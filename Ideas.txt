@@ -1,0 +1,19 @@
+## Ideas
+
+* This will be a scaled-down version of poirot, for more formal use
+* Have an overall area at the top of the output file showing:
+    * total papers (P)
+    * total topics (T)
+    * total pages (G)
+    * ratio P:T
+    * ratio G:P
+    * ratio G:T
+* Then have a pypi tabulate Table output showing rows for each of the subjects:
+    * number of papers (p)
+    * number of topics (t)
+    * number of pages (g)
+* I stress: no graphics, no contents list, no colours - just a very basic list & table
+
+* Will be two 'external' documents in Almanac:
+    * analyse.command
+    * metrics.txt
