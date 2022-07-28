@@ -103,22 +103,22 @@ for subject in subjectData:
 
     if int(subject[1]) == maxPapers:
 
-        subjectData[subjectData.index(subject)][1] = "( " + subject[1] + " )"
+        subjectData[subjectData.index(subject)][1] = "[ " + subject[1] + " ]"
 
 
     if int(subject[2]) == maxTopics:
 
-        subjectData[subjectData.index(subject)][2] = "( " + subject[2] + " )"
+        subjectData[subjectData.index(subject)][2] = "[ " + subject[2] + " ]"
 
 
     if int(subject[3]) == maxPages:
 
-        subjectData[subjectData.index(subject)][3] = "( " + subject[3] + " )"
+        subjectData[subjectData.index(subject)][3] = "[ " + subject[3] + " ]"
 
 
     if humanize.naturalsize(maxSize, binary=False, format="%.1f") == subject[4]:
 
-        subjectData[subjectData.index(subject)][4] = "( " + subject[4] + " )"
+        subjectData[subjectData.index(subject)][4] = "[ " + subject[4] + " ]"
 
 
 # Formatting and tabulating the overall data
