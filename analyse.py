@@ -1,6 +1,7 @@
 import os
 import warnings
 import humanize
+import PyPDF2
 import datetime as dt
 
 from PyPDF2 import PdfFileReader
@@ -38,6 +39,7 @@ subjectTopicVals = []
 subjectPageVals = []
 subjectSizeVals = []
 
+corruptFiles = []
 
 # Getting all the data
 for subject in subjects:
@@ -64,10 +66,23 @@ for subject in subjects:
             # Getting pages data
             with open(in_dir + "/" + subject + "/" + filename, "rb") as f:
 
-                pdf = PdfFileReader(f)
+                try:
 
-                overallData[0][2] += pdf.getNumPages()
-                subjectPages += pdf.getNumPages()
+                    pdf = PdfFileReader(f)
+
+                except PyPDF2.errors.PdfReadError:
+
+                    corruptFiles.append(filename)
+                
+
+                try:
+
+                    overallData[0][2] += pdf.getNumPages()
+                    subjectPages += pdf.getNumPages()
+
+                except PyPDF2.errors.PdfReadError:
+
+                    corruptFiles.append(filename)
 
 
             # Getting topics data
@@ -91,6 +106,22 @@ for subject in subjects:
     subjectData.append([subject, str(subjectPapers), str(subjectTopics), str(subjectPages), humanize.naturalsize(subjectSize, binary=False, format="%.1f")])
 
     print(f"{subject} done!")
+
+
+# Writing list of corrupt files, if necessary
+if corruptFiles != []:
+
+    with open("Corruptions.txt", "w") as f:
+
+        f.write("## Corrupt Files\n\n")
+
+        for filename in corruptFiles:
+
+            f.write("* " + filename + "\n")
+
+    print("\n--> Fix files listed in 'Corruptions.txt'\n")
+
+    exit()
 
 
 # Getting the maximum values and formatting them in their respective lists
