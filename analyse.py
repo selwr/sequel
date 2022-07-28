@@ -8,13 +8,7 @@ from tabulate import tabulate
 
 warnings.filterwarnings("ignore")
 
-
-# Getting date and time info
-dateNow = str(dt.date.today())
-dateNow = dateNow.split("-")[::-1]
-now = dt.datetime.now()
-timeNow = now.strftime("%H:%M:%S")
-
+print("\nStarting...\n")
 
 # Getting current working directory and its contents
 in_dir = os.path.dirname(os.path.realpath(__file__))
@@ -139,8 +133,15 @@ overall_table = tabulate(overallData, overall_headers, tablefmt="fancy_grid", co
 
 
 # Tabulating subject data
-subject_headers = ["Subject", "No. Papers", "No. Topics", "No. Pages", "  Size  "]
+subject_headers = ["Subject", "No. Papers", "No. Topics", "No. Pages", "   Size   "]
 subjects_table = tabulate(subjectData, subject_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
+
+
+# Getting date and time info
+dateNow = str(dt.date.today())
+dateNow = dateNow.split("-")[::-1]
+now = dt.datetime.now()
+timeNow = now.strftime("%H:%M:%S")
 
 
 # Writing all data to file
@@ -155,4 +156,4 @@ Last updated on {dateNow[0]}/{dateNow[1]}/{dateNow[2]} at {timeNow}
     f.write(subjects_table + "\n")
 
 
-print("\n\nDone!")
+print("\nDone!\n")
