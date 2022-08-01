@@ -232,7 +232,7 @@ Last updated on {dateNow[0]}/{dateNow[1]}/{dateNow[2]} at {timeNow}
     f.write(overall_table + "\n"*2)
     f.write(subjects_table + "\n"*4)
 
-    f.write("# Contents\n\n\n")
+    f.write("# Contents\n\n")
 
     for subject in topicsOverall:
 
