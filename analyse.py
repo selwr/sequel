@@ -41,8 +41,12 @@ subjectSizeVals = []
 
 corruptFiles = []
 
+topicsOverall = []
+
 # Getting all the data
 for subject in subjects:
+
+    topicsSubject = []
 
     subjectPapers = 0
     subjectTopics = 0
@@ -82,7 +86,11 @@ for subject in subjects:
 
                 except PyPDF2.errors.PdfReadError:
 
-                    corruptFiles.append(filename)
+                    corruptFiles.append(subject + " : " + filename)
+                
+                except ValueError:
+
+                    corruptFiles.append(subject + " : " + filename)
 
 
             # Getting topics data
@@ -95,7 +103,11 @@ for subject in subjects:
 
                 overallData[0][1] += 1
                 subjectTopics += 1
-    
+            
+
+            # Getting topics
+            topicsSubject.append(filename[:-4])
+        
 
     # Appending all values to necessary lists
     subjectPaperVals.append(subjectPapers)
@@ -104,6 +116,34 @@ for subject in subjects:
     subjectSizeVals.append(subjectSize)
 
     subjectData.append([subject, str(subjectPapers), str(subjectTopics), str(subjectPages), humanize.naturalsize(subjectSize, binary=False, format="%.1f")])
+
+
+    # Sorting out topic names
+    for topic in topicsSubject:
+
+        if "[" in topic:
+
+            topicsSubject[topicsSubject.index(topic)] = topicsSubject[topicsSubject.index(topic)][:topic.index("[")-1]
+    
+
+    topicsSubjectSet = set(topicsSubject)
+
+    topicsSubjectList = list(topicsSubjectSet)
+
+
+    for topic in topicsSubjectSet:
+
+        count = topicsSubject.count(topic)
+
+        if count > 1:
+
+            topicsSubjectList[topicsSubjectList.index(topic)] = topicsSubjectList[topicsSubjectList.index(topic)] + f" [{count}]"
+
+
+    topicsSubject = sorted(topicsSubjectList)
+
+    topicsOverall.append([subject, topicsSubject])
+
 
     print(f"{subject} done!")
 
@@ -121,10 +161,10 @@ if corruptFiles != []:
 
     print("\n--> Fix files listed in 'Corruptions.txt'\n")
 
-    exit()
 
+# Getting the total size, maximum values and formatting them in their respective lists
+totalSize = overallData[0][3]
 
-# Getting the maximum values and formatting them in their respective lists
 maxPapers = max(subjectPaperVals)
 maxTopics = max(subjectTopicVals)
 maxPages = max(subjectPageVals)
@@ -176,15 +216,34 @@ timeNow = now.strftime("%H:%M:%S")
 
 
 # Writing all data to file
-with open("Analysis.txt", "w") as f:
+with open("Report.txt", "w") as f:
 
-    f.write(f"""## Analysis
+    f.write(f"""## Report
+
+ID {totalSize * 8}
 
 Last updated on {dateNow[0]}/{dateNow[1]}/{dateNow[2]} at {timeNow}
-    
+
+
+# Numerical Analysis
+
 """)
+
     f.write(overall_table + "\n"*2)
-    f.write(subjects_table + "\n")
+    f.write(subjects_table + "\n"*4)
+
+    f.write("# Contents\n\n\n")
+
+    for subject in topicsOverall:
+
+        f.write(f"~ {subject[0]} ~\n\n")
+
+        for topic in subject[1]:
+
+            f.write(f"* {topic}\n")
+
+
+        f.write("\n\n\n")
 
 
 print("\nDone!\n")
