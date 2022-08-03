@@ -3,11 +3,14 @@ import warnings
 import humanize
 import PyPDF2
 import datetime as dt
+import numpy as np
 
 from PyPDF2 import PdfFileReader
 from tabulate import tabulate
 
 warnings.filterwarnings("ignore")
+
+separator = "-"
 
 print("\nStarting...\n")
 
@@ -76,7 +79,7 @@ for subject in subjects:
 
                 except PyPDF2.errors.PdfReadError:
 
-                    corruptFiles.append(filename)
+                    corruptFiles.append(subject + " : " + filename)
                 
 
                 try:
@@ -161,6 +164,8 @@ if corruptFiles != []:
 
     print("\n--> Fix files listed in 'Corruptions.txt'\n")
 
+    exit()
+
 
 # Getting the total size, maximum values and formatting them in their respective lists
 totalSize = overallData[0][3]
@@ -208,6 +213,12 @@ subject_headers = ["Subject", "No. Papers", "No. Topics", "No. Pages", "   Size 
 subjects_table = tabulate(subjectData, subject_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
 
 
+# Getting width of table
+start_left_corner = subjects_table.index("╘")
+start_right_corner = subjects_table.index("╛")
+bar_width = int(np.ceil((start_right_corner - start_left_corner) * 1.25))
+
+
 # Getting date and time info
 dateNow = str(dt.date.today())
 dateNow = dateNow.split("-")[::-1]
@@ -220,17 +231,22 @@ with open("Report.txt", "w") as f:
 
     f.write(f"""## Report
 
-ID {totalSize * 8}
+Date:   {dateNow[0]}/{dateNow[1]}/{dateNow[2]}
+Time:   {timeNow}
 
-Last updated on {dateNow[0]}/{dateNow[1]}/{dateNow[2]} at {timeNow}
 
+{separator * bar_width}
+{separator * bar_width}
 
 # Numerical Analysis
 
 """)
 
     f.write(overall_table + "\n"*2)
-    f.write(subjects_table + "\n"*4)
+    f.write(subjects_table + "\n"*3)
+
+    f.write((separator * bar_width) + "\n")
+    f.write((separator * bar_width) + "\n\n")
 
     f.write("# Contents\n\n")
 
@@ -243,7 +259,15 @@ Last updated on {dateNow[0]}/{dateNow[1]}/{dateNow[2]} at {timeNow}
             f.write(f"* {topic}\n")
 
 
-        f.write("\n\n\n")
+        if subject == topicsOverall[len(topicsOverall)-1]:
 
+            f.write(f"\n{separator * bar_width}\n")
+
+        else:
+
+            f.write(f"\n{separator * bar_width}\n\n")
+
+    f.write((separator * bar_width) + "\n\n")
+    f.write(f"ID {totalSize * 8}\n")
 
 print("\nDone!\n")
