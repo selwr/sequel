@@ -1,11 +1,16 @@
+# Archysis v3.2.1
+# by Sam Wallis-Riches, 2022
+
 import os
 import warnings
+import textwrap
 import humanize
 import PyPDF2
 import datetime as dt
 import numpy as np
 
 from PyPDF2 import PdfFileReader
+from fpdf import FPDF
 from tabulate import tabulate
 
 warnings.filterwarnings("ignore")
@@ -128,11 +133,9 @@ for subject in subjects:
 
             topicsSubject[topicsSubject.index(topic)] = topicsSubject[topicsSubject.index(topic)][:topic.index("[")-1]
     
-
     topicsSubjectSet = set(topicsSubject)
 
     topicsSubjectList = list(topicsSubjectSet)
-
 
     for topic in topicsSubjectSet:
 
@@ -142,11 +145,9 @@ for subject in subjects:
 
             topicsSubjectList[topicsSubjectList.index(topic)] = topicsSubjectList[topicsSubjectList.index(topic)] + f" [{count}]"
 
-
     topicsSubject = sorted(topicsSubjectList)
 
     topicsOverall.append([subject, topicsSubject])
-
 
     print(f"{subject} done!")
 
@@ -156,11 +157,11 @@ if corruptFiles != []:
 
     with open("Corruptions.txt", "w") as f:
 
-        f.write("## Corrupt Files\n\n")
+        text.append("## Corrupt Files\n\n")
 
         for filename in corruptFiles:
 
-            f.write("* " + filename + "\n")
+            text.append("* " + filename + "\n")
 
     print("\n--> Fix files listed in 'Corruptions.txt'\n")
 
@@ -206,17 +207,13 @@ overallData[0][3] = humanize.naturalsize(overallData[0][3], binary=False, format
 
 overall_headers = ["Total papers", "Total topics", "Total pages", "Total size"]
 overall_table = tabulate(overallData, overall_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center"))
+overall_table = overall_table.split("\n")
 
 
-# Tabulating subject data
+# Formatting and tabulating the subject data
 subject_headers = ["Subject", "No. Papers", "No. Topics", "No. Pages", "   Size   "]
 subjects_table = tabulate(subjectData, subject_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
-
-
-# Getting width of table
-start_left_corner = subjects_table.index("╘")
-start_right_corner = subjects_table.index("╛")
-bar_width = int(np.ceil((start_right_corner - start_left_corner) * 1.25))
+subjects_table = subjects_table.split("\n")
 
 
 # Getting date and time info
@@ -226,48 +223,113 @@ now = dt.datetime.now()
 timeNow = now.strftime("%H:%M:%S")
 
 
-# Writing all data to file
-with open("Report.txt", "w") as f:
+# Writing & formatting all the lines to the text list
+text = []
 
-    f.write(f"""## Report
+text.append("## Report")
+text.append("")
+text.append(f"Date:   {dateNow[0]}/{dateNow[1]}/{dateNow[2]}")
+text.append(f"Time:   {timeNow}")
+text.append("")
+text.append("")
+text.append("")
+text.append("# Numerical Analysis")
+text.append("")
 
-Date:   {dateNow[0]}/{dateNow[1]}/{dateNow[2]}
-Time:   {timeNow}
+for line in overall_table:
+
+    text.append(line)
+
+text.append("")
+
+for line in subjects_table:
+
+    text.append(line)
+
+text.append("")
+text.append("")
+text.append("")
+
+text.append("")
+text.append("")
+text.append("")
+
+text.append("# Contents")
+text.append("")
+text.append("")
+
+for subject in topicsOverall:
+
+    text.append(f"~ {subject[0]} ~")
+    text.append("=" * len(text[-1]))
+    text.append("")
+
+    for topic in subject[1]:
+
+        text.append(f"* {topic}")
 
 
-{separator * bar_width}
-{separator * bar_width}
+    if subject == topicsOverall[len(topicsOverall)-1]:
 
-# Numerical Analysis
+        text.append("")
+        text.append(f"{separator * 85}")
 
-""")
+    else:
 
-    f.write(overall_table + "\n"*2)
-    f.write(subjects_table + "\n"*3)
+        text.append("")
+        text.append(f"{separator * 85}")
+        text.append("")
+        text.append("")
 
-    f.write((separator * bar_width) + "\n")
-    f.write((separator * bar_width) + "\n\n")
+text.append((separator * 85))
+text.append("")
 
-    f.write("# Contents\n\n")
+text.append(f"ID {totalSize * 8}")
 
-    for subject in topicsOverall:
+for line in text[4:]:
 
-        f.write(f"~ {subject[0]} ~\n\n")
+    if ":" in line:
 
-        for topic in subject[1]:
-
-            f.write(f"* {topic}\n")
+        text[text.index(line)] = text[text.index(line)].replace(":", "/")
 
 
-        if subject == topicsOverall[len(topicsOverall)-1]:
+# Setting up the PDF
+pdf = FPDF(orientation = "P", format = "A4")
+pdf.add_page()
+pdf.add_font("Menlo", "", "/Users/selwr/Documents/Projects/sequel/Menlo-Regular.ttf", uni=True)
+pdf.set_font("Menlo", size = 10)
 
-            f.write(f"\n{separator * bar_width}\n")
 
-        else:
+# Writing to the PDF
+textToWrite = []
 
-            f.write(f"\n{separator * bar_width}\n\n")
+for line in text:
 
-    f.write((separator * bar_width) + "\n\n")
-    f.write(f"ID {totalSize * 8}\n")
+    if len(line) > 85:
 
-print("\nDone!\n")
+        wrappedText = textwrap.wrap(line, width = 85)
+
+        for elem in wrappedText:
+
+            if elem == wrappedText[0]:
+
+                textToWrite.append(elem)
+
+            else:
+
+                textToWrite.append("  " + elem)
+
+    else:
+
+        textToWrite.append(line)
+
+for line in textToWrite:
+
+    pdf.cell(0, 4, txt=line, ln=1)
+
+pdf.output("Report.pdf")
+
+os.remove("/Users/selwr/Documents/Projects/sequel/Menlo-Regular.cw127.pkl")
+os.remove("/Users/selwr/Documents/Projects/sequel/Menlo-Regular.pkl")
+
+print("\n--> Finished!\n")
