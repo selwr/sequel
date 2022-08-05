@@ -19,10 +19,30 @@ separator = "-"
 
 print("\nStarting...\n")
 
+
 # Getting current working directory and its contents
 in_dir = os.path.dirname(os.path.realpath(__file__))
 
 directory_contents = os.listdir(in_dir)
+
+
+# Getting directory of font file
+fontFile = 'Menlo-Regular.ttf'
+fontFileDir = None
+
+for root, dirs, files in os.walk(r'/Users'):
+
+    for name in files:
+
+        if name == fontFile and "Mobile Documents" not in root and "Library" not in root:
+
+            fontFileDir = os.path.abspath(os.path.join(root, name))[:-len(fontFile)]
+
+            break
+
+    if fontFileDir != None:
+
+        break
 
 
 # Getting each of the subject names
@@ -246,14 +266,6 @@ for line in subjects_table:
 
     text.append(line)
 
-text.append("")
-text.append("")
-text.append("")
-
-text.append("")
-text.append("")
-text.append("")
-
 text.append("# Contents")
 text.append("")
 text.append("")
@@ -296,7 +308,7 @@ for line in text[4:]:
 # Setting up the PDF
 pdf = FPDF(orientation = "P", format = "A4")
 pdf.add_page()
-pdf.add_font("Menlo", "", "/Users/selwr/Documents/Projects/sequel/Menlo-Regular.ttf", uni=True)
+pdf.add_font("Menlo", "", fontFileDir + fontFile, uni=True)
 pdf.set_font("Menlo", size = 10)
 
 
@@ -329,7 +341,11 @@ for line in textToWrite:
 
 pdf.output("Report.pdf")
 
-os.remove("/Users/selwr/Documents/Projects/sequel/Menlo-Regular.cw127.pkl")
-os.remove("/Users/selwr/Documents/Projects/sequel/Menlo-Regular.pkl")
 
+# Deleting temporary .pkl files
+os.remove(fontFileDir + "Menlo-Regular.cw127.pkl")
+os.remove(fontFileDir + "Menlo-Regular.pkl")
+
+
+# Informing the user of completion
 print("\n--> Finished!\n")
