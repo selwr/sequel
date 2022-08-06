@@ -1,4 +1,4 @@
-# Archysis v3.2.1
+# Archysis v3.2.2
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -58,7 +58,7 @@ subjects = sorted(subjects)
 
 
 # Setting up the lists for the data
-overallData = [[0, 0, 0, 0]]
+totalsData = [["Total", 0, 0, 0, 0]]
 
 subjectData = []
 
@@ -70,6 +70,7 @@ subjectSizeVals = []
 corruptFiles = []
 
 topicsOverall = []
+
 
 # Getting all the data
 for subject in subjects:
@@ -86,12 +87,12 @@ for subject in subjects:
         if ".pdf" in filename:
             
             # Getting papers data
-            overallData[0][0] += 1
+            totalsData[0][1] += 1
             subjectPapers += 1
 
 
             # Getting size data
-            overallData[0][3] += os.path.getsize(in_dir + "/" + subject + "/" + filename)
+            totalsData[0][4] += os.path.getsize(in_dir + "/" + subject + "/" + filename)
             subjectSize += os.path.getsize(in_dir + "/" + subject + "/" + filename)
 
 
@@ -109,7 +110,7 @@ for subject in subjects:
 
                 try:
 
-                    overallData[0][2] += pdf.getNumPages()
+                    totalsData[0][3] += pdf.getNumPages()
                     subjectPages += pdf.getNumPages()
 
                 except PyPDF2.errors.PdfReadError:
@@ -124,12 +125,12 @@ for subject in subjects:
             # Getting topics data
             if "[" not in filename:
 
-                overallData[0][1] += 1
+                totalsData[0][2] += 1
                 subjectTopics += 1
 
             if ("[" in filename) and ("[1]" in filename):
 
-                overallData[0][1] += 1
+                totalsData[0][2] += 1
                 subjectTopics += 1
             
 
@@ -188,9 +189,7 @@ if corruptFiles != []:
     exit()
 
 
-# Getting the total size, maximum values and formatting them in their respective lists
-totalSize = overallData[0][3]
-
+# Getting the maximum values and formatting them in their respective lists
 maxPapers = max(subjectPaperVals)
 maxTopics = max(subjectTopicVals)
 maxPages = max(subjectPageVals)
@@ -218,16 +217,14 @@ for subject in subjectData:
         subjectData[subjectData.index(subject)][4] = "[ " + subject[4] + " ]"
 
 
-# Formatting and tabulating the overall data
-for x in range(len(overallData[0]) - 1):
+# Getting lengths of subject names
+subjectLengths = []
 
-    overallData[0][x] = str(overallData[0][x])
+for subject in subjectData:
 
-overallData[0][3] = humanize.naturalsize(overallData[0][3], binary=False, format="%.2f")
+    subjectLengths.append(len(subject[0]))
 
-overall_headers = ["Total papers", "Total topics", "Total pages", "Total size"]
-overall_table = tabulate(overallData, overall_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center"))
-overall_table = overall_table.split("\n")
+longestSubjectNameLength = max(subjectLengths)
 
 
 # Formatting and tabulating the subject data
@@ -235,45 +232,125 @@ subject_headers = ["Subject", "No. Papers", "No. Topics", "No. Pages", "   Size 
 subjects_table = tabulate(subjectData, subject_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
 subjects_table = subjects_table.split("\n")
 
+tIndex = subjects_table[0].index("╤")
+
+firstLine = list(subjects_table[0])
+firstLine[tIndex] = "╒"
+
+for char in firstLine[:tIndex]:
+
+    firstLine[firstLine.index(char)] = " "
+
+subjects_table[0] = "".join(firstLine)
+
+secondLine = list(subjects_table[1])
+secondLine[0] = " "
+
+subjects_table[1] = "".join(secondLine)
+subjects_table[1] = subjects_table[1].replace("Subject", "       ")
+
+thirdLine = list(subjects_table[2])
+thirdLine[0] = "╒"
+
+subjects_table[2] = "".join(thirdLine)
+
+for line in subjects_table:
+
+    lineLength = len(line)
+    extraBit = (88 - lineLength) / 2
+
+    if extraBit % 2 == 0:
+
+        subjects_table[subjects_table.index(line)] = (" " * int(extraBit)) + subjects_table[subjects_table.index(line)] + (" " * int(extraBit))
+
+    else:
+
+        subjects_table[subjects_table.index(line)] = (" " * int(np.floor(extraBit))) + subjects_table[subjects_table.index(line)] + (" " * int(np.ceil(extraBit)))
+
+
+# Formatting and tabulating the totals data
+for x in range(1, len(totalsData[0]) - 1):
+
+    totalsData[0][x] = str(totalsData[0][x])
+
+totalsData[0][4] = humanize.naturalsize(totalsData[0][4], binary=False, format="%.2f")
+
+totals_headers = [" " * (longestSubjectNameLength - 2), "No. Papers", "No. Topics", "No. Pages", "   Size   "]
+totals_table = tabulate(totalsData, totals_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
+totals_table = totals_table.split("\n")
+
+totals_table = totals_table[2:]
+
+totals_table[0] = totals_table[0].replace("╪", "╤")
+totals_table[0] = totals_table[0].replace("╞", "╒")
+totals_table[0] = totals_table[0].replace("╡", "╕")
+
+for line in totals_table:
+
+    lineLength = len(line)
+    extraBit = (88 - lineLength) / 2
+
+    if extraBit % 2 == 0:
+
+        totals_table[totals_table.index(line)] = (" " * int(extraBit)) + totals_table[totals_table.index(line)] + (" " * int(extraBit))
+
+    else:
+        
+        totals_table[totals_table.index(line)] = (" " * int(np.floor(extraBit))) + totals_table[totals_table.index(line)] + (" " * int(np.ceil(extraBit)))
+
 
 # Getting date and time info
 dateNow = str(dt.date.today())
 dateNow = dateNow.split("-")[::-1]
 now = dt.datetime.now()
-timeNow = now.strftime("%H:%M:%S")
+timeNow = now.strftime("%H%M%S")
 
 
 # Writing & formatting all the lines to the text list
 text = []
 
-text.append("## Report")
 text.append("")
-text.append(f"Date:   {dateNow[0]}/{dateNow[1]}/{dateNow[2]}")
-text.append(f"Time:   {timeNow}")
+text.append(separator * 88)
+text.append("")
+text.append(" " * 41 + "Report")
+text.append("")
+text.append(separator * 88)
 text.append("")
 text.append("")
-text.append("")
-text.append("# Numerical Analysis")
-text.append("")
-
-for line in overall_table:
-
-    text.append(line)
-
+text.append(" " * 38 + "~ Metrics ~")
 text.append("")
 
 for line in subjects_table:
 
     text.append(line)
 
-text.append("# Contents")
+text.append("")
+
+for line in totals_table:
+
+    text.append(line)
+
+text.append("")
+
+text.append(" " * 37 + "~ Contents ~")
 text.append("")
 text.append("")
 
 for subject in topicsOverall:
+    
+    subjectLength = len("  " + subject[0] + "  ")
+    extraBit = (88 - subjectLength) / 2
 
-    text.append(f"~ {subject[0]} ~")
-    text.append("=" * len(text[-1]))
+    if extraBit % 2 == 0:
+
+        text.append(" " * int(extraBit) + f"  {subject[0]}  ")
+        text.append(" " * int(extraBit) + "=" * len(f"~ {subject[0]} ~"))
+
+    else:
+        
+        text.append(" " * int(np.floor(extraBit)) + f"  {subject[0]}  ")
+        text.append(" " * int(np.floor(extraBit)) + "=" * len(f"  {subject[0]}  "))
+
     text.append("")
 
     for topic in subject[1]:
@@ -284,21 +361,20 @@ for subject in topicsOverall:
     if subject == topicsOverall[len(topicsOverall)-1]:
 
         text.append("")
-        text.append(f"{separator * 85}")
+        text.append(f"{separator * 88}")
 
     else:
 
         text.append("")
-        text.append(f"{separator * 85}")
-        text.append("")
+        text.append(f"{separator * 88}")
         text.append("")
 
-text.append((separator * 85))
+text.append((separator * 88))
 text.append("")
 
-text.append(f"ID {totalSize * 8}")
+text.append(f"ID {dateNow[0]}{dateNow[1]}{dateNow[2][2:]}/{timeNow}")
 
-for line in text[4:]:
+for line in text[:-2]:
 
     if ":" in line:
 
@@ -317,9 +393,9 @@ textToWrite = []
 
 for line in text:
 
-    if len(line) > 85:
+    if len(line) > 88:
 
-        wrappedText = textwrap.wrap(line, width = 85)
+        wrappedText = textwrap.wrap(line, width = 88)
 
         for elem in wrappedText:
 
