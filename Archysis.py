@@ -178,11 +178,11 @@ if corruptFiles != []:
 
     with open("Corruptions.txt", "w") as f:
 
-        text.append("## Corrupt Files\n\n")
+        f.write("## Corrupt Files\n\n")
 
         for filename in corruptFiles:
 
-            text.append("* " + filename + "\n")
+            f.write("* " + filename + "\n")
 
     print("\n--> Fix files listed in 'Corruptions.txt'\n")
 
@@ -228,7 +228,7 @@ longestSubjectNameLength = max(subjectLengths)
 
 
 # Formatting and tabulating the subject data
-subject_headers = ["Subject", "No. Papers", "No. Topics", "No. Pages", "   Size   "]
+subject_headers = ["Subject", "No. Documents", "No. Topics", "No. Pages", "   Size   "]
 subjects_table = tabulate(subjectData, subject_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
 subjects_table = subjects_table.split("\n")
 
@@ -261,11 +261,11 @@ for line in subjects_table:
 
     if extraBit % 2 == 0:
 
-        subjects_table[subjects_table.index(line)] = (" " * int(extraBit)) + subjects_table[subjects_table.index(line)] + (" " * int(extraBit))
+        subjects_table[subjects_table.index(line)] = (" " * int(extraBit)) + subjects_table[subjects_table.index(line)]
 
     else:
 
-        subjects_table[subjects_table.index(line)] = (" " * int(np.floor(extraBit))) + subjects_table[subjects_table.index(line)] + (" " * int(np.ceil(extraBit)))
+        subjects_table[subjects_table.index(line)] = (" " * int(np.floor(extraBit))) + subjects_table[subjects_table.index(line)]
 
 
 # Formatting and tabulating the totals data
@@ -275,7 +275,7 @@ for x in range(1, len(totalsData[0]) - 1):
 
 totalsData[0][4] = humanize.naturalsize(totalsData[0][4], binary=False, format="%.2f")
 
-totals_headers = [" " * (longestSubjectNameLength - 2), "No. Papers", "No. Topics", "No. Pages", "   Size   "]
+totals_headers = [" " * (longestSubjectNameLength - 2), "No. Documents", "No. Topics", "No. Pages", "   Size   "]
 totals_table = tabulate(totalsData, totals_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
 totals_table = totals_table.split("\n")
 
@@ -292,11 +292,11 @@ for line in totals_table:
 
     if extraBit % 2 == 0:
 
-        totals_table[totals_table.index(line)] = (" " * int(extraBit)) + totals_table[totals_table.index(line)] + (" " * int(extraBit))
+        totals_table[totals_table.index(line)] = (" " * int(extraBit)) + totals_table[totals_table.index(line)]
 
     else:
         
-        totals_table[totals_table.index(line)] = (" " * int(np.floor(extraBit))) + totals_table[totals_table.index(line)] + (" " * int(np.ceil(extraBit)))
+        totals_table[totals_table.index(line)] = (" " * int(np.floor(extraBit))) + totals_table[totals_table.index(line)]
 
 
 # Getting date and time info
@@ -309,13 +309,11 @@ timeNow = now.strftime("%H%M%S")
 # Writing & formatting all the lines to the text list
 text = []
 
-text.append("")
 text.append(separator * 88)
 text.append("")
-text.append(" " * 41 + "Report")
+text.append(" " * 37 + "Almanac Report")
 text.append("")
 text.append(separator * 88)
-text.append("")
 text.append("")
 text.append(" " * 38 + "~ Metrics ~")
 text.append("")
@@ -357,7 +355,6 @@ for subject in topicsOverall:
 
         text.append(f"* {topic}")
 
-
     if subject == topicsOverall[len(topicsOverall)-1]:
 
         text.append("")
@@ -386,6 +383,7 @@ pdf = FPDF(orientation = "P", format = "A4")
 pdf.add_page()
 pdf.add_font("Menlo", "", fontFileDir + fontFile, uni=True)
 pdf.set_font("Menlo", size = 10)
+pdf.set_auto_page_break(auto = True, margin = 14.0)
 
 
 # Writing to the PDF
@@ -415,7 +413,7 @@ for line in textToWrite:
 
     pdf.cell(0, 4, txt=line, ln=1)
 
-pdf.output("Report.pdf")
+pdf.output("Almanac Report.pdf")
 
 
 # Deleting temporary .pkl files
