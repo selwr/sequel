@@ -1,7 +1,8 @@
-# Archysis v3.2.2
+# Archysis v3.2.3
 # by Sam Wallis-Riches, 2022
 
 import os
+import time
 import warnings
 import textwrap
 import humanize
@@ -16,6 +17,8 @@ from tabulate import tabulate
 warnings.filterwarnings("ignore")
 
 separator = "-"
+
+startTime = time.time()
 
 print("\nStarting...\n")
 
@@ -330,6 +333,8 @@ for line in totals_table:
 
 text.append("")
 
+text.append(" " * 37 + f"{dateNow[0]}{dateNow[1]}{dateNow[2][2:]}/{timeNow}")
+
 text.append(" " * 37 + "~ Contents ~")
 text.append("")
 text.append("")
@@ -367,9 +372,6 @@ for subject in topicsOverall:
         text.append("")
 
 text.append((separator * 88))
-text.append("")
-
-text.append(f"ID {dateNow[0]}{dateNow[1]}{dateNow[2][2:]}/{timeNow}")
 
 for line in text[:-2]:
 
@@ -383,7 +385,7 @@ pdf = FPDF(orientation = "P", format = "A4")
 pdf.add_page()
 pdf.add_font("Menlo", "", fontFileDir + fontFile, uni=True)
 pdf.set_font("Menlo", size = 10)
-pdf.set_auto_page_break(auto = True, margin = 14.0)
+pdf.set_auto_page_break(auto = True, margin = 8.0)
 
 
 # Writing to the PDF
@@ -421,5 +423,8 @@ os.remove(fontFileDir + "Menlo-Regular.cw127.pkl")
 os.remove(fontFileDir + "Menlo-Regular.pkl")
 
 
-# Informing the user of completion
-print("\n--> Finished!\n")
+# End of program message
+endTime = time.time()
+running = round(endTime - startTime, 2)
+
+print(f"\n--> Finished in {running}s!\n")
