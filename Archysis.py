@@ -1,4 +1,4 @@
-# Archysis v3.2.4
+# Archysis v3.2.5
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -316,6 +316,8 @@ text.append(separator * 88)
 text.append("")
 text.append(" " * 37 + "Almanac Report")
 text.append("")
+text.append(" " * 33 + f"{dateNow[0]}.{dateNow[1]}.{dateNow[2][2:]}  ~  {timeNow}")
+text.append("")
 text.append(separator * 88)
 text.append("")
 text.append(" " * 38 + "- Metrics -")
@@ -331,10 +333,6 @@ for line in totals_table:
 
     text.append(line)
 
-text.append("")
-
-text.append(" " * 33 + f"{dateNow[0]}.{dateNow[1]}.{dateNow[2][2:]}  @  {timeNow}")
-
 text.append(" " * 37 + "- Contents -")
 text.append("")
 text.append("")
@@ -347,7 +345,7 @@ for subject in topicsOverall:
     if extraBit % 2 == 0:
 
         text.append(" " * int(extraBit) + f"  {subject[0]}  ")
-        text.append(" " * int(extraBit) + "=" * len(f"~ {subject[0]} ~"))
+        text.append(" " * int(extraBit) + "=" * len(f"  {subject[0]}  "))
 
     else:
         
@@ -375,7 +373,7 @@ text.append((separator * 88))
 
 for line in text[:-2]:
 
-    if ":" in line and "@" not in line:
+    if ":" in line and "~" not in line:
 
         text[text.index(line)] = text[text.index(line)].replace(":", "/")
 

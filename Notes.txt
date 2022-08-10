@@ -11,5 +11,5 @@
 * The code will generate two .pkl files in the directory of the file's .ttf; the exact names of these files need to be put in the code (towards the end) so that they are deleted once the program has been executed
 
 # Protected characters
-* No @ can appear in a file name
+* No ~ can appear in a file name
 * Square brackets can only be used to show multiplicity of a topic at the end of a file name, eg. [n]
