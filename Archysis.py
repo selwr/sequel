@@ -1,4 +1,4 @@
-# Archysis v3.2.3
+# Archysis v3.2.4
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -306,7 +306,7 @@ for line in totals_table:
 dateNow = str(dt.date.today())
 dateNow = dateNow.split("-")[::-1]
 now = dt.datetime.now()
-timeNow = now.strftime("%H%M%S")
+timeNow = now.strftime("%H:%M:%S")
 
 
 # Writing & formatting all the lines to the text list
@@ -318,7 +318,7 @@ text.append(" " * 37 + "Almanac Report")
 text.append("")
 text.append(separator * 88)
 text.append("")
-text.append(" " * 38 + "~ Metrics ~")
+text.append(" " * 38 + "- Metrics -")
 text.append("")
 
 for line in subjects_table:
@@ -333,9 +333,9 @@ for line in totals_table:
 
 text.append("")
 
-text.append(" " * 37 + f"{dateNow[0]}{dateNow[1]}{dateNow[2][2:]}/{timeNow}")
+text.append(" " * 33 + f"{dateNow[0]}.{dateNow[1]}.{dateNow[2][2:]}  @  {timeNow}")
 
-text.append(" " * 37 + "~ Contents ~")
+text.append(" " * 37 + "- Contents -")
 text.append("")
 text.append("")
 
@@ -375,7 +375,7 @@ text.append((separator * 88))
 
 for line in text[:-2]:
 
-    if ":" in line:
+    if ":" in line and "@" not in line:
 
         text[text.index(line)] = text[text.index(line)].replace(":", "/")
 
@@ -425,6 +425,6 @@ os.remove(fontFileDir + "Menlo-Regular.pkl")
 
 # End of program message
 endTime = time.time()
-running = round(endTime - startTime, 2)
+runningTime = round(endTime - startTime, 2)
 
-print(f"\n--> Finished in {running}s!\n")
+print(f"\n--> Finished in {runningTime}s!\n")
