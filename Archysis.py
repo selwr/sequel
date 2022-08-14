@@ -1,4 +1,4 @@
-# Archysis v3.2.5
+# Archysis v3.2.6
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -333,6 +333,11 @@ for line in totals_table:
 
     text.append(line)
 
+text.append("")
+text.append((separator * 88))
+text.append((separator * 88))
+#text.append("")
+text.append("")
 text.append(" " * 37 + "- Contents -")
 text.append("")
 text.append("")
@@ -409,9 +414,28 @@ for line in text:
 
         textToWrite.append(line)
 
-for line in textToWrite:
+for index in range(len(textToWrite)):
 
-    pdf.cell(0, 4, txt=line, ln=1)
+    if index == 68:
+
+        oneReplaced = textToWrite[index].replace("┼", "┴")
+        twoReplaced = oneReplaced.replace("├", "└")
+        threeReplaced = twoReplaced.replace("┤", "┘")
+
+        pdf.cell(0, 4, txt=threeReplaced, ln=1)
+
+    elif index == 69:
+
+        oneReplaced = textToWrite[68].replace("┼", "┬")
+        twoReplaced = oneReplaced.replace("├", "┌")
+        threeReplaced = twoReplaced.replace("┤", "┐")
+
+        pdf.cell(0, 4, txt=threeReplaced, ln=1)
+        pdf.cell(0, 4, txt=textToWrite[index], ln=1)
+
+    else:
+
+        pdf.cell(0, 4, txt=textToWrite[index], ln=1)
 
 pdf.output("Almanac Report.pdf")
 
