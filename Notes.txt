@@ -4,6 +4,7 @@
 # General
 * The program will search through all subfolders of the folder in which the .py file is placed and ran from
 * The files to search for must be PDFs
+* The formatting currently allows up to 40 subjects. This can be reduced to give the desired formatting by removing some of the ‘text.append(“”)’ line breaks towards the beginning of the append statements, or by reducing the argument in the for loop which appends these breaks en masse.
 
 # Fonts
 * Must be a monospaced Unicode (UTF-8 encoded) font (eg. Menlo, as included)
