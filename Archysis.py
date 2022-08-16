@@ -1,4 +1,4 @@
-# Archysis v3.3.1
+# Archysis v3.3.2
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -705,28 +705,6 @@ theme_headers = ["Theme", " Subjects ", " Documents ", " Topics ", " Pages ", " 
 theme_table = tabulate(themesData, theme_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center", "center"))
 theme_table = theme_table.split("\n")
 
-tIndex = theme_table[0].index("╤")
-
-firstLine = list(theme_table[0])
-firstLine[tIndex] = "╒"
-
-for char in firstLine[:tIndex]:
-
-    firstLine[firstLine.index(char)] = " "
-
-theme_table[0] = "".join(firstLine)
-
-secondLine = list(theme_table[1])
-secondLine[0] = " "
-
-theme_table[1] = "".join(secondLine)
-theme_table[1] = theme_table[1].replace("Theme", "     ")
-
-thirdLine = list(theme_table[2])
-thirdLine[0] = "╒"
-
-theme_table[2] = "".join(thirdLine)
-
 for line in theme_table:
 
     lineLength = len(line)
@@ -755,7 +733,7 @@ for x in range(1, len(totalsData[0]) - 1):
 
 totalsData[0][5] = humanize.naturalsize(totalsData[0][5], binary=False, format="%.2f")
 
-totals_headers = [" " * (longestThemeNameLength - 2), " Subjects " + ((barIndicies[1] - barIndicies[0]) - 15) * " ", " Documents ", " Topics ", " Pages ", " Size "]
+totals_headers = [" " * (longestThemeNameLength - 2), " Subjects " + ((barIndicies[2] - barIndicies[1]) - 15) * " ", " Documents ", " Topics ", " Pages ", " Size "]
 totals_table = tabulate(totalsData, totals_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center", "center"))
 totals_table = totals_table.split("\n")
 
@@ -900,7 +878,7 @@ text.append(" " * 33 + f"{dateNow[0]}.{dateNow[1]}.{dateNow[2][2:]}  ~  {timeNow
 text.append("")
 text.append(separator * 88)
 text.append("")
-text.append(" " * 38 + "- Themes -")
+text.append(" " * 18 + separator * 20 + "  Themes  " + separator * 20)
 text.append("")
 
 for line in theme_table:
@@ -914,16 +892,19 @@ for line in totals_table:
     text.append(line)
 
 text.append("")
-text.append(" " * 37 + "- Subjects -")
+text.append(" " * 17 + separator * 20 + "  Subjects  " + separator * 20)
 text.append("")
 
 for line in subjects_table:
 
     text.append(line)
 
+for x in range(54):
+    
+    text.append("")
+
+text.append(" " * 17 + separator * 20 + "  Contents  " + separator * 20)
 text.append("")
-text.append((separator * 88))
-text.append(separator * 37 + "  Contents  " + separator * 39)
 text.append((separator * 88))
 
 for theme in topicsOverall:
