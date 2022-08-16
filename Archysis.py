@@ -1,4 +1,4 @@
-# Archysis v3.2.6
+# Archysis v3.3.1
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -48,22 +48,51 @@ for root, dirs, files in os.walk(r'/Users'):
         break
 
 
-# Getting each of the subject names
-subjects = []
+# Getting each of the theme names
+themes = []
 
 for folder in directory_contents:
 
     if (os.path.isdir(folder)) and ("." not in folder):
 
-        subjects.append(folder)
+        subjects = []
 
-subjects = sorted(subjects)
+        for subject in os.listdir(in_dir + "/" + folder):
+
+            if (os.path.isdir(in_dir + "/" + folder + "/" + subject)) and ("." not in subject):
+
+                subjects.append(subject)
+
+        if subjects != []:
+
+            themes.append([folder, subjects])
+
+        else:
+
+            themes.append(folder)
+
+def theme_name_0(element):
+
+    return element[0]
+
+themes = sorted(themes, key=theme_name_0)
+num_themes = len(themes)
+
+for theme in themes:
+
+    if isinstance(theme, list):
+
+        themes[themes.index(theme)][1] = sorted(theme[1])
 
 
 # Setting up the lists for the data
-totalsData = [["Total", 0, 0, 0, 0]]
+totalsData = [[f"Total", 0, 0, 0, 0, 0]]
 
-subjectData = []
+overallData = []
+
+themesData = []
+
+topicsOverall = []
 
 subjectPaperVals = []
 subjectTopicVals = []
@@ -72,108 +101,577 @@ subjectSizeVals = []
 
 corruptFiles = []
 
-topicsOverall = []
-
 
 # Getting all the data
-for subject in subjects:
+for theme in themes:
 
-    topicsSubject = []
+    docs = 0
+    topics = 0
+    pages = 0
+    size = 0
+    subjects = 0
 
-    subjectPapers = 0
-    subjectTopics = 0
-    subjectPages = 0
-    subjectSize = 0
+    running_subjects = ""
 
-    for filename in os.listdir(in_dir + "/" + subject):
 
-        if ".pdf" in filename:
-            
-            # Getting papers data
+    if isinstance(theme, list):
+
+        themeData = [theme[0], []]
+
+        themeTopics = [theme[0], []]
+
+        print(f"\nDoing {theme[0]}...")
+
+        for subject in theme[1]:
+
+            topicsSubject = []
+
+            subjectPapers = 0
+            subjectTopics = 0
+            subjectPages = 0
+            subjectSize = 0
+
+            subjects += 1
             totalsData[0][1] += 1
-            subjectPapers += 1
+
+            running_subjects += subject + "\n"
+
+            for filename in os.listdir(in_dir + "/" + theme[0] + "/" + subject):
+
+                if ".pdf" in filename:
+                    
+                    # Getting papers data
+                    totalsData[0][2] += 1
+                    subjectPapers += 1
+                    docs += 1
 
 
-            # Getting size data
-            totalsData[0][4] += os.path.getsize(in_dir + "/" + subject + "/" + filename)
-            subjectSize += os.path.getsize(in_dir + "/" + subject + "/" + filename)
+                    # Getting size data
+                    totalsData[0][5] += os.path.getsize(in_dir + "/" + theme[0] + "/" + subject + "/" + filename)
+                    subjectSize += os.path.getsize(in_dir + "/" + theme[0] + "/" + subject + "/" + filename)
+                    size += os.path.getsize(in_dir + "/" + theme[0] + "/" + subject + "/" + filename)
 
 
-            # Getting pages data
-            with open(in_dir + "/" + subject + "/" + filename, "rb") as f:
+                    # Getting pages data
+                    with open(in_dir + "/" + theme[0] + "/" + subject + "/" + filename, "rb") as f:
 
-                try:
+                        try:
 
-                    pdf = PdfFileReader(f)
+                            pdf = PdfFileReader(f)
 
-                except PyPDF2.errors.PdfReadError:
+                        except PyPDF2.errors.PdfReadError:
 
-                    corruptFiles.append(subject + " : " + filename)
+                            corruptFiles.append(subject + " : " + filename)
+                        
+
+                        try:
+
+                            totalsData[0][4] += pdf.getNumPages()
+                            subjectPages += pdf.getNumPages()
+                            pages += pdf.getNumPages()
+
+                        except PyPDF2.errors.PdfReadError:
+
+                            corruptFiles.append(subject + " : " + filename)
+                        
+                        except ValueError:
+
+                            corruptFiles.append(subject + " : " + filename)
+
+
+                    # Getting topics data
+                    if "[" not in filename:
+
+                        totalsData[0][3] += 1
+                        subjectTopics += 1
+                        topics += 1
+
+                    if ("[" in filename) and ("[1]" in filename):
+
+                        totalsData[0][3] += 1
+                        subjectTopics += 1
+                        topics += 1
+                    
+
+                    # Getting topics
+                    topicsSubject.append(filename[:-4])
                 
 
-                try:
+            # Appending all values to necessary lists
+            subjectPaperVals.append(subjectPapers)
+            subjectTopicVals.append(subjectTopics)
+            subjectPageVals.append(subjectPages)
+            subjectSizeVals.append(subjectSize)
 
-                    totalsData[0][3] += pdf.getNumPages()
-                    subjectPages += pdf.getNumPages()
+            themeData[1].append([subject, str(subjectPapers), str(subjectTopics), str(subjectPages), humanize.naturalsize(subjectSize, binary=False, format="%.1f")])
 
-                except PyPDF2.errors.PdfReadError:
 
-                    corruptFiles.append(subject + " : " + filename)
+            # Sorting out topic names
+            topicsSubject = sorted(topicsSubject)
+
+            for topic in topicsSubject:
+
+                if "[" in topic:
+
+                    topicsSubject[topicsSubject.index(topic)] = topicsSubject[topicsSubject.index(topic)][:topic.index("[")-1]
+
+            topicsSubjectActual = []
+
+            for topic in topicsSubject:
+
+                if "(" in topic:
+
+                    tempTopic = topic.split(" (")
+
+                    if tempTopic[0] not in topicsSubjectActual:
+
+                        topicsSubjectActual.append(tempTopic[0])
+                else:
+                    
+                    topicsSubjectActual.append(topic)
+
+            topicsSubjectActualSet = set(topicsSubjectActual)
+            topicsSubjectActualList = list(topicsSubjectActualSet)
+
+            topicsSubjectActual = sorted(topicsSubjectActualList)
+
+            topicsForSubject = []
+            for elem in topicsSubjectActual:
+
+                topicsForSubject.append(elem)
+
+            for name in topicsSubject:
+
+                flags = []
+
+                if "(" in name:
+
+                    bracketIndex = name.index("(")
+                    flag = name[bracketIndex+1:-1]
+                    topicProper = name[:bracketIndex-1]
+
+                    # One flag
+                    if "," not in flag and " and " not in flag:
+
+                        flags.append(flag)
+                    
+                    # Two flags
+                    if "," not in flag and " and " in flag:
+
+                        tempFlags = flag.split(" and ")
+
+                        for f in tempFlags:
+
+                            flags.append(f)
                 
-                except ValueError:
+                    # No comma with 'and', three or more flags
+                    if ", " in flag and " and " in flag and ", and " not in flag:
 
-                    corruptFiles.append(subject + " : " + filename)
+                        tempFlags = flag.split(", ")
 
+                        tempFlags2 = []
 
-            # Getting topics data
-            if "[" not in filename:
+                        for elem in tempFlags:
 
-                totalsData[0][2] += 1
-                subjectTopics += 1
+                            if " and " in elem:
 
-            if ("[" in filename) and ("[1]" in filename):
+                                splitAnd = elem.split(" and ")
 
-                totalsData[0][2] += 1
-                subjectTopics += 1
-            
+                                for e in splitAnd:
 
-            # Getting topics
-            topicsSubject.append(filename[:-4])
+                                    tempFlags2.append(e)
+                            
+                            else:
+
+                                tempFlags2.append(elem)
+
+                        for f in tempFlags2:
+
+                            flags.append(f)
+
+                    # Comma with 'and', three or more flags
+                    if "," in flag and ", and " in flag:
+
+                        tempFlags = flag.split(", ")
+
+                        tempFlags2 = []
+
+                        for elem in tempFlags:
+
+                            if "and " in elem:
+
+                                splitAnd = elem.split("and ")
+
+                                for e in splitAnd:
+
+                                    if e != "":
+
+                                        tempFlags2.append(e)
+
+                            else:
+                                tempFlags2.append(elem)
+
+                        for f in tempFlags2:
+
+                            flags.append(f)
+
+                    topicIndex = topicsForSubject.index(topicProper)
+
+                    if topicsSubjectActual[topicIndex] == topicProper:
+
+                        topicsSubjectActual[topicIndex] = [topicProper, flags]
+
+                    elif topicsSubjectActual[topicIndex] != topicProper:
+
+                        for f in flags:
+
+                            topicsSubjectActual[topicIndex][1].append(f)
+
+                if flags != [] and topicProper in topicsSubjectActual:
+
+                    topicsSubjectActual.remove(topicProper)
+
+            for flaggedTopic in topicsSubjectActual:
+                
+                if isinstance(flaggedTopic, list):
+                    
+                    for flag in flaggedTopic[1]:
+
+                        countFlag = flaggedTopic[1].count(flag)
+
+                        if countFlag == len(flaggedTopic[1]) and countFlag > 1:
+
+                            topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)] = f"{flaggedTopic[0]} ({flag}) [{countFlag}]"
+
+                            break
+
+                        elif countFlag != len(flaggedTopic[1]) and countFlag > 1:
+
+                            topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1][flaggedTopic[1].index(flag)] = f"{flag} [{countFlag}]"
+
+                            while flag in topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1]:
+
+                                topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1].remove(flag)
+
+                        elif countFlag == len(flaggedTopic[1]) and countFlag == 1:
+
+                            topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)] = f"{flaggedTopic[0]} ({flag})"
+                            
+                            break
+                
+            topicsSubjectDupes = []
+            for topic in topicsSubject:
+
+                if "(" in topic:
+
+                    tempTopic = topic.split(" (")
+                    topicsSubjectDupes.append(tempTopic[0])
+
+                else:
+
+                    topicsSubjectDupes.append(topic)
+
+            for topic in topicsForSubject:
+
+                count = topicsSubjectDupes.count(topic)
+                index = topicsForSubject.index(topic)
+
+                if count > 1:
+
+                    if isinstance(topicsSubjectActual[index], list):
+
+                        topicsSubjectActual[index][0] = topicsSubjectActual[index][0] + f" [{count}]"
+
+                    elif not isinstance(topicsSubjectActual[index], list) and "[" not in topicsSubjectActual[index]:
+
+                        topicsSubjectActual[index] = topicsSubjectActual[index] + f" [{count}]"
+
+            themeTopics[1].append([subject, topicsSubjectActual])
+
+            print(f"--> {subject} done!")
         
+        themesData.append([theme[0], "("+ str(subjects) + ")\n" + running_subjects, str(docs), str(topics), str(pages), humanize.naturalsize(size, binary=False, format="%.1f")])
 
-    # Appending all values to necessary lists
-    subjectPaperVals.append(subjectPapers)
-    subjectTopicVals.append(subjectTopics)
-    subjectPageVals.append(subjectPages)
-    subjectSizeVals.append(subjectSize)
+        overallData.append(themeData)
+        topicsOverall.append(themeTopics)
 
-    subjectData.append([subject, str(subjectPapers), str(subjectTopics), str(subjectPages), humanize.naturalsize(subjectSize, binary=False, format="%.1f")])
+    else:
+
+        themeData = [theme]
+
+        themeTopics = [theme]
+
+        topicsSubject = []
+
+        subjectPapers = 0
+        subjectTopics = 0
+        subjectPages = 0
+        subjectSize = 0
+
+        running_subjects += theme + "\n"
+
+        totalsData[0][1] += 1
+
+        for filename in os.listdir(in_dir + "/" + theme):
+
+            if ".pdf" in filename:
+
+                # Getting papers data
+                totalsData[0][2] += 1
+                subjectPapers += 1
+                docs += 1
 
 
-    # Sorting out topic names
-    for topic in topicsSubject:
+                # Getting size data
+                totalsData[0][5] += os.path.getsize(in_dir + "/" + theme + "/" + filename)
+                subjectSize += os.path.getsize(in_dir + "/" + theme + "/" + filename)
+                size += os.path.getsize(in_dir + "/" + theme + "/" + filename)
 
-        if "[" in topic:
 
-            topicsSubject[topicsSubject.index(topic)] = topicsSubject[topicsSubject.index(topic)][:topic.index("[")-1]
-    
-    topicsSubjectSet = set(topicsSubject)
+                # Getting pages data
+                with open(in_dir + "/" + theme + "/" + filename, "rb") as f:
 
-    topicsSubjectList = list(topicsSubjectSet)
+                    try:
 
-    for topic in topicsSubjectSet:
+                        pdf = PdfFileReader(f)
 
-        count = topicsSubject.count(topic)
+                    except PyPDF2.errors.PdfReadError:
 
-        if count > 1:
+                        corruptFiles.append(subject + " : " + filename)
 
-            topicsSubjectList[topicsSubjectList.index(topic)] = topicsSubjectList[topicsSubjectList.index(topic)] + f" [{count}]"
+                    try:
 
-    topicsSubject = sorted(topicsSubjectList)
+                        totalsData[0][4] += pdf.getNumPages()
+                        subjectPages += pdf.getNumPages()
+                        pages += pdf.getNumPages()
 
-    topicsOverall.append([subject, topicsSubject])
+                    except PyPDF2.errors.PdfReadError:
 
-    print(f"{subject} done!")
+                        corruptFiles.append(subject + " : " + filename)
+
+                    except ValueError:
+
+                        corruptFiles.append(subject + " : " + filename)
+
+
+                # Getting topics data
+                if "[" not in filename:
+
+                    totalsData[0][3] += 1
+                    subjectTopics += 1
+                    topics += 1
+
+                if ("[" in filename) and ("[1]" in filename):
+
+                    totalsData[0][3] += 1
+                    subjectTopics += 1
+                    topics += 1
+
+
+                # Getting topics
+                topicsSubject.append(filename[:-4])
+
+
+        # Appending all values to necessary lists
+        subjectPaperVals.append(subjectPapers)
+        subjectTopicVals.append(subjectTopics)
+        subjectPageVals.append(subjectPages)
+        subjectSizeVals.append(subjectSize)
+
+        themeData.append(str(subjectPapers))
+        themeData.append(str(subjectTopics))
+        themeData.append(str(subjectPages))
+        themeData.append(humanize.naturalsize(subjectSize, binary=False, format="%.1f"))
+
+
+        # Sorting out topic names
+        topicsSubject = sorted(topicsSubject)
+
+        for topic in topicsSubject:
+
+            if "[" in topic:
+
+                topicsSubject[topicsSubject.index(topic)] = topicsSubject[topicsSubject.index(topic)][:topic.index("[")-1]
+
+        topicsSubjectActual = []
+
+        for topic in topicsSubject:
+
+            if "(" in topic:
+
+                tempTopic = topic.split(" (")
+
+                if tempTopic[0] not in topicsSubjectActual:
+
+                    topicsSubjectActual.append(tempTopic[0])
+            else:
+
+                topicsSubjectActual.append(topic)
+
+        topicsSubjectActualSet = set(topicsSubjectActual)
+        topicsSubjectActualList = list(topicsSubjectActualSet)
+
+        topicsSubjectActual = sorted(topicsSubjectActualList)
+
+        topicsForSubject = []
+        for elem in topicsSubjectActual:
+
+            topicsForSubject.append(elem)
+
+        for name in topicsSubject:
+
+            flags = []
+
+            if "(" in name:
+
+                bracketIndex = name.index("(")
+                flag = name[bracketIndex+1:-1]
+                topicProper = name[:bracketIndex-1]
+
+                # One flag
+                if "," not in flag and " and " not in flag:
+
+                    flags.append(flag)
+
+                # Two flags
+                if "," not in flag and " and " in flag:
+
+                    tempFlags = flag.split(" and ")
+
+                    for f in tempFlags:
+
+                        flags.append(f)
+
+                # No comma with 'and', three or more flags
+                if ", " in flag and " and " in flag and ", and " not in flag:
+
+                    tempFlags = flag.split(", ")
+
+                    tempFlags2 = []
+
+                    for elem in tempFlags:
+
+                        if " and " in elem:
+
+                            splitAnd = elem.split(" and ")
+
+                            for e in splitAnd:
+
+                                tempFlags2.append(e)
+
+                        else:
+
+                            tempFlags2.append(elem)
+
+                    for f in tempFlags2:
+
+                        flags.append(f)
+
+                # Comma with 'and', three or more flags
+                if "," in flag and ", and " in flag:
+
+                    tempFlags = flag.split(", ")
+
+                    tempFlags2 = []
+
+                    for elem in tempFlags:
+
+                        if "and " in elem:
+
+                            splitAnd = elem.split("and ")
+
+                            for e in splitAnd:
+
+                                if e != "":
+
+                                    tempFlags2.append(e)
+
+                        else:
+                            tempFlags2.append(elem)
+
+                    for f in tempFlags2:
+
+                        flags.append(f)
+
+                topicIndex = topicsForSubject.index(topicProper)
+
+                if topicsSubjectActual[topicIndex] == topicProper:
+
+                    topicsSubjectActual[topicIndex] = [topicProper, flags]
+
+                elif topicsSubjectActual[topicIndex] != topicProper:
+
+                    for f in flags:
+
+                        topicsSubjectActual[topicIndex][1].append(f)
+
+            if flags != [] and topicProper in topicsSubjectActual:
+
+                topicsSubjectActual.remove(topicProper)
+
+        for flaggedTopic in topicsSubjectActual:
+
+            if isinstance(flaggedTopic, list):
+
+                for flag in flaggedTopic[1]:
+
+                    countFlag = flaggedTopic[1].count(flag)
+
+                    if countFlag == len(flaggedTopic[1]) and countFlag > 1:
+
+                        topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)] = f"{flaggedTopic[0]} ({flag}) [{countFlag}]"
+
+                        break
+
+                    elif countFlag != len(flaggedTopic[1]) and countFlag > 1:
+
+                        topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1][flaggedTopic[1].index(flag)] = f"{flag} [{countFlag}]"
+
+                        while flag in topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1]:
+
+                            topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1].remove(flag)
+
+                    elif countFlag == len(flaggedTopic[1]) and countFlag == 1:
+
+                        topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)] = f"{flaggedTopic[0]} ({flag})"
+
+                        break
+
+        topicsSubjectDupes = []
+        for topic in topicsSubject:
+
+            if "(" in topic:
+
+                tempTopic = topic.split(" (")
+                topicsSubjectDupes.append(tempTopic[0])
+
+            else:
+
+                topicsSubjectDupes.append(topic)
+
+        for topic in topicsForSubject:
+
+            count = topicsSubjectDupes.count(topic)
+            index = topicsForSubject.index(topic)
+
+            if count > 1:
+
+                if isinstance(topicsSubjectActual[index], list):
+
+                    topicsSubjectActual[index][0] = topicsSubjectActual[index][0] + f" [{count}]"
+
+                elif not isinstance(topicsSubjectActual[index], list) and "[" not in topicsSubjectActual[index]:
+
+                    topicsSubjectActual[index] = topicsSubjectActual[index] + f" [{count}]"
+
+        themeTopics.append(topicsSubjectActual)
+
+        themesData.append([theme, "(1)\n" + running_subjects, str(docs), str(topics), str(pages), humanize.naturalsize(size, binary=False, format="%.1f")])
+
+        overallData.append(themeData)
+        topicsOverall.append(themeTopics)
+
+        print(f"\n{theme} done!")
 
 
 # Writing list of corrupt files, if necessary
@@ -192,83 +690,62 @@ if corruptFiles != []:
     exit()
 
 
-# Getting the maximum values and formatting them in their respective lists
-maxPapers = max(subjectPaperVals)
-maxTopics = max(subjectTopicVals)
-maxPages = max(subjectPageVals)
-maxSize = max(subjectSizeVals)
+# Getting lengths of theme names
+themeLengths = []
 
-for subject in subjectData:
+for theme in themesData:
 
-    if int(subject[1]) == maxPapers:
+    themeLengths.append(len(theme[0]))
 
-        subjectData[subjectData.index(subject)][1] = "[ " + subject[1] + " ]"
+longestThemeNameLength = max(themeLengths)
 
 
-    if int(subject[2]) == maxTopics:
+# Formatting and tabulating the theme data
+theme_headers = ["Theme", " Subjects ", " Documents ", " Topics ", " Pages ", " Size "]
+theme_table = tabulate(themesData, theme_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center", "center"))
+theme_table = theme_table.split("\n")
 
-        subjectData[subjectData.index(subject)][2] = "[ " + subject[2] + " ]"
+tIndex = theme_table[0].index("╤")
 
-
-    if int(subject[3]) == maxPages:
-
-        subjectData[subjectData.index(subject)][3] = "[ " + subject[3] + " ]"
-
-
-    if humanize.naturalsize(maxSize, binary=False, format="%.1f") == subject[4]:
-
-        subjectData[subjectData.index(subject)][4] = "[ " + subject[4] + " ]"
-
-
-# Getting lengths of subject names
-subjectLengths = []
-
-for subject in subjectData:
-
-    subjectLengths.append(len(subject[0]))
-
-longestSubjectNameLength = max(subjectLengths)
-
-
-# Formatting and tabulating the subject data
-subject_headers = ["Subject", "No. Documents", "No. Topics", "No. Pages", "   Size   "]
-subjects_table = tabulate(subjectData, subject_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
-subjects_table = subjects_table.split("\n")
-
-tIndex = subjects_table[0].index("╤")
-
-firstLine = list(subjects_table[0])
+firstLine = list(theme_table[0])
 firstLine[tIndex] = "╒"
 
 for char in firstLine[:tIndex]:
 
     firstLine[firstLine.index(char)] = " "
 
-subjects_table[0] = "".join(firstLine)
+theme_table[0] = "".join(firstLine)
 
-secondLine = list(subjects_table[1])
+secondLine = list(theme_table[1])
 secondLine[0] = " "
 
-subjects_table[1] = "".join(secondLine)
-subjects_table[1] = subjects_table[1].replace("Subject", "       ")
+theme_table[1] = "".join(secondLine)
+theme_table[1] = theme_table[1].replace("Theme", "     ")
 
-thirdLine = list(subjects_table[2])
+thirdLine = list(theme_table[2])
 thirdLine[0] = "╒"
 
-subjects_table[2] = "".join(thirdLine)
+theme_table[2] = "".join(thirdLine)
 
-for line in subjects_table:
+for line in theme_table:
 
     lineLength = len(line)
     extraBit = (88 - lineLength) / 2
 
     if extraBit % 2 == 0:
 
-        subjects_table[subjects_table.index(line)] = (" " * int(extraBit)) + subjects_table[subjects_table.index(line)]
+        theme_table[theme_table.index(line)] = (" " * int(extraBit)) + theme_table[theme_table.index(line)]
 
     else:
 
-        subjects_table[subjects_table.index(line)] = (" " * int(np.floor(extraBit))) + subjects_table[subjects_table.index(line)]
+        theme_table[theme_table.index(line)] = (" " * int(np.floor(extraBit))) + theme_table[theme_table.index(line)]
+
+barIndicies = []
+for index in range(len(theme_table[1])):
+
+    if theme_table[1][index] == "│":
+
+        barIndicies.append(index)
 
 
 # Formatting and tabulating the totals data
@@ -276,10 +753,10 @@ for x in range(1, len(totalsData[0]) - 1):
 
     totalsData[0][x] = str(totalsData[0][x])
 
-totalsData[0][4] = humanize.naturalsize(totalsData[0][4], binary=False, format="%.2f")
+totalsData[0][5] = humanize.naturalsize(totalsData[0][5], binary=False, format="%.2f")
 
-totals_headers = [" " * (longestSubjectNameLength - 2), "No. Documents", "No. Topics", "No. Pages", "   Size   "]
-totals_table = tabulate(totalsData, totals_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
+totals_headers = [" " * (longestThemeNameLength - 2), " Subjects " + ((barIndicies[1] - barIndicies[0]) - 15) * " ", " Documents ", " Topics ", " Pages ", " Size "]
+totals_table = tabulate(totalsData, totals_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center", "center"))
 totals_table = totals_table.split("\n")
 
 totals_table = totals_table[2:]
@@ -302,6 +779,109 @@ for line in totals_table:
         totals_table[totals_table.index(line)] = (" " * int(np.floor(extraBit))) + totals_table[totals_table.index(line)]
 
 
+# Getting the maximum values and formatting them in their respective lists
+maxPapers = max(subjectPaperVals)
+maxTopics = max(subjectTopicVals)
+maxPages = max(subjectPageVals)
+maxSize = max(subjectSizeVals)
+
+for theme in overallData:
+
+    if isinstance(theme[1], list):
+
+        for subject in theme[1]:
+
+            if int(subject[1]) == maxPapers:
+
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][1] = "[ " + subject[1] + " ]"
+
+
+            if int(subject[2]) == maxTopics:
+
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][2] = "[ " + subject[2] + " ]"
+
+
+            if int(subject[3]) == maxPages:
+
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][3] = "[ " + subject[3] + " ]"
+
+
+            if subject[4] == humanize.naturalsize(maxSize, binary=False, format="%.1f"):
+
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][4] = "[ " + subject[4] + " ]"
+    
+    else:
+
+        if int(subject[1]) == maxPapers:
+
+            overallData[overallData.index(theme)][1] = "[ " + subject[1] + " ]"
+
+
+        if int(subject[2]) == maxTopics:
+
+            overallData[overallData.index(theme)][2] = "[ " + subject[2] + " ]"
+
+
+        if int(subject[3]) == maxPages:
+
+            overallData[overallData.index(theme)][3] = "[ " + subject[3] + " ]"
+
+
+        if subject[4] == humanize.naturalsize(maxSize, binary=False, format="%.1f"):
+
+            overallData[overallData.index(theme)][4] = "[ " + subject[4] + " ]"
+
+
+# Getting rows of subject table
+subjectRows = []
+for theme in overallData:
+
+    if not isinstance(theme[1], list):
+
+        subjectRows.append(theme)
+
+    else:
+
+        for subject in theme[1]:
+
+            subjectRows.append(subject)
+
+def subject_name(element):
+
+    return element[0]
+
+subjectRows = sorted(subjectRows, key=subject_name)
+
+
+# Getting lengths of subject names
+subjectLengths = []
+
+for subject in subjectRows:
+
+    subjectLengths.append(len(subject[0]))
+
+longestSubjectNameLength = max(subjectLengths)
+
+
+# Formatting and tabulating the subject data
+subject_headers = [f"Subject", " Documents ", "  Topics  ", "  Pages  ", "   Size   "]
+subjects_table = tabulate(subjectRows, subject_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
+subjects_table = subjects_table.split("\n")
+
+for line in subjects_table:
+
+    lineLength = len(line)
+    extraBit = (88 - lineLength) / 2
+
+    if extraBit % 2 == 0:
+
+        subjects_table[subjects_table.index(line)] = (" " * int(extraBit)) + subjects_table[subjects_table.index(line)]
+
+    else:
+
+        subjects_table[subjects_table.index(line)] = (" " * int(np.floor(extraBit))) + subjects_table[subjects_table.index(line)]
+
+
 # Getting date and time info
 dateNow = str(dt.date.today())
 dateNow = dateNow.split("-")[::-1]
@@ -320,10 +900,10 @@ text.append(" " * 33 + f"{dateNow[0]}.{dateNow[1]}.{dateNow[2][2:]}  ~  {timeNow
 text.append("")
 text.append(separator * 88)
 text.append("")
-text.append(" " * 38 + "- Metrics -")
+text.append(" " * 38 + "- Themes -")
 text.append("")
 
-for line in subjects_table:
+for line in theme_table:
 
     text.append(line)
 
@@ -334,48 +914,120 @@ for line in totals_table:
     text.append(line)
 
 text.append("")
+text.append(" " * 37 + "- Subjects -")
+text.append("")
+
+for line in subjects_table:
+
+    text.append(line)
+
+text.append("")
 text.append((separator * 88))
+text.append(separator * 37 + "  Contents  " + separator * 39)
 text.append((separator * 88))
-#text.append("")
-text.append("")
-text.append(" " * 37 + "- Contents -")
-text.append("")
-text.append("")
 
-for subject in topicsOverall:
-    
-    subjectLength = len("  " + subject[0] + "  ")
-    extraBit = (88 - subjectLength) / 2
+for theme in topicsOverall:
 
-    if extraBit % 2 == 0:
+    if not isinstance(theme[1][0][1], list):
 
-        text.append(" " * int(extraBit) + f"  {subject[0]}  ")
-        text.append(" " * int(extraBit) + "=" * len(f"  {subject[0]}  "))
+        text.append("")
 
-    else:
+        subjectLength = len("- " + theme[0] + " -")
+        extraBit = (88 - subjectLength) / 2
+
+        if extraBit % 2 == 0:
+
+            text.append(" " * int(extraBit) + f"- {theme[0]} -")
+
+        else:
+            
+            text.append(" " * int(np.floor(extraBit)) + f"- {theme[0]} -")
+
+        text.append("")
+        text.append((separator * 88))
+        text.append("")
+
+        for topic in theme[1]:
+
+            if isinstance(topic, list):
+
+                text.append(f"* {topic[0]}")
+
+                for flag in topic[1]:
+
+                    text.append(f"    > {flag}")
+
+            else:
+                text.append(f"* {topic}")
         
-        text.append(" " * int(np.floor(extraBit)) + f"  {subject[0]}  ")
-        text.append(" " * int(np.floor(extraBit)) + "=" * len(f"  {subject[0]}  "))
-
-    text.append("")
-
-    for topic in subject[1]:
-
-        text.append(f"* {topic}")
-
-    if subject == topicsOverall[len(topicsOverall)-1]:
-
         text.append("")
         text.append(f"{separator * 88}")
-
+    
     else:
 
         text.append("")
-        text.append(f"{separator * 88}")
+
+        themeLength = len("- " + theme[0] + " -")
+        extraBit = (88 - themeLength) / 2
+
+        if extraBit % 2 == 0:
+
+            text.append(" " * int(extraBit) + f"- {theme[0]} -")
+
+        else:
+
+            text.append(" " * int(np.floor(extraBit)) + f"- {theme[0]} -")
+
         text.append("")
+        text.append((separator * 88))
 
-text.append((separator * 88))
+        subjects = []
+        for item in theme:
+            if isinstance(item, list):
 
+                for subject in item:
+
+                    subjects.append(subject)
+
+        for subject in subjects:
+
+            text.append("")
+
+            subjectLength = len("  " + subject[0] + "  ")
+            extraBit = (88 - subjectLength) / 2
+
+            if extraBit % 2 == 0:
+
+                text.append(" " * int(extraBit) + f"  {subject[0]}  ")
+                text.append(" " * int(extraBit) + "=" * len(f"  {subject[0]}  "))
+
+            else:
+                
+                text.append(" " * int(np.floor(extraBit)) + f"  {subject[0]}  ")
+                text.append(" " * int(np.floor(extraBit)) + "=" * len(f"  {subject[0]}  "))
+
+            text.append("")
+
+            for topic in subject[1]:
+
+                if isinstance(topic, list):
+
+                    text.append(f"* {topic[0]}")
+
+                    for flag in topic[1]:
+
+                        text.append(f"    > {flag}")
+
+                else:
+                    text.append(f"* {topic}")
+
+            text.append("")
+            text.append(f"{separator * 88}")
+
+text.append(f"{separator * 88}")      
+
+
+# Replacing the slash characters
 for line in text[:-2]:
 
     if ":" in line and "~" not in line:
@@ -391,7 +1043,7 @@ pdf.set_font("Menlo", size = 10)
 pdf.set_auto_page_break(auto = True, margin = 8.0)
 
 
-# Writing to the PDF
+# Wrapping text
 textToWrite = []
 
 for line in text:
@@ -414,9 +1066,11 @@ for line in text:
 
         textToWrite.append(line)
 
+
+# Writing to PDF
 for index in range(len(textToWrite)):
 
-    if index == 68:
+    if index == 68 or index == 137:
 
         oneReplaced = textToWrite[index].replace("┼", "┴")
         twoReplaced = oneReplaced.replace("├", "└")
@@ -424,9 +1078,18 @@ for index in range(len(textToWrite)):
 
         pdf.cell(0, 4, txt=threeReplaced, ln=1)
 
-    elif index == 69:
+    elif index == 69 and "│" in textToWrite[index]:
 
         oneReplaced = textToWrite[68].replace("┼", "┬")
+        twoReplaced = oneReplaced.replace("├", "┌")
+        threeReplaced = twoReplaced.replace("┤", "┐")
+
+        pdf.cell(0, 4, txt=threeReplaced, ln=1)
+        pdf.cell(0, 4, txt=textToWrite[index], ln=1)
+
+    elif index == 138:
+
+        oneReplaced = textToWrite[137].replace("┼", "┬")
         twoReplaced = oneReplaced.replace("├", "┌")
         threeReplaced = twoReplaced.replace("┤", "┐")
 
@@ -449,4 +1112,4 @@ os.remove(fontFileDir + "Menlo-Regular.pkl")
 endTime = time.time()
 runningTime = round(endTime - startTime, 2)
 
-print(f"\n--> Finished in {runningTime}s!\n")
+print(f"\n\n--> Finished in {runningTime}s!\n")

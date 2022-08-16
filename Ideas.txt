@@ -1,36 +1,18 @@
 ## Ideas
 
-* This will be a scaled-down version of poirot, for more formal use
-* Have an overall area showing:
-    * total papers (P)
-    * total topics (T)
-    * total pages (G)
-    * total storage size (Z)
-    * ratio P:T
 
-* Then have a table output showing rows for each of the subjects:
-    * number of papers (p)
-    * number of topics (t)
-    * number of pages (g)
-    * memory size (z)
+* Introduce themes into the report
 
-* I stress: no graphics, no contents list, no colours - just a very basic table
+* There will be 6 themes:
+    - Space
+    - Physics
+    - Chemistry
+    - Biology
+    - Mathematics
+    - Technology
 
-* Will be two 'external' documents in Almanac:
-    * analyse.command
-    * Analysis.pdf
+* There will be a themes table at the top of the document, giving the totals underneath
 
-1. Loop over folders in Almanac , and then files in there
-2. Add one to the papers count for that folder, and then to the pages count for that folder, and for file size (converted)
-3. Check if [ in filename
-4. If there isn’t, add one to topic count, and if there is and then only if [1] in filename, add one to topic count
-5. Then at the end of that subject folder, append the four values to the array
-6. The total figures can be calculated with running totals
+* Organise contents by themes
 
-* Must make sure all ints get made into strings (could use f-strings)
-
-* Try get the highest in each metric underlined within each column
-
-* Make it so there’s a second table under the ‘subject’ table that is a ‘totals’ table that just has the sum of the above columns. These numbers should be in bold.
-
-* Find a place for the ‘ratios’ somewhere. Maybe write them as text.
+* The main directory would contain subfolders for the relevant themes, and then the files would be in the sub-sub-directories
