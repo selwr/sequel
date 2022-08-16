@@ -1,4 +1,4 @@
-# Archysis v3.3.2
+# Archysis v3.3.4
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -16,7 +16,7 @@ from tabulate import tabulate
 
 warnings.filterwarnings("ignore")
 
-separator = "-"
+separator = "─"
 
 startTime = time.time()
 
@@ -891,7 +891,6 @@ for line in totals_table:
 
     text.append(line)
 
-text.append("")
 text.append(" " * 17 + separator * 20 + "  Subjects  " + separator * 20)
 text.append("")
 
@@ -899,7 +898,7 @@ for line in subjects_table:
 
     text.append(line)
 
-for x in range(54):
+for x in range(52):
     
     text.append("")
 
@@ -1051,7 +1050,7 @@ for line in text:
 # Writing to PDF
 for index in range(len(textToWrite)):
 
-    if index == 68 or index == 137:
+    if index == 137 and "┼" in textToWrite[index]:
 
         oneReplaced = textToWrite[index].replace("┼", "┴")
         twoReplaced = oneReplaced.replace("├", "└")
@@ -1059,16 +1058,7 @@ for index in range(len(textToWrite)):
 
         pdf.cell(0, 4, txt=threeReplaced, ln=1)
 
-    elif index == 69 and "│" in textToWrite[index]:
-
-        oneReplaced = textToWrite[68].replace("┼", "┬")
-        twoReplaced = oneReplaced.replace("├", "┌")
-        threeReplaced = twoReplaced.replace("┤", "┐")
-
-        pdf.cell(0, 4, txt=threeReplaced, ln=1)
-        pdf.cell(0, 4, txt=textToWrite[index], ln=1)
-
-    elif index == 138:
+    elif index == 138 and "┼" in textToWrite[137]:
 
         oneReplaced = textToWrite[137].replace("┼", "┬")
         twoReplaced = oneReplaced.replace("├", "┌")
@@ -1077,6 +1067,24 @@ for index in range(len(textToWrite)):
         pdf.cell(0, 4, txt=threeReplaced, ln=1)
         pdf.cell(0, 4, txt=textToWrite[index], ln=1)
 
+    elif index == 136 and "┼" in textToWrite[index]:
+
+        oneReplaced = textToWrite[index].replace("┼", "┴")
+        twoReplaced = oneReplaced.replace("├", "└")
+        threeReplaced = twoReplaced.replace("┤", "┘")
+
+        pdf.cell(0, 4, txt=threeReplaced, ln=1)
+        pdf.cell(0, 4, txt="", ln=1)
+
+    elif index == 137 and "┼" in textToWrite[136]:
+
+        oneReplaced = textToWrite[136].replace("┼", "┬")
+        twoReplaced = oneReplaced.replace("├", "┌")
+        threeReplaced = twoReplaced.replace("┤", "┐")
+
+        pdf.cell(0, 4, txt=threeReplaced, ln=1)
+        pdf.cell(0, 4, txt=textToWrite[index], ln=1)
+        
     else:
 
         pdf.cell(0, 4, txt=textToWrite[index], ln=1)
