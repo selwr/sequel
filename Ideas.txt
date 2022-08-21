@@ -1,18 +1,4 @@
 ## Ideas
 
 
-* Introduce themes into the report
-
-* There will be 6 themes:
-    - Space
-    - Physics
-    - Chemistry
-    - Biology
-    - Mathematics
-    - Technology
-
-* There will be a themes table at the top of the document, giving the totals underneath
-
-* Organise contents by themes
-
-* The main directory would contain subfolders for the relevant themes, and then the files would be in the sub-sub-directories
+* None planned!

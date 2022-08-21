@@ -1,4 +1,4 @@
-# Archysis v3.3.4
+# Archysis v3.4
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -20,7 +20,7 @@ separator = "─"
 
 startTime = time.time()
 
-print("\nStarting...\n")
+print("\nStarting...")
 
 
 # Getting current working directory and its contents
@@ -32,6 +32,8 @@ directory_contents = os.listdir(in_dir)
 # Getting directory of font file
 fontFile = 'Menlo-Regular.ttf'
 fontFileDir = None
+
+print("--> Searching for font file...")
 
 for root, dirs, files in os.walk(r'/Users'):
 
@@ -46,6 +48,15 @@ for root, dirs, files in os.walk(r'/Users'):
     if fontFileDir != None:
 
         break
+
+if fontFileDir == None:
+
+    print("--> No font file found!\n")
+    exit()
+
+else:
+
+    print("--> Font file found!\n")
 
 
 # Getting each of the theme names
@@ -85,6 +96,91 @@ for theme in themes:
         themes[themes.index(theme)][1] = sorted(theme[1])
 
 
+# Checking status of all files
+corruptFiles = []
+
+print("--> Checking files...")
+
+for theme in themes:
+
+    if not isinstance(theme, list):
+
+        for filename in os.listdir(in_dir + "/" + theme):
+
+            if ".pdf" in filename:
+
+                try:
+
+                    pdf = PdfFileReader(in_dir + "/" + theme + "/" + filename)
+
+                except PyPDF2.errors.PdfReadError:
+
+                    corruptFiles.append(subject + ": " + filename)
+                    continue
+
+                try:
+
+                    temp = pdf.getNumPages()
+
+                except PyPDF2.errors.PdfReadError:
+
+                    corruptFiles.append(subject + ": " + filename)
+
+                except ValueError:
+
+                    corruptFiles.append(subject + ": " + filename)
+
+    else:
+
+        for subject in theme[1]:
+
+            for filename in os.listdir(in_dir + "/" + theme[0] + "/" + subject):
+
+                if ".pdf" in filename:
+
+                    try:
+                        
+                        pdf = PdfFileReader(in_dir + "/" + theme[0] + "/" + subject + "/" + filename)
+
+                    except PyPDF2.errors.PdfReadError:
+
+                        corruptFiles.append(subject + ": " + filename)
+                        continue
+                    
+
+                    try:
+
+                        temp = pdf.getNumPages()
+
+                    except PyPDF2.errors.PdfReadError:
+
+                        corruptFiles.append(subject + ": " + filename)
+                    
+                    except ValueError:
+
+                        corruptFiles.append(subject + ": " + filename)
+
+
+# Writing list of corrupt files, if necessary
+if corruptFiles != []:
+
+    with open("Corruptions.txt", "w") as f:
+
+        f.write("## Corrupt Files\n\n")
+
+        for filename in corruptFiles:
+
+            f.write("* " + filename + "\n")
+
+    print("\n--> Fix files listed in 'Corruptions.txt'\n")
+
+    exit()
+
+else:
+
+    print("--> File check complete!\n")
+
+
 # Setting up the lists for the data
 totalsData = [[f"Total", 0, 0, 0, 0, 0]]
 
@@ -99,7 +195,7 @@ subjectTopicVals = []
 subjectPageVals = []
 subjectSizeVals = []
 
-corruptFiles = []
+print("\nReading files...")
 
 
 # Getting all the data
@@ -114,13 +210,20 @@ for theme in themes:
     running_subjects = ""
 
 
+    # Getting data if theme has subjects
     if isinstance(theme, list):
 
         themeData = [theme[0], []]
 
         themeTopics = [theme[0], []]
 
-        print(f"\nDoing {theme[0]}...")
+        if themes.index(theme) == 0:
+
+            print(f"--> Doing {theme[0]}...")
+
+        else:
+
+            print(f"\n--> Doing {theme[0]}...")
 
         for subject in theme[1]:
 
@@ -155,28 +258,11 @@ for theme in themes:
                     # Getting pages data
                     with open(in_dir + "/" + theme[0] + "/" + subject + "/" + filename, "rb") as f:
 
-                        try:
+                        pdf = PdfFileReader(f)
 
-                            pdf = PdfFileReader(f)
-
-                        except PyPDF2.errors.PdfReadError:
-
-                            corruptFiles.append(subject + " : " + filename)
-                        
-
-                        try:
-
-                            totalsData[0][4] += pdf.getNumPages()
-                            subjectPages += pdf.getNumPages()
-                            pages += pdf.getNumPages()
-
-                        except PyPDF2.errors.PdfReadError:
-
-                            corruptFiles.append(subject + " : " + filename)
-                        
-                        except ValueError:
-
-                            corruptFiles.append(subject + " : " + filename)
+                        totalsData[0][4] += pdf.getNumPages()
+                        subjectPages += pdf.getNumPages()
+                        pages += pdf.getNumPages()
 
 
                     # Getting topics data
@@ -206,7 +292,7 @@ for theme in themes:
             themeData[1].append([subject, str(subjectPapers), str(subjectTopics), str(subjectPages), humanize.naturalsize(subjectSize, binary=False, format="%.1f")])
 
 
-            # Sorting out topic names
+            # Sorting out topics and flags
             topicsSubject = sorted(topicsSubject)
 
             for topic in topicsSubject:
@@ -250,11 +336,13 @@ for theme in themes:
                     flag = name[bracketIndex+1:-1]
                     topicProper = name[:bracketIndex-1]
 
+
                     # One flag
                     if "," not in flag and " and " not in flag:
 
                         flags.append(flag)
                     
+
                     # Two flags
                     if "," not in flag and " and " in flag:
 
@@ -264,6 +352,7 @@ for theme in themes:
 
                             flags.append(f)
                 
+
                     # No comma with 'and', three or more flags
                     if ", " in flag and " and " in flag and ", and " not in flag:
 
@@ -288,6 +377,7 @@ for theme in themes:
                         for f in tempFlags2:
 
                             flags.append(f)
+
 
                     # Comma with 'and', three or more flags
                     if "," in flag and ", and " in flag:
@@ -388,13 +478,17 @@ for theme in themes:
 
             themeTopics[1].append([subject, topicsSubjectActual])
 
-            print(f"--> {subject} done!")
+            print(f"    ✓ {subject} done!")
         
+
+        # Appending all necessary values
         themesData.append([theme[0], "("+ str(subjects) + ")\n" + running_subjects, str(docs), str(topics), str(pages), humanize.naturalsize(size, binary=False, format="%.1f")])
 
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
 
+
+    # Getting data if theme has subjects
     else:
 
         themeData = [theme]
@@ -411,6 +505,14 @@ for theme in themes:
         running_subjects += theme + "\n"
 
         totalsData[0][1] += 1
+
+        if themes.index(theme) == 0:
+
+            print(f"--> Doing {theme}...")
+
+        else:
+
+            print(f"\n--> Doing {theme}...")
 
         for filename in os.listdir(in_dir + "/" + theme):
 
@@ -431,27 +533,11 @@ for theme in themes:
                 # Getting pages data
                 with open(in_dir + "/" + theme + "/" + filename, "rb") as f:
 
-                    try:
+                    pdf = PdfFileReader(f)
 
-                        pdf = PdfFileReader(f)
-
-                    except PyPDF2.errors.PdfReadError:
-
-                        corruptFiles.append(subject + " : " + filename)
-
-                    try:
-
-                        totalsData[0][4] += pdf.getNumPages()
-                        subjectPages += pdf.getNumPages()
-                        pages += pdf.getNumPages()
-
-                    except PyPDF2.errors.PdfReadError:
-
-                        corruptFiles.append(subject + " : " + filename)
-
-                    except ValueError:
-
-                        corruptFiles.append(subject + " : " + filename)
+                    totalsData[0][4] += pdf.getNumPages()
+                    subjectPages += pdf.getNumPages()
+                    pages += pdf.getNumPages()
 
 
                 # Getting topics data
@@ -484,7 +570,7 @@ for theme in themes:
         themeData.append(humanize.naturalsize(subjectSize, binary=False, format="%.1f"))
 
 
-        # Sorting out topic names
+        # Sorting out topics and flags
         topicsSubject = sorted(topicsSubject)
 
         for topic in topicsSubject:
@@ -528,10 +614,12 @@ for theme in themes:
                 flag = name[bracketIndex+1:-1]
                 topicProper = name[:bracketIndex-1]
 
+
                 # One flag
                 if "," not in flag and " and " not in flag:
 
                     flags.append(flag)
+
 
                 # Two flags
                 if "," not in flag and " and " in flag:
@@ -541,6 +629,7 @@ for theme in themes:
                     for f in tempFlags:
 
                         flags.append(f)
+
 
                 # No comma with 'and', three or more flags
                 if ", " in flag and " and " in flag and ", and " not in flag:
@@ -566,6 +655,7 @@ for theme in themes:
                     for f in tempFlags2:
 
                         flags.append(f)
+
 
                 # Comma with 'and', three or more flags
                 if "," in flag and ", and " in flag:
@@ -671,23 +761,11 @@ for theme in themes:
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
 
-        print(f"\n{theme} done!")
+        print(f"    ✓ {theme} done!")
 
+print("\n--> Files read!\n\n")
 
-# Writing list of corrupt files, if necessary
-if corruptFiles != []:
-
-    with open("Corruptions.txt", "w") as f:
-
-        f.write("## Corrupt Files\n\n")
-
-        for filename in corruptFiles:
-
-            f.write("* " + filename + "\n")
-
-    print("\n--> Fix files listed in 'Corruptions.txt'\n")
-
-    exit()
+print("Finishing up...")
 
 
 # Getting lengths of theme names
@@ -701,6 +779,8 @@ longestThemeNameLength = max(themeLengths)
 
 
 # Formatting and tabulating the theme data
+print("--> Formatting text...")
+
 theme_headers = ["Theme", " Subjects ", " Documents ", " Topics ", " Pages ", " Size "]
 theme_table = tabulate(themesData, theme_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center", "center"))
 theme_table = theme_table.split("\n")
@@ -859,6 +939,8 @@ for line in subjects_table:
 
         subjects_table[subjects_table.index(line)] = (" " * int(np.floor(extraBit))) + subjects_table[subjects_table.index(line)]
 
+print("--> Text formatted!\n")
+
 
 # Getting date and time info
 dateNow = str(dt.date.today())
@@ -868,13 +950,15 @@ timeNow = now.strftime("%H:%M:%S")
 
 
 # Writing & formatting all the lines to the text list
+print("--> Writing to PDF...")
+
 text = []
 
 text.append(separator * 88)
 text.append("")
 text.append(" " * 37 + "Almanac Report")
 text.append("")
-text.append(" " * 33 + f"{dateNow[0]}.{dateNow[1]}.{dateNow[2][2:]}  ~  {timeNow}")
+text.append(" " * 33 + f"{dateNow[0]}.{dateNow[1]}.{dateNow[2][2:]}  ❦  {timeNow}")
 text.append("")
 text.append(separator * 88)
 text.append("")
@@ -898,13 +982,62 @@ for line in subjects_table:
 
     text.append(line)
 
-for x in range(52):
+text.append("")
+text.append("")
+text.append(" " * 18 + separator * 20 + "  Index  " + separator * 20)
+text.append("")
+text.append(separator * 88)
+text.append("")
+text.append("• Atomic & Molecular - ")
+text.append("• Biochemistry - ")
+text.append("• Black Holes - ")
+text.append("• Computing - ")
+text.append("• Cosmology - ")
+text.append("• Cryptography - ")
+text.append("• Dark Matter - ")
+text.append("• Earth - ")
+text.append("• Energy - ")
+text.append("• Extrasolar - ")
+text.append("• Fluids - ")
+text.append("• Galaxies - ")
+text.append("• Gravity - ")
+text.append("• Heliophysics - ")
+text.append("• Humans - ")
+text.append("• Inorganics - ")
+text.append("• Jupiter - ")
+text.append("• Life - ")
+text.append("• Lunar - ")
+text.append("• Mars - ")
+text.append("• Materials - ")
+text.append("• Mathematics - ")
+text.append("• Medicine - ")
+text.append("• Mercury - ")
+text.append("• Nature - ")
+text.append("• Neptune - ")
+text.append("• Optics - ")
+text.append("• Organics - ")
+text.append("• Organometallics - ")
+text.append("• Particle Physics - ")
+text.append("• Photonics - ")
+text.append("• Quantum Computing - ")
+text.append("• Quantum Physics - ")
+text.append("• Saturn - ")
+text.append("• Solar System - ")
+text.append("• Space - ")
+text.append("• Spacecraft - ")
+text.append("• Stars - ")
+text.append("• Uranus - ")
+text.append("• Venus - ")
+text.append("")
+text.append((separator * 88))
+
+for x in range(4):
     
     text.append("")
 
 text.append(" " * 17 + separator * 20 + "  Contents  " + separator * 20)
 text.append("")
-text.append((separator * 88))
+text.append(separator * 88)
 
 for theme in topicsOverall:
 
@@ -931,14 +1064,14 @@ for theme in topicsOverall:
 
             if isinstance(topic, list):
 
-                text.append(f"* {topic[0]}")
+                text.append(f"• {topic[0]}")
 
                 for flag in topic[1]:
 
-                    text.append(f"    > {flag}")
+                    text.append(f"    ‣ {flag}")
 
             else:
-                text.append(f"* {topic}")
+                text.append(f"• {topic}")
         
         text.append("")
         text.append(f"{separator * 88}")
@@ -992,14 +1125,14 @@ for theme in topicsOverall:
 
                 if isinstance(topic, list):
 
-                    text.append(f"* {topic[0]}")
+                    text.append(f"• {topic[0]}")
 
                     for flag in topic[1]:
 
-                        text.append(f"    > {flag}")
+                        text.append(f"    ‣ {flag}")
 
                 else:
-                    text.append(f"* {topic}")
+                    text.append(f"• {topic}")
 
             text.append("")
             text.append(f"{separator * 88}")
@@ -1007,20 +1140,12 @@ for theme in topicsOverall:
 text.append(f"{separator * 88}")      
 
 
-# Replacing the slash characters
-for line in text[:-2]:
+# Replacing the colons
+for line in text:
 
-    if ":" in line and "~" not in line:
+    if ":" in line and "❦" not in line:
 
         text[text.index(line)] = text[text.index(line)].replace(":", "/")
-
-
-# Setting up the PDF
-pdf = FPDF(orientation = "P", format = "A4")
-pdf.add_page()
-pdf.add_font("Menlo", "", fontFileDir + fontFile, uni=True)
-pdf.set_font("Menlo", size = 10)
-pdf.set_auto_page_break(auto = True, margin = 8.0)
 
 
 # Wrapping text
@@ -1045,6 +1170,14 @@ for line in text:
     else:
 
         textToWrite.append(line)
+
+
+# Setting up the PDF
+pdf = FPDF(orientation = "P", format = "A4")
+pdf.add_page()
+pdf.add_font("Menlo", "", fontFileDir + fontFile, uni=True)
+pdf.set_font("Menlo", size = 10)
+pdf.set_auto_page_break(auto = True, margin = 8.0)
 
 
 # Writing to PDF
@@ -1091,6 +1224,8 @@ for index in range(len(textToWrite)):
 
 pdf.output("Almanac Report.pdf")
 
+print("--> PDF written!\n")
+
 
 # Deleting temporary .pkl files
 os.remove(fontFileDir + "Menlo-Regular.cw127.pkl")
@@ -1101,4 +1236,4 @@ os.remove(fontFileDir + "Menlo-Regular.pkl")
 endTime = time.time()
 runningTime = round(endTime - startTime, 2)
 
-print(f"\n\n--> Finished in {runningTime}s!\n")
+print(f"--> Finished in {runningTime}s!\n\n")
