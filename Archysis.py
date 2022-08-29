@@ -1,4 +1,4 @@
-# Archysis v3.5.1
+# Archysis v3.5.2
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -986,13 +986,13 @@ text = []
 
 text.append(separator * 88)
 text.append("")
-text.append(" " * 37 + "Almanac Report")
+text.append(" " * 38 + "Almanac Report")
 text.append("")
-text.append(" " * 33 + f"{dateNow[0]}.{dateNow[1]}.{dateNow[2][2:]}  ❦  {timeNow}")
+text.append(" " * 34 + f"{dateNow[0]}.{dateNow[1]}.{dateNow[2][2:]}  ❦  {timeNow}")
 text.append("")
 text.append(separator * 88)
 text.append("")
-text.append(" " * 18 + separator * 20 + "  Themes  " + separator * 20)
+text.append(" " * 20 + separator * 20 + "  Themes  " + separator * 20)
 text.append("")
 
 for line in theme_table:
@@ -1016,19 +1016,19 @@ for x in range(push):
 
     text.append("")
 
-text.append(" " * 17 + separator * 20 + "  Subjects  " + separator * 20)
+text.append(" " * 18 + separator * 20 + "  Subjects  " + separator * 20)
 text.append("")
 
 for line in subjects_table:
 
     text.append(line)
 
-text.append(" " * 17 + separator * 20 + "  Contents  " + separator * 20)
+text.append(" " * 19 + separator * 20 + "  Topics  " + separator * 20)
 text.append("")
 text.append(separator * 88)
 
 
-# Writing the contents
+# Writing the topics list
 for theme in topicsOverall:
 
     if not isinstance(theme[1][0][1], list):
@@ -1044,7 +1044,7 @@ for theme in topicsOverall:
 
         else:
             
-            text.append(" " * int(np.floor(extraBit)) + f"- {theme[0]} -")
+            text.append(" " * int(np.ceil(extraBit)) + f"- {theme[0]} -")
 
         text.append("")
         text.append(separator * 88)
@@ -1079,7 +1079,7 @@ for theme in topicsOverall:
 
         else:
 
-            text.append(" " * int(np.floor(extraBit)) + f"- {theme[0]} -")
+            text.append(" " * int(np.ceil(extraBit)) + f"- {theme[0]} -")
 
         text.append("")
         text.append(separator * 88)
@@ -1108,8 +1108,8 @@ for theme in topicsOverall:
 
             else:
                 
-                text.append(" " * int(np.floor(extraBit)) + f"  {subject[0]}  ")
-                text.append(" " * int(np.floor(extraBit)) + "═" * len(f"  {subject[0]}  "))
+                text.append(" " * int(np.ceil(extraBit)) + f"  {subject[0]}  ")
+                text.append(" " * int(np.ceil(extraBit)) + "═" * len(f"  {subject[0]}  "))
 
             text.append("")
 
@@ -1293,8 +1293,8 @@ while runningIndex < finalIndex:
         
     finalText = []
 
-    subjectsStartLine = listToSort.index(" " * 17 + separator * 20 + "  Subjects  " + separator * 20)
-    contentsStartLine = listToSort.index(" " * 17 + separator * 20 + "  Contents  " + separator * 20)
+    subjectsStartLine = listToSort.index(" " * 18 + separator * 20 + "  Subjects  " + separator * 20)
+    topicsStartLine = listToSort.index(" " * 19 + separator * 20 + "  Topics  " + separator * 20)
     glossaryStartLine = listToSort.index(" " * 16 + separator * 20 + "  Glossary  " + separator * 20)
 
     for x in range(len(listToSort)):
@@ -1305,7 +1305,7 @@ while runningIndex < finalIndex:
 
 
             # Moving new themes/subjects onto a new page
-            if x > contentsStartLine and line == (separator * 88) and x != 0 and x != 6 and x != (len(listToSort) - 1) and x != (len(listToSort) - 2) and x % 69 != 0 and listToSort[x-4] != (separator * 88) and x != (contentsStartLine + 2):
+            if x > topicsStartLine and line == (separator * 88) and x != 0 and x != 6 and x != (len(listToSort) - 1) and x != (len(listToSort) - 2) and x % 69 != 0 and listToSort[x-4] != (separator * 88) and x != (topicsStartLine + 2):
 
                 currentSepIndex = x
 
