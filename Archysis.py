@@ -1021,7 +1021,7 @@ for x in range(push):
 
     text.append("")
 
-text.append(" " * 18 + separator * 20 + "  Subjects  " + separator * 20)
+text.append(" " * 19 + separator * 20 + "  Subjects  " + separator * 20)
 text.append("")
 
 for line in subjects_table:
@@ -1298,7 +1298,7 @@ while runningIndex < finalIndex:
         
     finalText = []
 
-    subjectsStartLine = listToSort.index(" " * 18 + separator * 20 + "  Subjects  " + separator * 20)
+    subjectsStartLine = listToSort.index(" " * 19 + separator * 20 + "  Subjects  " + separator * 20)
     topicsStartLine = listToSort.index(" " * 19 + separator * 20 + "  Topics  " + separator * 20)
     glossaryStartLine = listToSort.index(" " * 19 + separator * 20 + "  Glossary  " + separator * 20)
 
