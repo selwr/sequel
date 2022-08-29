@@ -1,4 +1,4 @@
-# Archysis v3.4
+# Archysis v3.5
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -20,7 +20,7 @@ separator = "─"
 
 startTime = time.time()
 
-print("\nStarting...")
+print("\n\nStarting...")
 
 
 # Getting current working directory and its contents
@@ -57,6 +57,35 @@ if fontFileDir == None:
 else:
 
     print("--> Font file found!\n")
+
+
+# Getting directory of glossary file
+glossDir = None
+
+print("--> Searching for glossary file...")
+
+for root, dirs, files in os.walk(r'/Users'):
+
+    for name in files:
+
+        if name == "almanac_glossary.txt" and "Mobile Documents" not in root and "Library" not in root:
+
+            glossDir = os.path.abspath(os.path.join(root, name))[:-len("almanac_glossary.txt")]
+
+            break
+
+    if glossDir != None:
+
+        break
+
+if glossDir == None:
+
+    print("--> No glossary file found!\n")
+    exit()
+
+else:
+
+    print("--> Glossary file found!\n")
 
 
 # Getting each of the theme names
@@ -518,6 +547,7 @@ for theme in themes:
 
             if ".pdf" in filename:
 
+
                 # Getting papers data
                 totalsData[0][2] += 1
                 subjectPapers += 1
@@ -756,7 +786,7 @@ for theme in themes:
 
         themeTopics.append(topicsSubjectActual)
 
-        themesData.append([theme, "(1)\n" + running_subjects, str(docs), str(topics), str(pages), humanize.naturalsize(size, binary=False, format="%.1f")])
+        themesData.append([theme, "N/A", str(docs), str(topics), str(pages), humanize.naturalsize(size, binary=False, format="%.1f")])
 
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
@@ -779,7 +809,7 @@ longestThemeNameLength = max(themeLengths)
 
 
 # Formatting and tabulating the theme data
-print("--> Formatting text...")
+print("--> Formatting tables...")
 
 theme_headers = ["Theme", " Subjects ", " Documents ", " Topics ", " Pages ", " Size "]
 theme_table = tabulate(themesData, theme_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center", "center"))
@@ -939,7 +969,7 @@ for line in subjects_table:
 
         subjects_table[subjects_table.index(line)] = (" " * int(np.floor(extraBit))) + subjects_table[subjects_table.index(line)]
 
-print("--> Text formatted!\n")
+print("--> Tables formatted!\n")
 
 
 # Getting date and time info
@@ -950,7 +980,8 @@ timeNow = now.strftime("%H:%M:%S")
 
 
 # Writing & formatting all the lines to the text list
-print("--> Writing to PDF...")
+
+print("--> Preparing lines for writing...")
 
 text = []
 
@@ -975,65 +1006,13 @@ for line in totals_table:
 
     text.append(line)
 
+text.append("")
 text.append(" " * 17 + separator * 20 + "  Subjects  " + separator * 20)
 text.append("")
 
 for line in subjects_table:
 
     text.append(line)
-
-text.append("")
-text.append("")
-text.append(" " * 18 + separator * 20 + "  Index  " + separator * 20)
-text.append("")
-text.append(separator * 88)
-text.append("")
-text.append("• Atomic & Molecular - ")
-text.append("• Biochemistry - ")
-text.append("• Black Holes - ")
-text.append("• Computing - ")
-text.append("• Cosmology - ")
-text.append("• Cryptography - ")
-text.append("• Dark Matter - ")
-text.append("• Earth - ")
-text.append("• Energy - ")
-text.append("• Extrasolar - ")
-text.append("• Fluids - ")
-text.append("• Galaxies - ")
-text.append("• Gravity - ")
-text.append("• Heliophysics - ")
-text.append("• Humans - ")
-text.append("• Inorganics - ")
-text.append("• Jupiter - ")
-text.append("• Life - ")
-text.append("• Lunar - ")
-text.append("• Mars - ")
-text.append("• Materials - ")
-text.append("• Mathematics - ")
-text.append("• Medicine - ")
-text.append("• Mercury - ")
-text.append("• Nature - ")
-text.append("• Neptune - ")
-text.append("• Optics - ")
-text.append("• Organics - ")
-text.append("• Organometallics - ")
-text.append("• Particle Physics - ")
-text.append("• Photonics - ")
-text.append("• Quantum Computing - ")
-text.append("• Quantum Physics - ")
-text.append("• Saturn - ")
-text.append("• Solar System - ")
-text.append("• Space - ")
-text.append("• Spacecraft - ")
-text.append("• Stars - ")
-text.append("• Uranus - ")
-text.append("• Venus - ")
-text.append("")
-text.append((separator * 88))
-
-for x in range(4):
-    
-    text.append("")
 
 text.append(" " * 17 + separator * 20 + "  Contents  " + separator * 20)
 text.append("")
@@ -1057,7 +1036,7 @@ for theme in topicsOverall:
             text.append(" " * int(np.floor(extraBit)) + f"- {theme[0]} -")
 
         text.append("")
-        text.append((separator * 88))
+        text.append(separator * 88)
         text.append("")
 
         for topic in theme[1]:
@@ -1074,7 +1053,7 @@ for theme in topicsOverall:
                 text.append(f"• {topic}")
         
         text.append("")
-        text.append(f"{separator * 88}")
+        text.append(separator * 88)
     
     else:
 
@@ -1092,7 +1071,7 @@ for theme in topicsOverall:
             text.append(" " * int(np.floor(extraBit)) + f"- {theme[0]} -")
 
         text.append("")
-        text.append((separator * 88))
+        text.append(separator * 88)
 
         subjects = []
         for item in theme:
@@ -1112,12 +1091,12 @@ for theme in topicsOverall:
             if extraBit % 2 == 0:
 
                 text.append(" " * int(extraBit) + f"  {subject[0]}  ")
-                text.append(" " * int(extraBit) + "=" * len(f"  {subject[0]}  "))
+                text.append(" " * int(extraBit) + "═" * len(f"  {subject[0]}  "))
 
             else:
                 
                 text.append(" " * int(np.floor(extraBit)) + f"  {subject[0]}  ")
-                text.append(" " * int(np.floor(extraBit)) + "=" * len(f"  {subject[0]}  "))
+                text.append(" " * int(np.floor(extraBit)) + "═" * len(f"  {subject[0]}  "))
 
             text.append("")
 
@@ -1135,9 +1114,31 @@ for theme in topicsOverall:
                     text.append(f"• {topic}")
 
             text.append("")
-            text.append(f"{separator * 88}")
+            text.append(separator * 88)
 
-text.append(f"{separator * 88}")      
+text = text[:-2]
+
+
+# Appending glossary at the end of the document
+text.append(" " * 16 + separator * 20 + "  Glossary  " + separator * 20)
+text.append("")
+
+with open(glossDir + "almanac_glossary.txt", "r") as f:
+
+    lines = f.readlines()
+    
+    for line in lines[3:]:
+        
+        if "*" in line:
+            text.append(line[:-1].replace("*", "•"))
+        
+        else:
+            text.append(line[:-1])
+
+
+text.append("")
+text.append(separator * 88)
+text.append(separator * 88)
 
 
 # Replacing the colons
@@ -1149,27 +1150,324 @@ for line in text:
 
 
 # Wrapping text
-textToWrite = []
+textWrapped = []
+inGloss = False
 
 for line in text:
 
+    if line == " " * 16 + separator * 20 + "  Glossary  " + separator * 20:
+        inGloss = True
+
+
     if len(line) > 88:
 
-        wrappedText = textwrap.wrap(line, width = 88)
+        if not inGloss:
 
-        for elem in wrappedText:
+            wrappedText = textwrap.wrap(line, width = 88)
 
-            if elem == wrappedText[0]:
+            for elem in wrappedText:
 
-                textToWrite.append(elem)
+                if "‣" not in line:
 
-            else:
+                    if elem == wrappedText[0]:
 
-                textToWrite.append("  " + elem)
+                        textWrapped.append(elem)
+
+                    else:
+
+                        textWrapped.append("  " + elem)
+                
+                elif "‣" in line:
+
+                    if elem == wrappedText[0]:
+
+                        textWrapped.append("    " + elem)
+
+                    else:
+
+                        textWrapped.append("      " + elem)
+        
+        else:
+
+            endSubject = line.index("-") + 2
+
+            wrappedText = textwrap.wrap(line, width = (88 - endSubject))
+
+            for elem in wrappedText:
+
+                if elem == wrappedText[0]:
+
+                        textWrapped.append(elem)
+
+                else:
+
+                    textWrapped.append(" " * (endSubject) + elem)
 
     else:
 
-        textToWrite.append(line)
+        textWrapped.append(line)
+
+
+# Formatting tables for PDF
+textTablesDone = []
+
+for index in range(len(textWrapped)):
+
+    if index % 69 == 68 and "┼" in textWrapped[index]:
+
+        oneReplaced = textWrapped[index].replace("┼", "┴")
+        twoReplaced = oneReplaced.replace("├", "└")
+        threeReplaced = twoReplaced.replace("┤", "┘")
+
+        textTablesDone.append(threeReplaced)
+
+    elif index % 69 == 0 and "┼" in textWrapped[index - 1]:
+
+        oneReplaced = textWrapped[index - 1].replace("┼", "┬")
+        twoReplaced = oneReplaced.replace("├", "┌")
+        threeReplaced = twoReplaced.replace("┤", "┐")
+
+        textTablesDone.append(threeReplaced)
+        textTablesDone.append(textWrapped[index])
+
+    elif index % 69 == 67 and "┼" in textWrapped[index]:
+
+        oneReplaced = textWrapped[index].replace("┼", "┴")
+        twoReplaced = oneReplaced.replace("├", "└")
+        threeReplaced = twoReplaced.replace("┤", "┘")
+
+        textTablesDone.append(threeReplaced)
+        textTablesDone.append(textWrapped[index])
+
+    elif index % 69 == 68 and "┼" in textWrapped[index - 1]:
+
+        oneReplaced = textWrapped[index - 1].replace("┼", "┬")
+        twoReplaced = oneReplaced.replace("├", "┌")
+        threeReplaced = twoReplaced.replace("┤", "┐")
+
+        textTablesDone.append(threeReplaced)
+        textTablesDone.append(textWrapped[index])
+        
+    else:
+
+        textTablesDone.append(textWrapped[index])
+
+
+# Correcting any cross-page topics/flags and moving all new sections/subjects/themes onto a new page
+finalText = []
+
+runningIndex = 0
+finalIndex = len(textTablesDone)
+
+while runningIndex < finalIndex:
+
+    listToSort = []
+
+    if runningIndex == 0:
+
+        for line in textTablesDone:
+
+            listToSort.append(line)
+        
+    else:
+
+        for line in finalText:
+
+            listToSort.append(line)
+        
+    finalText = []
+
+    subjectsStartLine = listToSort.index(" " * 17 + separator * 20 + "  Subjects  " + separator * 20)
+    contentsStartLine = listToSort.index(" " * 17 + separator * 20 + "  Contents  " + separator * 20)
+    glossaryStartLine = listToSort.index(" " * 16 + separator * 20 + "  Glossary  " + separator * 20)
+
+    for x in range(len(listToSort)):
+
+        line = listToSort[x]
+
+        if "•" not in line:
+
+
+            # Moving new themes/subjects onto a new page
+            if x > contentsStartLine and line == (separator * 88) and x != 0 and x != 6 and x != (len(listToSort) - 1) and x != (len(listToSort) - 2) and x % 69 != 0 and listToSort[x-4] != (separator * 88) and x != (contentsStartLine + 2):
+
+                currentSepIndex = x
+
+                currentSepModulo = currentSepIndex % 69
+
+                push = 69 - currentSepModulo
+
+
+                # Checking if line at the top of the page is a blank character
+                if push != 68:
+
+                    for x in range(push):
+
+                        finalText.append("")
+
+                    finalText.append(line)
+
+                    for rem in listToSort[currentSepIndex + 1:]:
+
+                        finalText.append(rem)
+
+                    finalIndex = len(finalText)
+
+                    break
+
+                elif push == 68:
+
+                    finalText = finalText[:-1]
+
+                    finalText.append(line)
+
+                    if x >= runningIndex:
+
+                        runningIndex += 1
+
+                    continue
+            
+
+            # Moving new sections onto new pages
+            elif (separator in line) and line != (separator * 88) and x % 69 != 0 and x >= subjectsStartLine and "┼" not in line and "┴" not in line and "┬" not in line:
+
+                currentStartIndex = x
+
+                currentStartModulo = currentStartIndex % 69
+
+                push = 69 - currentStartModulo
+
+                for x in range(push):
+
+                    finalText.append("")
+
+                finalText.append(line)
+
+                for rem in listToSort[currentStartIndex + 1:]:
+
+                    finalText.append(rem)
+
+                finalIndex = len(finalText)
+
+                break
+
+            else:
+
+                finalText.append(line)
+
+                if x >= runningIndex:
+
+                    runningIndex += 1
+
+                continue
+
+
+        # Checking and sorting out all the topics, and the glossary
+        elif "•" in line:
+
+            currentBulletIndex = listToSort.index(line)
+
+            currentBulletModulo = currentBulletIndex % 69
+
+            for part in listToSort[currentBulletIndex+1:]:
+
+                if "•" in part:
+
+                    nextBulletIndex = listToSort.index(part)
+
+                    break
+            
+            if nextBulletIndex > glossaryStartLine:
+
+                finalText.append(line)
+
+                if x >= runningIndex:
+
+                    runningIndex += 1
+
+                continue
+
+            nextBulletModulo = nextBulletIndex % 69
+
+            
+            # Check if next bullet is on same page as current bullet or at very top of next page
+            if (nextBulletModulo > currentBulletModulo):
+
+                finalText.append(line)
+
+                if x >= runningIndex:
+
+                    runningIndex += 1
+
+                continue
+
+
+            # This implies the next bullet is on the next page
+            else:
+
+                push = 69 - currentBulletModulo
+
+                if nextBulletModulo != 0:
+
+                    sepCount = listToSort[currentBulletIndex:nextBulletIndex+1].count(separator * 88)
+
+                    if sepCount == 0:
+
+                        for x in range(push):
+
+                            finalText.append("")
+
+                        finalText.append(line)
+
+                        for rem in listToSort[currentBulletIndex + 1:]:
+
+                            finalText.append(rem)
+
+                        finalIndex = len(finalText)
+
+                        break
+
+                    elif sepCount > 0:
+
+                        finalText.append(line)
+
+                        if x >= runningIndex:
+
+                            runningIndex += 1
+
+                        continue
+
+                else:
+
+                    finalText.append(line)
+
+                    if x >= runningIndex:
+
+                        runningIndex += 1
+
+                    continue
+
+
+# Fixing any potential blank lines at top of extra pages of glossary
+glossaryStartLine = finalText.index(" " * 16 + separator * 20 + "  Glossary  " + separator * 20)
+
+textToWrite = []
+
+for x in range(len(finalText)):
+
+    if x < glossaryStartLine:
+
+        textToWrite.append(finalText[x])
+    
+    else:
+
+        if x % 69 == 0 and finalText[x] == "":
+            continue
+
+        else:
+            textToWrite.append(finalText[x])
+
+print("--> Lines prepared!\n")
 
 
 # Setting up the PDF
@@ -1181,46 +1479,11 @@ pdf.set_auto_page_break(auto = True, margin = 8.0)
 
 
 # Writing to PDF
-for index in range(len(textToWrite)):
+print("--> Writing to PDF...")
 
-    if index == 137 and "┼" in textToWrite[index]:
+for x in range(len(textToWrite)):
 
-        oneReplaced = textToWrite[index].replace("┼", "┴")
-        twoReplaced = oneReplaced.replace("├", "└")
-        threeReplaced = twoReplaced.replace("┤", "┘")
-
-        pdf.cell(0, 4, txt=threeReplaced, ln=1)
-
-    elif index == 138 and "┼" in textToWrite[137]:
-
-        oneReplaced = textToWrite[137].replace("┼", "┬")
-        twoReplaced = oneReplaced.replace("├", "┌")
-        threeReplaced = twoReplaced.replace("┤", "┐")
-
-        pdf.cell(0, 4, txt=threeReplaced, ln=1)
-        pdf.cell(0, 4, txt=textToWrite[index], ln=1)
-
-    elif index == 136 and "┼" in textToWrite[index]:
-
-        oneReplaced = textToWrite[index].replace("┼", "┴")
-        twoReplaced = oneReplaced.replace("├", "└")
-        threeReplaced = twoReplaced.replace("┤", "┘")
-
-        pdf.cell(0, 4, txt=threeReplaced, ln=1)
-        pdf.cell(0, 4, txt="", ln=1)
-
-    elif index == 137 and "┼" in textToWrite[136]:
-
-        oneReplaced = textToWrite[136].replace("┼", "┬")
-        twoReplaced = oneReplaced.replace("├", "┌")
-        threeReplaced = twoReplaced.replace("┤", "┐")
-
-        pdf.cell(0, 4, txt=threeReplaced, ln=1)
-        pdf.cell(0, 4, txt=textToWrite[index], ln=1)
-        
-    else:
-
-        pdf.cell(0, 4, txt=textToWrite[index], ln=1)
+    pdf.cell(0, 4, txt=textToWrite[x], ln=1)
 
 pdf.output("Almanac Report.pdf")
 
