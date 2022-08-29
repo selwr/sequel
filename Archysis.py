@@ -1,4 +1,4 @@
-# Archysis v3.5
+# Archysis v3.5.1
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -980,7 +980,6 @@ timeNow = now.strftime("%H:%M:%S")
 
 
 # Writing & formatting all the lines to the text list
-
 print("--> Preparing lines for writing...")
 
 text = []
@@ -1006,7 +1005,17 @@ for line in totals_table:
 
     text.append(line)
 
-text.append("")
+
+# Moving subject section onto a new page
+currentIndex = len(text) - 1
+currentIndexModulo = currentIndex % 69
+
+push = 68 - currentIndexModulo
+
+for x in range(push):
+
+    text.append("")
+
 text.append(" " * 17 + separator * 20 + "  Subjects  " + separator * 20)
 text.append("")
 
@@ -1018,6 +1027,8 @@ text.append(" " * 17 + separator * 20 + "  Contents  " + separator * 20)
 text.append("")
 text.append(separator * 88)
 
+
+# Writing the contents
 for theme in topicsOverall:
 
     if not isinstance(theme[1][0][1], list):
@@ -1074,7 +1085,9 @@ for theme in topicsOverall:
         text.append(separator * 88)
 
         subjects = []
+
         for item in theme:
+
             if isinstance(item, list):
 
                 for subject in item:
@@ -1130,9 +1143,11 @@ with open(glossDir + "almanac_glossary.txt", "r") as f:
     for line in lines[3:]:
         
         if "*" in line:
+
             text.append(line[:-1].replace("*", "•"))
         
         else:
+
             text.append(line[:-1])
 
 
@@ -1156,6 +1171,7 @@ inGloss = False
 for line in text:
 
     if line == " " * 16 + separator * 20 + "  Glossary  " + separator * 20:
+
         inGloss = True
 
 
@@ -1329,7 +1345,7 @@ while runningIndex < finalIndex:
             
 
             # Moving new sections onto new pages
-            elif (separator in line) and line != (separator * 88) and x % 69 != 0 and x >= subjectsStartLine and "┼" not in line and "┴" not in line and "┬" not in line:
+            elif (separator in line) and line != (separator * 88) and x % 69 != 0 and x >= subjectsStartLine and "┼" not in line and "┴" not in line and "┬" not in line and line != (" " * 17 + separator * 20 + "  Subjects  " + separator * 20):
 
                 currentStartIndex = x
 
