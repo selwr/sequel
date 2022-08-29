@@ -1,4 +1,4 @@
-# Archysis v3.5.2
+# Archysis v3.5.4
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -14,13 +14,18 @@ from PyPDF2 import PdfFileReader
 from fpdf import FPDF
 from tabulate import tabulate
 
+startLine = "Archysis v3.5.4"
+runningSep = "~"
+numSep = int(np.ceil((40 - len(f" {startLine} ")) / 2))
+print(f"\n\n{runningSep * numSep} {startLine} {runningSep * numSep}")
+
 warnings.filterwarnings("ignore")
 
 separator = "─"
 
 startTime = time.time()
 
-print("\n\nStarting...")
+print("\nStarting...")
 
 
 # Getting current working directory and its contents
@@ -1133,7 +1138,7 @@ text = text[:-2]
 
 
 # Appending glossary at the end of the document
-text.append(" " * 16 + separator * 20 + "  Glossary  " + separator * 20)
+text.append(" " * 19 + separator * 20 + "  Glossary  " + separator * 20)
 text.append("")
 
 with open(glossDir + "almanac_glossary.txt", "r") as f:
@@ -1170,7 +1175,7 @@ inGloss = False
 
 for line in text:
 
-    if line == " " * 16 + separator * 20 + "  Glossary  " + separator * 20:
+    if line == " " * 19 + separator * 20 + "  Glossary  " + separator * 20:
 
         inGloss = True
 
@@ -1295,7 +1300,7 @@ while runningIndex < finalIndex:
 
     subjectsStartLine = listToSort.index(" " * 18 + separator * 20 + "  Subjects  " + separator * 20)
     topicsStartLine = listToSort.index(" " * 19 + separator * 20 + "  Topics  " + separator * 20)
-    glossaryStartLine = listToSort.index(" " * 16 + separator * 20 + "  Glossary  " + separator * 20)
+    glossaryStartLine = listToSort.index(" " * 19 + separator * 20 + "  Glossary  " + separator * 20)
 
     for x in range(len(listToSort)):
 
@@ -1465,7 +1470,7 @@ while runningIndex < finalIndex:
 
 
 # Fixing any potential blank lines at top of extra pages of glossary
-glossaryStartLine = finalText.index(" " * 16 + separator * 20 + "  Glossary  " + separator * 20)
+glossaryStartLine = finalText.index(" " * 19 + separator * 20 + "  Glossary  " + separator * 20)
 
 textToWrite = []
 
@@ -1515,4 +1520,6 @@ os.remove(fontFileDir + "Menlo-Regular.pkl")
 endTime = time.time()
 runningTime = round(endTime - startTime, 2)
 
-print(f"--> Finished in {runningTime}s!\n\n")
+print(f"--> Finished in {runningTime}s!\n")
+
+print(runningSep * len(f"{runningSep * numSep} {startLine} {runningSep * numSep}") + "\n\n")
