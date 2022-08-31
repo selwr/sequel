@@ -14,7 +14,7 @@ from PyPDF2 import PdfFileReader
 from fpdf import FPDF
 from tabulate import tabulate
 
-version = "v3.6"
+version = "v3.6.1"
 
 startLine = f"Archysis {version}"
 runningSep = "~"
@@ -1557,7 +1557,7 @@ for x in range(len(textToWrite)):
 
     pdf.cell(0, 4, txt=textToWrite[x], ln=1)
 
-pdf.output("Almanac Report.pdf")
+pdf.output(f"{archive_name} Report.pdf")
 
 print("--> PDF written!\n")
 
