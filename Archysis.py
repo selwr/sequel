@@ -14,7 +14,7 @@ from PyPDF2 import PdfFileReader
 from fpdf import FPDF
 from tabulate import tabulate
 
-version = "v3.6.1"
+version = "v3.6.2"
 
 startLine = f"Archysis {version}"
 runningSep = "~"
@@ -1528,8 +1528,8 @@ for i in range(6):
     pdf.cell(0, 4, txt="", ln=1)
 
 pdf.set_font("Menlo", size = 18)
-datetimeLength = len(timeNow + " ~ " + formattedDate)
-dateLine = int(np.ceil((49 - datetimeLength)/2)) * " " + timeNow + " ~ " + formattedDate
+datetimeLength = len(timeNow + "  ~  " + formattedDate)
+dateLine = int(np.ceil((49 - datetimeLength)/2)) * " " + timeNow + "  ~  " + formattedDate
 pdf.cell(0, 4, txt=dateLine, ln=1)
 
 pdf.set_font("Menlo", size = 10)
