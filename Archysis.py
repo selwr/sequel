@@ -1,4 +1,4 @@
-# Archysis v3.5.4
+# Archysis
 # by Sam Wallis-Riches, 2022
 
 import os
@@ -14,24 +14,32 @@ from PyPDF2 import PdfFileReader
 from fpdf import FPDF
 from tabulate import tabulate
 
-startLine = "Archysis v3.5.4"
+version = "v3.6"
+
+startLine = f"Archysis {version}"
 runningSep = "~"
-numSep = int(np.ceil((40 - len(f" {startLine} ")) / 2))
-print(f"\n\n{runningSep * numSep} {startLine} {runningSep * numSep}")
+numSep = int(np.ceil((45 - len(f" {startLine} ")) / 2))
+print(f"\n\n{runningSep * (numSep + 1)} {startLine} {runningSep * (numSep + 1)}")
 
 warnings.filterwarnings("ignore")
 
 separator = "─"
 
-startTime = time.time()
+pageWidth = 88
+pageLength = 69
 
-print("\nStarting...")
+startTime = time.time()
 
 
 # Getting current working directory and its contents
 in_dir = os.path.dirname(os.path.realpath(__file__))
 
+archive_name = in_dir.split("/")[-1]
+
 directory_contents = os.listdir(in_dir)
+
+print("\nStarting...")
+print(f"--> '{archive_name}' will be analysed!\n")
 
 
 # Getting directory of font file
@@ -522,7 +530,7 @@ for theme in themes:
         topicsOverall.append(themeTopics)
 
 
-    # Getting data if theme has subjects
+    # Getting data if theme has no subjects
     else:
 
         themeData = [theme]
@@ -796,8 +804,6 @@ for theme in themes:
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
 
-        print(f"    ✓ {theme} done!")
-
 print("\n--> Files read!\n\n")
 
 print("Finishing up...")
@@ -823,15 +829,9 @@ theme_table = theme_table.split("\n")
 for line in theme_table:
 
     lineLength = len(line)
-    extraBit = (88 - lineLength) / 2
+    extraBit = (pageWidth - lineLength) / 2
 
-    if extraBit % 2 == 0:
-
-        theme_table[theme_table.index(line)] = (" " * int(extraBit)) + theme_table[theme_table.index(line)]
-
-    else:
-
-        theme_table[theme_table.index(line)] = (" " * int(np.floor(extraBit))) + theme_table[theme_table.index(line)]
+    theme_table[theme_table.index(line)] = (" " * int(np.floor(extraBit))) + theme_table[theme_table.index(line)]
 
 barIndicies = []
 for index in range(len(theme_table[1])):
@@ -861,15 +861,9 @@ totals_table[0] = totals_table[0].replace("╡", "╕")
 for line in totals_table:
 
     lineLength = len(line)
-    extraBit = (88 - lineLength) / 2
+    extraBit = (pageWidth - lineLength) / 2
 
-    if extraBit % 2 == 0:
-
-        totals_table[totals_table.index(line)] = (" " * int(extraBit)) + totals_table[totals_table.index(line)]
-
-    else:
-        
-        totals_table[totals_table.index(line)] = (" " * int(np.floor(extraBit))) + totals_table[totals_table.index(line)]
+    totals_table[totals_table.index(line)] = (" " * int(np.floor(extraBit))) + totals_table[totals_table.index(line)]
 
 
 # Getting the maximum values and formatting them in their respective lists
@@ -957,31 +951,18 @@ longestSubjectNameLength = max(subjectLengths)
 
 
 # Formatting and tabulating the subject data
-subject_headers = [f"Subject", " Documents ", "  Topics  ", "  Pages  ", "   Size   "]
+subject_headers = ["Subject", " Documents ", "  Topics  ", "  Pages  ", "   Size   "]
 subjects_table = tabulate(subjectRows, subject_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
 subjects_table = subjects_table.split("\n")
 
 for line in subjects_table:
 
     lineLength = len(line)
-    extraBit = (88 - lineLength) / 2
+    extraBit = (pageWidth - lineLength) / 2
 
-    if extraBit % 2 == 0:
-
-        subjects_table[subjects_table.index(line)] = (" " * int(extraBit)) + subjects_table[subjects_table.index(line)]
-
-    else:
-
-        subjects_table[subjects_table.index(line)] = (" " * int(np.floor(extraBit))) + subjects_table[subjects_table.index(line)]
+    subjects_table[subjects_table.index(line)] = (" " * int(np.floor(extraBit))) + subjects_table[subjects_table.index(line)]
 
 print("--> Tables formatted!\n")
-
-
-# Getting date and time info
-dateNow = str(dt.date.today())
-dateNow = dateNow.split("-")[::-1]
-now = dt.datetime.now()
-timeNow = now.strftime("%H:%M:%S")
 
 
 # Writing & formatting all the lines to the text list
@@ -989,14 +970,6 @@ print("--> Preparing lines for writing...")
 
 text = []
 
-text.append(separator * 88)
-text.append("")
-text.append(" " * 38 + "Almanac Report")
-text.append("")
-text.append(" " * 34 + f"{dateNow[0]}.{dateNow[1]}.{dateNow[2][2:]}  ❦  {timeNow}")
-text.append("")
-text.append(separator * 88)
-text.append("")
 text.append(" " * 20 + separator * 20 + "  Themes  " + separator * 20)
 text.append("")
 
@@ -1013,9 +986,9 @@ for line in totals_table:
 
 # Moving subject section onto a new page
 currentIndex = len(text) - 1
-currentIndexModulo = currentIndex % 69
+currentIndexModulo = currentIndex % pageLength
 
-push = 68 - currentIndexModulo
+push = (pageLength - 1) - currentIndexModulo
 
 for x in range(push):
 
@@ -1030,29 +1003,24 @@ for line in subjects_table:
 
 text.append(" " * 19 + separator * 20 + "  Topics  " + separator * 20)
 text.append("")
-text.append(separator * 88)
 
 
 # Writing the topics list
 for theme in topicsOverall:
 
+    # Theme with no subjects
     if not isinstance(theme[1][0][1], list):
 
+        text.append(separator * pageWidth)
         text.append("")
 
         subjectLength = len("- " + theme[0] + " -")
-        extraBit = (88 - subjectLength) / 2
+        extraBit = (pageWidth - subjectLength) / 2
 
-        if extraBit % 2 == 0:
-
-            text.append(" " * int(extraBit) + f"- {theme[0]} -")
-
-        else:
-            
-            text.append(" " * int(np.ceil(extraBit)) + f"- {theme[0]} -")
+        text.append(" " * int(np.ceil(extraBit)) + f"- {theme[0]} -")
 
         text.append("")
-        text.append(separator * 88)
+        text.append(separator * pageWidth)
         text.append("")
 
         for topic in theme[1]:
@@ -1067,27 +1035,22 @@ for theme in topicsOverall:
 
             else:
                 text.append(f"• {topic}")
-        
-        text.append("")
-        text.append(separator * 88)
     
+
+    # Theme with subjects
     else:
 
+        text.append(separator * pageWidth)
         text.append("")
 
         themeLength = len("- " + theme[0] + " -")
-        extraBit = (88 - themeLength) / 2
+        extraBit = (pageWidth - themeLength) / 2
 
-        if extraBit % 2 == 0:
-
-            text.append(" " * int(extraBit) + f"- {theme[0]} -")
-
-        else:
-
-            text.append(" " * int(np.ceil(extraBit)) + f"- {theme[0]} -")
+        text.append(" " * int(np.ceil(extraBit)) + f"- {theme[0]} -")
 
         text.append("")
-        text.append(separator * 88)
+        text.append(separator * pageWidth)
+        text.append("")
 
         subjects = []
 
@@ -1101,20 +1064,11 @@ for theme in topicsOverall:
 
         for subject in subjects:
 
-            text.append("")
-
             subjectLength = len("  " + subject[0] + "  ")
-            extraBit = (88 - subjectLength) / 2
+            extraBit = (pageWidth - subjectLength) / 2
 
-            if extraBit % 2 == 0:
-
-                text.append(" " * int(extraBit) + f"  {subject[0]}  ")
-                text.append(" " * int(extraBit) + "═" * len(f"  {subject[0]}  "))
-
-            else:
-                
-                text.append(" " * int(np.ceil(extraBit)) + f"  {subject[0]}  ")
-                text.append(" " * int(np.ceil(extraBit)) + "═" * len(f"  {subject[0]}  "))
+            text.append(" " * int(np.ceil(extraBit)) + f"  {subject[0]}  ")
+            text.append(" " * int(np.ceil(extraBit)) + "═" * len(f"  {subject[0]}  "))
 
             text.append("")
 
@@ -1131,9 +1085,6 @@ for theme in topicsOverall:
                 else:
                     text.append(f"• {topic}")
 
-            text.append("")
-            text.append(separator * 88)
-
 text = text[:-2]
 
 
@@ -1149,22 +1100,17 @@ with open(glossDir + "almanac_glossary.txt", "r") as f:
         
         if "*" in line:
 
-            text.append(line[:-1].replace("*", "•"))
+            text.append(line[:-1].replace("*", "▪"))
         
         else:
 
             text.append(line[:-1])
 
 
-text.append("")
-text.append(separator * 88)
-text.append(separator * 88)
-
-
 # Replacing the colons
 for line in text:
 
-    if ":" in line and "❦" not in line:
+    if ":" in line:
 
         text[text.index(line)] = text[text.index(line)].replace(":", "/")
 
@@ -1180,11 +1126,11 @@ for line in text:
         inGloss = True
 
 
-    if len(line) > 88:
+    if len(line) > pageWidth:
 
         if not inGloss:
 
-            wrappedText = textwrap.wrap(line, width = 88)
+            wrappedText = textwrap.wrap(line, width = pageWidth)
 
             for elem in wrappedText:
 
@@ -1212,7 +1158,7 @@ for line in text:
 
             endSubject = line.index("-") + 2
 
-            wrappedText = textwrap.wrap(line, width = (88 - endSubject))
+            wrappedText = textwrap.wrap(line, width = (pageWidth - endSubject))
 
             for elem in wrappedText:
 
@@ -1234,7 +1180,7 @@ textTablesDone = []
 
 for index in range(len(textWrapped)):
 
-    if index % 69 == 68 and "┼" in textWrapped[index]:
+    if index % pageLength == (pageLength - 1) and "┼" in textWrapped[index]:
 
         oneReplaced = textWrapped[index].replace("┼", "┴")
         twoReplaced = oneReplaced.replace("├", "└")
@@ -1242,7 +1188,7 @@ for index in range(len(textWrapped)):
 
         textTablesDone.append(threeReplaced)
 
-    elif index % 69 == 0 and "┼" in textWrapped[index - 1]:
+    elif index % pageLength == 0 and "┼" in textWrapped[index - 1]:
 
         oneReplaced = textWrapped[index - 1].replace("┼", "┬")
         twoReplaced = oneReplaced.replace("├", "┌")
@@ -1251,7 +1197,7 @@ for index in range(len(textWrapped)):
         textTablesDone.append(threeReplaced)
         textTablesDone.append(textWrapped[index])
 
-    elif index % 69 == 67 and "┼" in textWrapped[index]:
+    elif index % pageLength == (pageLength - 2) and "┼" in textWrapped[index]:
 
         oneReplaced = textWrapped[index].replace("┼", "┴")
         twoReplaced = oneReplaced.replace("├", "└")
@@ -1260,7 +1206,7 @@ for index in range(len(textWrapped)):
         textTablesDone.append(threeReplaced)
         textTablesDone.append(textWrapped[index])
 
-    elif index % 69 == 68 and "┼" in textWrapped[index - 1]:
+    elif index % pageLength == (pageLength - 1) and "┼" in textWrapped[index - 1]:
 
         oneReplaced = textWrapped[index - 1].replace("┼", "┬")
         twoReplaced = oneReplaced.replace("├", "┌")
@@ -1306,57 +1252,43 @@ while runningIndex < finalIndex:
 
         line = listToSort[x]
 
-        if "•" not in line:
+        nextBulletIndex = None
+
+        if "•" not in line and "▪" not in line:
 
 
             # Moving new themes/subjects onto a new page
-            if x > topicsStartLine and line == (separator * 88) and x != 0 and x != 6 and x != (len(listToSort) - 1) and x != (len(listToSort) - 2) and x % 69 != 0 and listToSort[x-4] != (separator * 88) and x != (topicsStartLine + 2):
+            if x > topicsStartLine and line == (separator * pageWidth) and x % pageLength != 0 and listToSort[x-4] != (separator * pageWidth) and x != (topicsStartLine + 2):
 
                 currentSepIndex = x
 
-                currentSepModulo = currentSepIndex % 69
+                currentSepModulo = currentSepIndex % pageLength
 
-                push = 69 - currentSepModulo
+                push = pageLength - currentSepModulo
 
+                for x in range(push):
 
-                # Checking if line at the top of the page is a blank character
-                if push != 68:
+                    finalText.append("")
 
-                    for x in range(push):
+                finalText.append(line)
 
-                        finalText.append("")
+                for rem in listToSort[currentSepIndex + 1:]:
 
-                    finalText.append(line)
+                    finalText.append(rem)
 
-                    for rem in listToSort[currentSepIndex + 1:]:
+                finalIndex = len(finalText)
 
-                        finalText.append(rem)
-
-                    finalIndex = len(finalText)
-
-                    break
-
-                elif push == 68:
-
-                    finalText = finalText[:-1]
-
-                    finalText.append(line)
-
-                    if x >= runningIndex:
-
-                        runningIndex += 1
-
-                    continue
+                break
             
 
             # Moving new sections onto new pages
-            elif (separator in line) and line != (separator * 88) and x % 69 != 0 and x >= subjectsStartLine and "┼" not in line and "┴" not in line and "┬" not in line and line != (" " * 17 + separator * 20 + "  Subjects  " + separator * 20):
+            elif (separator in line) and line != (separator * pageWidth) and x % pageLength != 0 and x >= subjectsStartLine and "┼" not in line and "┴" not in line and "┬" not in line and line != (" " * 17 + separator * 20 + "  Subjects  " + separator * 20):
 
                 currentStartIndex = x
 
-                currentStartModulo = currentStartIndex % 69
+                currentStartModulo = currentStartIndex % pageLength
 
-                push = 69 - currentStartModulo
+                push = pageLength - currentStartModulo
 
                 for x in range(push):
 
@@ -1365,6 +1297,28 @@ while runningIndex < finalIndex:
                 finalText.append(line)
 
                 for rem in listToSort[currentStartIndex + 1:]:
+
+                    finalText.append(rem)
+
+                finalIndex = len(finalText)
+
+                break
+
+            elif x > topicsStartLine and (separator not in line) and x % pageLength != 0 and "═" in listToSort[x+1] and listToSort[x-2] != (separator * pageWidth):
+
+                currentSubjectIndex = x
+
+                currentSubjectModulo = currentSubjectIndex % pageLength
+
+                push = pageLength - currentSubjectModulo
+
+                for x in range(push):
+
+                    finalText.append("")
+
+                finalText.append(line)
+
+                for rem in listToSort[currentSubjectIndex + 1:]:
 
                     finalText.append(rem)
 
@@ -1384,21 +1338,21 @@ while runningIndex < finalIndex:
 
 
         # Checking and sorting out all the topics, and the glossary
-        elif "•" in line:
+        elif "•" in line or "▪" in line:
 
             currentBulletIndex = listToSort.index(line)
 
-            currentBulletModulo = currentBulletIndex % 69
+            currentBulletModulo = currentBulletIndex % pageLength
 
             for part in listToSort[currentBulletIndex+1:]:
 
-                if "•" in part:
+                if "•" in part or "▪" in part:
 
                     nextBulletIndex = listToSort.index(part)
 
                     break
-            
-            if nextBulletIndex > glossaryStartLine:
+
+            if nextBulletIndex == None:
 
                 finalText.append(line)
 
@@ -1408,7 +1362,18 @@ while runningIndex < finalIndex:
 
                 continue
 
-            nextBulletModulo = nextBulletIndex % 69
+            
+            if nextBulletIndex > glossaryStartLine and currentBulletIndex < glossaryStartLine:
+
+                finalText.append(line)
+
+                if x >= runningIndex:
+
+                    runningIndex += 1
+
+                continue
+
+            nextBulletModulo = nextBulletIndex % pageLength
 
             
             # Check if next bullet is on same page as current bullet or at very top of next page
@@ -1426,13 +1391,21 @@ while runningIndex < finalIndex:
             # This implies the next bullet is on the next page
             else:
 
-                push = 69 - currentBulletModulo
+                push = pageLength - currentBulletModulo
 
                 if nextBulletModulo != 0:
 
-                    sepCount = listToSort[currentBulletIndex:nextBulletIndex+1].count(separator * 88)
+                    dividerCount = 0
 
-                    if sepCount == 0:
+                    for part in listToSort[currentBulletIndex:nextBulletIndex+1]:
+
+                        if separator in part or "═" in part:
+
+                            dividerCount += 1
+
+                            break
+
+                    if dividerCount == 0:
 
                         for x in range(push):
 
@@ -1448,7 +1421,7 @@ while runningIndex < finalIndex:
 
                         break
 
-                    elif sepCount > 0:
+                    elif dividerCount > 0:
 
                         finalText.append(line)
 
@@ -1482,10 +1455,12 @@ for x in range(len(finalText)):
     
     else:
 
-        if x % 69 == 0 and finalText[x] == "":
+        if x % pageLength == 0 and finalText[x] == "":
+
             continue
 
         else:
+
             textToWrite.append(finalText[x])
 
 print("--> Lines prepared!\n")
@@ -1495,12 +1470,88 @@ print("--> Lines prepared!\n")
 pdf = FPDF(orientation = "P", format = "A4")
 pdf.add_page()
 pdf.add_font("Menlo", "", fontFileDir + fontFile, uni=True)
-pdf.set_font("Menlo", size = 10)
 pdf.set_auto_page_break(auto = True, margin = 8.0)
+
+
+# Getting date and time info
+today = dt.date.today()
+dateDay = today.day
+dateMonth = today.month
+dateYear = today.year
+
+now = dt.datetime.now()
+timeNow = now.strftime("%H:%M")
+
+dateToday = dt.datetime(dateYear, dateMonth, dateDay)
+
+def get_ending(dayNum):
+
+    if "1" in dayNum[-1]:
+
+        return "st"
+
+    elif "2" in dayNum[-1]:
+
+        return "nd"
+
+    elif "3" in dayNum[-1]:
+
+        return "rd"
+
+    else:
+
+        return "th"
+
+formattedDate = dateToday.strftime(f"%d{get_ending(str(dateDay))} %b %Y")
 
 
 # Writing to PDF
 print("--> Writing to PDF...")
+
+
+# Writing title page
+pdf.set_font("Menlo", size = 10)
+
+for i in range(16):
+
+    pdf.cell(0, 4, txt="", ln=1)
+
+pdf.set_font("Menlo", size = 32)
+titleLength = len(f"{archive_name} Report")
+titleLine = int(np.ceil((27 - titleLength)/2)) * " " + f"{archive_name} Report"
+pdf.cell(0, 4, txt=titleLine, ln=1)
+
+pdf.set_font("Menlo", size = 10)
+
+for i in range(6):
+
+    pdf.cell(0, 4, txt="", ln=1)
+
+pdf.set_font("Menlo", size = 18)
+datetimeLength = len(timeNow + " ~ " + formattedDate)
+dateLine = int(np.ceil((49 - datetimeLength)/2)) * " " + timeNow + " ~ " + formattedDate
+pdf.cell(0, 4, txt=dateLine, ln=1)
+
+pdf.set_font("Menlo", size = 10)
+
+for i in range(41):
+
+    pdf.cell(0, 4, txt="", ln=1)
+
+pdf.set_font("Menlo", size = 18)
+versionLength = len(version)
+versionLine = int(np.ceil((49 - versionLength)/2)) * " " + version
+pdf.cell(0, 4, txt=versionLine, ln=1)
+
+pdf.set_font("Menlo", size = 10)
+
+for i in range(3):
+
+    pdf.cell(0, 4, txt="", ln=1)
+
+
+# Writing remainder of the pages
+pdf.set_font("Menlo", size = 10)
 
 for x in range(len(textToWrite)):
 
@@ -1512,7 +1563,14 @@ print("--> PDF written!\n")
 
 
 # Deleting temporary .pkl files
-os.remove(fontFileDir + "Menlo-Regular.cw127.pkl")
+try:
+
+    os.remove(fontFileDir + "Menlo-Regular.cw127.pkl")
+
+except FileNotFoundError:
+
+    pass
+
 os.remove(fontFileDir + "Menlo-Regular.pkl")
 
 
@@ -1522,4 +1580,4 @@ runningTime = round(endTime - startTime, 2)
 
 print(f"--> Finished in {runningTime}s!\n")
 
-print(runningSep * len(f"{runningSep * numSep} {startLine} {runningSep * numSep}") + "\n\n")
+print(runningSep * (len(f"{runningSep * numSep} {startLine} {runningSep * numSep}") + 2) + "\n\n")
