@@ -25,12 +25,13 @@ INITIAL SETUP
 
 
 # Setting initial variables
-version = "v3.7"
+version = "v3.7.1"
 
 ext = ".pdf"
 
 singleSep = "─"
 doubleSep = "═"
+runningSep = "~"
 
 pageWidth = 88
 pageLength = 69
@@ -44,7 +45,7 @@ startTime = time.time()
 
 # Printing beginning verbose lines
 startLine = f"Archysis {version}"
-runningSep = "~"
+
 numSep = int(np.ceil((45 - len(f" {startLine} ")) / 2))
 print(f"\n\n{runningSep * (numSep + 1)} {startLine} {runningSep * (numSep + 1)}")
 
@@ -300,7 +301,6 @@ else:
 '''
 DATA EXTRACTION
 '''
-
 
 
 # Setting up the lists for the data
@@ -1169,7 +1169,6 @@ PDF LINE LIST WRITING
 '''
 
 
-
 # Writing & formatting all the lines to the text list
 text = []
 
@@ -1182,7 +1181,7 @@ for n in range(blankLinesNum):
 
     text.append("")
 
-contentsLine = " " * 28 + "▶" + singleSep * 10 + "  Contents  " + singleSep * 10 + "◀"
+contentsLine = " " * 28 + "├" + singleSep * 10 + "  Contents  " + singleSep * 10 + "┤"
 text.append(contentsLine)
 
 text.append("")
@@ -1246,7 +1245,7 @@ for x in range(push):
 # Themes table
 if doThemesTable == True:
 
-    themesLine = " " * 20 + "▷" + singleSep * 19 + "  Themes  " + singleSep * 19 + "◁"
+    themesLine = " " * 9 + "┌" + singleSep * 30 + "  Themes  " + singleSep * 30 + "┐"
     text.append(themesLine)
 
     text.append("")
@@ -1279,7 +1278,7 @@ if doThemesTable == True:
 
 
 # Subjects table
-subjectsLine = " " * 19 + "▷" + singleSep * 19 + "  Subjects  " + singleSep * 19 + "◁"
+subjectsLine = " " * 14 + "┌" + singleSep * 24 + "  Subjects  " + singleSep * 24 + "┐"
 text.append(subjectsLine)
 text.append("")
 
@@ -1297,7 +1296,7 @@ if doThemesTable == False:
 
         text.append(line)
 
-topicsLine = " " * 19 + "▷" + singleSep * 19 + "  Topics  " + singleSep * 19 + "◁"
+topicsLine = " " * 19 + "┌" + singleSep * 19 + "  Topics  " + singleSep * 19 + "┐"
 text.append(topicsLine)
 text.append("")
 
@@ -1419,8 +1418,9 @@ for theme in topicsOverall:
 # Appending glossary at the end of the document
 if doGlossary == True:
 
-    glossaryLine = " " * 19 + "▷" + singleSep * 19 + "  Glossary  " + singleSep * 19 + "◁"
+    glossaryLine = " " * 19 + "┌" + singleSep * 19 + "  Glossary  " + singleSep * 19 + "┐"
     text.append(glossaryLine)
+    text.append("")
     text.append("")
 
     with open(glossDir + glossName, "r") as f:
@@ -1447,7 +1447,6 @@ else:
 '''
 PDF LINE FORMATTING
 '''
-
 
 
 # Replacing the colons
@@ -1645,7 +1644,7 @@ while runningIndex < finalIndex:
 
 
             # Moving sections onto new pages
-            elif "▷" in line and x % pageLength != 0 and x >= topicsStartLine:
+            elif "┌" in line and x % pageLength != 0 and x >= topicsStartLine:
 
                 currentStartIndex = x
 
@@ -2054,6 +2053,7 @@ print("--> Lines prepared!\n")
 '''
 WRITING TO PDF
 '''
+
 
 print("--> Writing to PDF...")
 

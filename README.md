@@ -47,6 +47,8 @@ The root of the archive should contain folders in which the PDF files reside. Th
 
 Under normal circumstances, the PDF files will be placed in the subject folders, which are in the theme folders. However, theme folders can be 'subject-like', containing no subfolders but instead containing PDF files. This is fine, and will be properly analysed - even if all 'theme' folders are subject-like.
 
+However, if a theme _is_ subject-like, it cannot contain any subfolders.
+
 Due to the formatting and nature of the report, ***up to 49 subjects*** can be analysed without messing up how the final result looks!
 
 
@@ -64,7 +66,7 @@ Round and/or square brackets should not appear anywhere else in the filename, ot
 
 
 ## Report structure
-The report will contain a title page, a contents page, a themes table (if not all themes are subject-like), a subjects table, a totals table, a topic list (including the flags as sub-lists), and a glossary (if one is found).
+The report will contain a title page, a contents page, a themes table (if not all themes are subject-like), a subjects table, a totals table, a topic list (with multiplicities, the flags as sub-lists, and the flags' multiplicities too), and a glossary (if one is found).
 
 The date and time of generation is given on the title page.
 
