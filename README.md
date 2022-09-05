@@ -1,18 +1,75 @@
-## Notes
+# Archysis v3
+
+## Introduction
+Archysis is an archive analysis tool which will read in a directory's PDF files and produce a report, detailing all unique themes, subjects, topics, flags and multiplicities. A contents page is automatically generated, and an optional glossary can be included as well.
+
+The report is automatically formatted to ensure a high level of readability.
+
+Archysis v1 and v2 can be found in selwr/poirot, but these are very much out of date with many oversights and problems, hence the v3 re-write.
+
+## Pre-requisites
+The program runs on Python 3, but uses f-strings which were introduced in v3.6, so this is the minimum requirement.
+
+A number of dependent libraries are also used, so these should be installed too:
+* numpy
+* textwrap
+* humanize
+* PyPDF2
+* fpdf
+* tabulate
+
+Once the Archysis.py is placed in the root of the archive, it need only be run to generate the report.
+
+### Fonts
+Due to the formatting of the report's tables, a monospaced UTF-8 Unicode font must be used and one is included within this repo, Menlo. Once the repo has been downloaded, provided that the 'archysis_font.ttf' file is _somewhere_ on the hard drive, it will be found.
+
+Other fonts can be used, provided that they conform to the above requirements and are renamed to be 'archysis_font.ttf'.
+
+The code will generate two temporary .pkl files during its execution, but these will be automatically deleted.
+
+### Glossary
+A glossary can optionally be included in the report as well! Its plaintext file should be formatted as follows:
+
+> \## Glossary\
+> --- *blank line* ---\
+> --- *blank line* ---\
+> \* Subject 1 - field 1, field 2, field3\
+> --- *blank line* ---\
+> \* Subject 2 - field 1, field 2, field 3\
+> ...\
+> etc.
+
+As with the font file, provided the glossary file is named 'archive_glossary.txt' and is somewhere on the hard drive, it will be found.
 
 
-# General
-* The program will search through all subfolders of the folder in which the .py file is placed and ran from
-* The files to search for must be PDFs
-* The formatting currently allows up to 40 subjects. This can be reduced to give the desired formatting by removing some of the ‘text.append(“”)’ line breaks towards the beginning of the append statements, or by reducing the argument in the for loop which appends these breaks en masse.
+## Directory structure
+The root of the archive should contain folders in which the PDF files reside. This highest-level of folder is denoted a 'theme', and can itself contain subfolders, which are denoted 'subjects'. No further recursive folders can be analysed.
 
-# Fonts
-* Must be a monospaced Unicode (UTF-8 encoded) font (eg. Menlo, as included)
-* The .ttf file must be somewhere on the hard drive, but not in /Library or (explicitly) /'Mobile Documents'
-* The code will generate two .pkl files in the directory of the file's .ttf; the exact names of these files need to be put in the code (towards the end) so that they are deleted once the program has been executed
+Under normal circumstances, the PDF files will be placed in the subject folders, which are in the theme folders. However, theme folders can be 'subject-like', containing no subfolders but instead containing PDF files. This is fine, and will be properly analysed - even if all 'theme' folders are subject-like.
 
-# Protected characters
-* No ~ or > can appear in a file name
-* Square brackets can only be used to show multiplicity of a topic at the end of a file name, eg. [n]
-* Round brackets can only be used for 'flags' at the end of the file, before the multiplicity
-* There must only be one set of square or round brackets per filename
+Due to the formatting and nature of the report, ***up to 49 subjects*** can be analysed without messing up how the final result looks!
+
+
+## Files in the archive
+Only PDF files will be analysed and must be formatted in the following way:
+> "{topic} (flags) [multiplicity].pdf"
+
+The topic is essentially what the file is about. It shouldn't be written within curly brackets - the above is just to illustrate its positioning within the filename.
+
+The optional flags are separate 'classifiers' that allow differentiation between files on the same topic. They should all be in one set of round brackets and in the position shown above. Two flags should be separated by ' and ', but three flags can be separated using commas _as well_.
+
+The multiplicity in the square brackets should count from 1 up to however many files there are on that specific topic - however, if there is only one file on that topic, [1] is not required at the end of the filename. The multiplicity should be the final part of the filename before the extension.
+
+Round and/or square brackets should not appear anywhere else in the filename, other than the positions shown above.
+
+
+## Report structure
+The report will contain a title page, a contents page, a themes table (if not all themes are subject-like), a subjects table, a totals table, a topic list (including the flags as sub-lists), and a glossary (if one is found).
+
+The date and time of generation is given on the title page.
+
+The page numbers given in the glossary refer to the absolute page number of the report, **including the title page and all table-containing pages**.
+
+
+## Future
+A GUI-based version of Archysis is in the works.
