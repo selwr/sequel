@@ -45,11 +45,25 @@ As with the font file, provided the glossary file is named 'archive_glossary.txt
 ## Directory structure
 The root of the archive should contain folders in which the PDF files reside. This highest-level of folder is denoted a 'theme', and can itself contain subfolders, which are denoted 'subjects'. No further recursive folders can be analysed.
 
-Under normal circumstances, the PDF files will be placed in the subject folders, which are in the theme folders. However, theme folders can be 'subject-like', containing no subfolders but instead containing PDF files. This is fine, and will be properly analysed - even if all 'theme' folders are subject-like.
+Under normal circumstances, the PDF files will be placed in the subject folders, which are in the theme folders. However, theme folders can be 'subject-like', containing no subfolders but instead containing PDF files themselves. This is fine, and will be properly analysed - even if all 'theme' folders are subject-like.
 
 However, if a theme _is_ subject-like, it cannot contain any subfolders.
 
-Due to the formatting and nature of the report, ***up to 49 subjects*** can be analysed without messing up how the final result looks!
+
+### Limits to the analysis
+Due to the formatting and nature of the report, if all themes are subject-like, then a maximum of 30 'themes' can be analysed. However, if not **all** themes are subject-like, then the number depends on how many themes _are_ subject-like and how many _aren't_ subject-like, using the below formula:
+
+> maxNumSubjects = 69 - 9 - (2 x numRegThemes) - (numSubLikeThemes)
+
+where
+* 69 is the number of lines per page under the default settings (a paper size of A4 and a font size of 10)
+* 9 is the number of 'other' lines on the page
+* numSubLikeThemes is the number of themes that are subject-like
+* numRegThemes is the remaining number of themes.
+
+These limits are only imposed to ensure the 'main table' and the totals table (and, independently, the contents page) of the report remain on the same page for clarity. A warning will be printed to the console if the number of subjects in an archive exceeds the maximum.
+
+If the limit is exceeded, and all 'themes' are subject-like, proper theming is recommended. If the limit is exceeded and not all of the themes are subject-like, unfortunately there is no way around a strange-looking result!
 
 
 ## Files in the archive

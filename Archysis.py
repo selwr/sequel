@@ -25,7 +25,7 @@ INITIAL SETUP
 
 
 # Setting initial variables
-version = "v3.7.1"
+version = "v3.7.2"
 
 ext = ".pdf"
 
@@ -1175,7 +1175,19 @@ text = []
 
 
 # Contents page
-blankLinesNum = int(np.ceil((49 - int(len(subjectRows))) / 2)) - 1
+maxNumSubjects = pageLength - 9 - subjectLikeThemeCount - 2 * (len(themes) - subjectLikeThemeCount)
+
+
+if doThemesTable == True and len(subjectRows) > maxNumSubjects:
+
+    print(f"Your report may have poor formatting as your number of subjects exceeds the maximum ({maxNumSubjects})!")
+
+elif doThemesTable == False and len(subjectRows) > 30:
+
+    print(f"Your report may have poor formatting as your number of subjects exceeds the maximum (30)!")
+
+
+blankLinesNum = int(np.ceil((maxNumSubjects - int(len(subjectRows))) / 2)) - 1
 
 for n in range(blankLinesNum):
 
