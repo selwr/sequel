@@ -25,7 +25,7 @@ INITIAL SETUP
 
 
 # Setting initial variables
-version = "v3.7.2"
+version = "v3.7.3"
 
 ext = ".pdf"
 
@@ -2092,15 +2092,15 @@ dateToday = dt.datetime(dateYear, dateMonth, dateDay)
 
 def get_ending(dayNum):
 
-    if "1" in dayNum[-1]:
+    if "1" in dayNum[-1] and dayNum != "11":
 
         return "st"
 
-    elif "2" in dayNum[-1]:
+    elif "2" in dayNum[-1] and dayNum != "12":
 
         return "nd"
 
-    elif "3" in dayNum[-1]:
+    elif "3" in dayNum[-1] and dayNum != "13":
 
         return "rd"
 
