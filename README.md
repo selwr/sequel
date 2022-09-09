@@ -28,18 +28,9 @@ Other fonts can be used, provided that they conform to the above requirements an
 The code will generate two .pkl files during its execution, but these will be automatically deleted.
 
 ### Glossary
-A glossary can optionally be included in the report as well! Its plaintext file should be formatted as follows:
+A glossary can optionally be included in the report as well! Each entry in the plaintext file should be formatted as follows:
 
-> \## Glossary\
-> --- *blank line* ---\
-> --- *blank line* ---\
-> \* Subject1 - field1, field2, field3, ...\
-> --- *blank line* ---\
-> \* Subject2 - field1, field2, field3, ...\
-> --- *blank line* ---\
-> \* Subject3 - field1, field2, field3, ...\
-> ...\
-> etc.
+> \* SubjectName - Field1, Field2, Field3, ...
 
 The glossary file must end with a blank line to prevent any fields from being cut off.
 
@@ -52,27 +43,9 @@ The root of the archive should contain folders in which the PDF files reside. Th
 Under normal circumstances, the PDF files will be placed in the subject folders. However, theme folders can be 'subject-like', containing no subfolders and instead PDF files themselves. This is fine, and will be properly analysed - even if all 'theme' folders are subject-like. However, if a theme is subject-like, it must not contain any subfolders.
 
 
-### Limits to the analysis
-Due to the formatting and nature of the report, if all themes are subject-like, then a maximum of 30 'themes' can be analysed - and these will be referred to as subjects in the report. However, if not **all** of the themes are subject-like, then the number depends on how many themes there are and how many are/aren't subject-like using the formula below:
-
-> maxNumSubjects = p - (2r + s + 9)
-
-where
-* p is the number of lines per page (under the default settings - a paper size of A4 and a font size of 10 - this is 69)
-* r is the remaining number of themes
-* s is the number of themes that are subject-like
-* 9 is the number of 'other' lines on the page.
-
-These limits are only imposed to ensure the 'main table' and the totals table (and, separately, the contents page) of the report remain on the same page for clarity. A warning will be printed to the console if the number of subjects in an archive exceeds the maximum.
-
-If the limit is exceeded, and all 'themes' are subject-like, proper theming is recommended. If the limit is exceeded and not all of the themes are subject-like, unfortunately there is no way around a strange-looking result!
-
-The paper and font sizes can be changed towards the end of the code, and then the pageWidth and pageLength numbers can be corrected to match the new parameters, but this is a manual task to be performed if needed. Note though that the title page is written independently of the rest of the lines, so the value for pageWidth and pageLength do not apply to it and will need to be worked out independently for the title page to look correct after paper and/or font size adjustment!
-
-
 ## Files in the archive
 Only PDF files will be analysed and their filenames must be formatted in the following way:
-> "{topic} (flags) [multiplicity].pdf"
+> {topic} (flags) [multiplicity].pdf
 
 The topic is essentially what the file is about. It needn't be written within curly brackets - the above is just to illustrate its positioning within the filename.
 
@@ -89,14 +62,17 @@ The report will contain:
 * a contents page
 * a themes table (if not all themes are subject-like)
 * a subjects table
-* a totals table
 * a topic list with topic multiplicities, any flags as sub-lists, and any flags' multiplicities too
 * a glossary (if one is found).
 
 The date and time of generation is given on the title page for future reference.
 
+A summary of the report, and thus of the archive itself too, is given on the title page.
+
 The page numbers given in the contents refer to the absolute page number of the report, ***including all pages***.
+
+The highest value of any particular metric in each column is surrounded with curly braces to illustrate its size.
 
 
 ## Future
-A GUI-based version of Archysis is in the works.
+A GUI-based version of Archysis (called P.A.G.E.) is in the works.
