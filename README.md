@@ -34,6 +34,8 @@ A glossary can optionally be included in the report as well! Each entry in the p
 
 The glossary file must end with a blank line to prevent any fields from being cut off.
 
+The glossary will be automatically alphabetised in the report.
+
 As with the font file, provided the glossary file is named 'archive_glossary.txt' and is _somewhere_ on the hard drive, it will be found.
 
 
@@ -71,7 +73,7 @@ A summary of the report, and thus of the archive itself too, is given on the tit
 
 The page numbers given in the contents refer to the absolute page number of the report, ***including all pages***.
 
-The highest value of any particular metric in each column is surrounded with curly braces to illustrate its size.
+The highest value of a particular metric in each column is surrounded with curly braces to illustrate its size.
 
 
 ## Future

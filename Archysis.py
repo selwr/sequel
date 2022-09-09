@@ -25,7 +25,7 @@ INITIAL SETUP
 
 
 # Setting initial variables
-version = "v3.8"
+version = "v3.8.1"
 
 ext = ".pdf"
 
@@ -1079,22 +1079,22 @@ for theme in overallData:
 
             if int(subject[1]) == maxDocuments:
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][1] = "{ " + subject[1] + " }"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][1] = "{" + subject[1] + "}"
 
 
             if int(subject[2]) == maxTopics:
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][2] = "{ " + subject[2] + " }"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][2] = "{" + subject[2] + "}"
 
 
             if int(subject[3]) == maxPages:
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][3] = "{ " + subject[3] + " }"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][3] = "{" + subject[3] + "}"
 
 
             if subject[4] == humanize.naturalsize(maxSize, binary=False, format="%.1f"):
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][4] = "{ " + subject[4] + " }"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][4] = "{" + subject[4] + "}"
     
 
     else:
@@ -1184,7 +1184,19 @@ text = []
 
 
 # Contents page
-maxNumSubjectsForPush = pageLength - 9 - subjectLikeThemeCount - 2 * (totalsData[0] - subjectLikeThemeCount)
+extraLines = 5
+
+if doThemesTable == True:
+
+    extraLines += 1
+
+
+if doGlossary == True:
+
+    extraLines += 3
+
+
+maxNumSubjectsForPush = pageLength - extraLines - subjectLikeThemeCount - 2 * (totalsData[0] - subjectLikeThemeCount)
 
 blankLinesNum = int(np.ceil((maxNumSubjectsForPush - int(len(subjectRows))) / 2)) - 1
 
@@ -2108,7 +2120,7 @@ for theme in themes:
 
                     if f" - {theme} -" in line:
                         
-                        pageNum = (x // 69) + 2
+                        pageNum = (x // pageLength) + 2
 
                         pageNums.append([theme, pageNum])
 
@@ -2122,7 +2134,7 @@ for theme in themes:
 
                     if f" - {theme} -" in line:
 
-                        pageNum = (x // 69) + 2
+                        pageNum = (x // pageLength) + 2
 
                         pageNums.append([theme, pageNum])
 
@@ -2145,7 +2157,7 @@ for theme in themes:
                         
                         if f" {subject} " in line and singleSep in finalText[x+1]:
 
-                            pageNum = (x // 69) + 2
+                            pageNum = (x // pageLength) + 2
 
                             pageNums.append([subject, pageNum])
 
@@ -2160,7 +2172,7 @@ for theme in themes:
 
                         if f" {subject} " in line and singleSep in finalText[x+1]:
 
-                            pageNum = (x // 69) + 2
+                            pageNum = (x // pageLength) + 2
 
                             pageNums.append([subject, pageNum])
 
@@ -2177,7 +2189,7 @@ if doGlossary == True:
 
         if line == glossaryLine:
 
-            pageNum = (x // 69) + 2
+            pageNum = (x // pageLength) + 2
 
             pageNums.append(["Glossary", pageNum])
 
@@ -2192,7 +2204,7 @@ for x in range(len(finalText)):
 
     if line == themesLine:
 
-        pageNum = (x // 69) + 2
+        pageNum = (x // pageLength) + 2
 
         pageNums.append(["Themes table", pageNum])
 
@@ -2207,7 +2219,7 @@ for x in range(len(finalText)):
 
     if line == subjectsLine:
 
-        pageNum = (x // 69) + 2
+        pageNum = (x // pageLength) + 2
 
         pageNums.append(["Subjects table", pageNum])
 
@@ -2304,7 +2316,6 @@ if doGlossary:
 '''
 WRITING TO PDF
 '''
-
 
 
 print("--> Writing to PDF...")
