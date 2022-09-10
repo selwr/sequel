@@ -73,7 +73,7 @@ A summary of the report, and thus of the archive itself too, is given on the tit
 
 The page numbers given in the contents refer to the absolute page number of the report, ***including all pages***.
 
-The highest value of a particular metric in each column is surrounded with curly braces to illustrate its size.
+The highest value of a particular metric in each column is surrounded by curly braces to illustrate its size.
 
 
 ## Future
