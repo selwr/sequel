@@ -25,7 +25,7 @@ INITIAL SETUP
 
 
 # Setting initial variables
-version = "v3.8.1"
+version = "v3.8.2"
 
 ext = ".pdf"
 
@@ -97,7 +97,7 @@ else:
 
 # Getting directory of glossary file
 glossDir = None
-glossName = "archive_glossary.txt"
+glossName = f"{archive_name.lower()}_glossary.txt"
 
 print("--> Searching for glossary file...")
 
@@ -206,8 +206,8 @@ themesData = []
 
 topicsOverall = []
 
-subjectDocumentVals = []
 subjectTopicVals = []
+subjectDocumentVals = []
 subjectPageVals = []
 subjectSizeVals = []
 
@@ -218,11 +218,11 @@ corruptFiles = []
 # Getting all the data
 for theme in themes:
 
-    docs = 0
+    subjects = 0
     topics = 0
+    docs = 0
     pages = 0
     size = 0
-    subjects = 0
 
     running_subjects = ""
 
@@ -248,8 +248,8 @@ for theme in themes:
 
             topicsSubject = []
 
-            subjectDocuments = 0
             subjectTopics = 0
+            subjectDocuments = 0
             subjectPages = 0
             subjectSize = 0
 
@@ -337,17 +337,18 @@ for theme in themes:
 
 
             # Appending all values to necessary lists
-            subjectDocumentVals.append(subjectDocuments)
             subjectTopicVals.append(subjectTopics)
+            subjectDocumentVals.append(subjectDocuments)
             subjectPageVals.append(subjectPages)
             subjectSizeVals.append(subjectSize)
 
-            themeData[1].append([subject, str(subjectDocuments), str(subjectTopics), str(subjectPages), humanize.naturalsize(subjectSize, binary=False, format="%.1f")])
+            themeData[1].append([subject,  str(subjectTopics), str(subjectDocuments), str(subjectPages), humanize.naturalsize(subjectSize, binary=False, format="%.1f")])
 
 
 
             # Sorting out topics and flags
             topicsSubject = sorted(topicsSubject)
+
 
 
             # Removing square brackets
@@ -358,6 +359,7 @@ for theme in themes:
                     topicsSubject[topicsSubject.index(topic)] = topicsSubject[topicsSubject.index(topic)][:topic.index("[")-1]
 
             topicsSubjectActual = []
+
 
 
             # Removing flags
@@ -569,7 +571,7 @@ for theme in themes:
 
 
         # Appending all necessary values
-        themesData.append([theme[0], "("+ str(subjects) + ")\n" + running_subjects, str(docs), str(topics), str(pages), size])
+        themesData.append([theme[0], "("+ str(subjects) + ")\n" + running_subjects, str(topics), str(docs), str(pages), size])
 
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
@@ -585,8 +587,8 @@ for theme in themes:
 
         topicsSubject = []
 
-        subjectDocuments = 0
         subjectTopics = 0
+        subjectDocuments = 0
         subjectPages = 0
         subjectSize = 0
 
@@ -680,13 +682,13 @@ for theme in themes:
 
 
         # Appending all values to necessary lists
-        subjectDocumentVals.append(subjectDocuments)
         subjectTopicVals.append(subjectTopics)
+        subjectDocumentVals.append(subjectDocuments)
         subjectPageVals.append(subjectPages)
         subjectSizeVals.append(subjectSize)
 
-        themeData.append(str(subjectDocuments))
         themeData.append(str(subjectTopics))
+        themeData.append(str(subjectDocuments))
         themeData.append(str(subjectPages))
         themeData.append(humanize.naturalsize(subjectSize, binary=False, format="%.1f"))
 
@@ -910,7 +912,7 @@ for theme in themes:
 
         themeTopics.append(topicsSubjectActual)
 
-        themesData.append([theme, "N/A", str(docs), str(topics), str(pages), size])
+        themesData.append([theme, "N/A", str(topics), str(docs), str(pages), size])
 
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
@@ -958,23 +960,12 @@ print("--> Preparing lines for writing...")
 
 
 
-# Getting lengths of theme names
-themeLengths = []
-
-for theme in themesData:
-
-    themeLengths.append(len(theme[0]))
-
-longestThemeNameLength = max(themeLengths)
-
-
-
 # Formatting and tabulating the theme data, if necessary
 if doThemesTable:
 
     themeSubVals = []
-    themeDocVals = []
     themeTopVals = []
+    themeDocVals = []
     themePageVals = []
     themeSizeVals = []
 
@@ -986,10 +977,9 @@ if doThemesTable:
 
             themeSubVals.append(int(theme[1][1:endSubNum]))
 
+        themeTopVals.append(int(theme[2]))
 
-        themeDocVals.append(int(theme[2]))
-
-        themeTopVals.append(int(theme[3]))
+        themeDocVals.append(int(theme[3]))
 
         themePageVals.append(int(theme[4]))
 
@@ -997,8 +987,8 @@ if doThemesTable:
 
     
     maxThemesSubs = max(themeSubVals)
-    maxThemesDocs = max(themeDocVals)
     maxThemesTops = max(themeTopVals)
+    maxThemesDocs = max(themeDocVals)
     maxThemesPages = max(themePageVals)
     maxThemesSize = max(themeSizeVals)
 
@@ -1012,16 +1002,16 @@ if doThemesTable:
             if int(theme[1][1:endSubNum]) == maxThemesSubs:
 
                 themesData[themesData.index(theme)][1] = "{" + str(maxThemesSubs) + "}" + theme[1][endSubNum + 1:]
-        
 
-        if int(theme[2]) == maxThemesDocs:
 
-            themesData[themesData.index(theme)][2] = "{" + str(maxThemesDocs) + "}"
-        
+        if int(theme[2]) == maxThemesTops:
 
-        if int(theme[3]) == maxThemesTops:
+            themesData[themesData.index(theme)][2] = "{" + str(maxThemesTops) + "}"
 
-            themesData[themesData.index(theme)][3] = "{" + str(maxThemesTops) + "}"
+
+        if int(theme[3]) == maxThemesDocs:
+
+            themesData[themesData.index(theme)][3] = "{" + str(maxThemesDocs) + "}"
 
         
         if int(theme[4]) == maxThemesPages:
@@ -1038,7 +1028,7 @@ if doThemesTable:
             themesData[themesData.index(theme)][5] = humanize.naturalsize(theme[5], binary=False, format="%.1f")
 
 
-    theme_headers = ["Theme", " Subjects ", " Documents ", " Topics ", " Pages ", " Size "]
+    theme_headers = ["Theme", " Subjects ", " Topics ", " Documents ", " Pages ", " Size "]
     theme_table = tabulate(themesData, theme_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center", "center"))
     theme_table = theme_table.split("\n")
 
@@ -1066,8 +1056,8 @@ if doThemesTable:
 
 
 # Getting the highest values and formatting them in their respective lists
-maxDocuments = max(subjectDocumentVals)
 maxTopics = max(subjectTopicVals)
+maxDocuments = max(subjectDocumentVals)
 maxPages = max(subjectPageVals)
 maxSize = max(subjectSizeVals)
 
@@ -1077,12 +1067,12 @@ for theme in overallData:
 
         for subject in theme[1]:
 
-            if int(subject[1]) == maxDocuments:
+            if int(subject[1]) == maxTopics:
 
                 overallData[overallData.index(theme)][1][theme[1].index(subject)][1] = "{" + subject[1] + "}"
 
 
-            if int(subject[2]) == maxTopics:
+            if int(subject[2]) == maxDocuments:
 
                 overallData[overallData.index(theme)][1][theme[1].index(subject)][2] = "{" + subject[2] + "}"
 
@@ -1099,12 +1089,12 @@ for theme in overallData:
 
     else:
 
-        if int(theme[1]) == maxDocuments:
+        if int(theme[1]) == maxTopics:
 
             overallData[overallData.index(theme)][1] = "{ " + theme[1] + " }"
 
 
-        if int(theme[2]) == maxTopics:
+        if int(theme[2]) == maxDocuments:
 
             overallData[overallData.index(theme)][2] = "{ " + theme[2] + " }"
 
@@ -1144,19 +1134,8 @@ subjectRows = sorted(subjectRows, key=subject_name)
 
 
 
-# Getting lengths of subject names
-subjectLengths = []
-
-for subject in subjectRows:
-
-    subjectLengths.append(len(subject[0]))
-
-longestSubjectNameLength = max(subjectLengths)
-
-
-
 # Formatting and tabulating the subject data
-subject_headers = ["Subject", " Documents ", "  Topics  ", "  Pages  ", "   Size   "]
+subject_headers = ["Subject", "  Topics  ", " Documents ", "  Pages  ", "   Size   "]
 subjects_table = tabulate(subjectRows, subject_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
 subjects_table = subjects_table.split("\n")
 
@@ -1324,6 +1303,7 @@ text.append("")
 
 # Topics list
 for theme in topicsOverall:
+
 
 
     # Theme with no subjects
@@ -1725,6 +1705,7 @@ while runningIndex < finalIndex:
         if "•" not in line:
 
 
+
             # Fixing the cross-page formatting of the glossary
             if "▪" in line:
 
@@ -1861,6 +1842,7 @@ while runningIndex < finalIndex:
 
 
             else:
+
 
 
                 # Moving themes onto a new page
@@ -2100,11 +2082,14 @@ if doGlossary == True:
 
     glossaryStartLine = finalText.index(glossaryLine)
 
+
 topicsStartLine = finalText.index(topicsLine)
 
 pageNums = []
 
+
 for theme in themes:
+
 
 
     # If we have a subject-like theme
@@ -2246,6 +2231,7 @@ for x in range(len(finalText)):
     if "$" in line:
 
 
+
         # Finding position of subject name
         for char in line:
 
@@ -2287,6 +2273,7 @@ for x in range(len(finalText)):
                     finalText[x] = " " * 14 + "- " + subjectName + " " + "." * numDots + " " + str(subject[1])
 
 
+
     # Stopping when neccessary
     elif line == themesLine:
 
@@ -2319,6 +2306,7 @@ WRITING TO PDF
 
 
 print("--> Writing to PDF...")
+
 
 
 # Setting up the PDF
