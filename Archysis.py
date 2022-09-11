@@ -25,7 +25,7 @@ INITIAL SETUP
 
 
 # Setting initial variables
-version = "v3.8.2"
+version = "v3.8.2.1"
 
 ext = ".pdf"
 
@@ -931,7 +931,7 @@ if corruptFiles != []:
 
     with open("Corruptions.txt", "w") as f:
 
-        f.write("## Corrupt Files\n\n")
+        f.write("# Corrupt Files\n\n")
 
         for filename in corruptFiles:
 
