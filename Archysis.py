@@ -24,8 +24,8 @@ INITIAL SETUP
 '''
 
 
-# Setting initial variables
-version = "v3.8.2.1"
+# Setting initial variables & starting the clock
+version = "v3.9"
 
 ext = ".pdf"
 
@@ -84,6 +84,8 @@ for root, dirs, files in os.walk(r"/Users"):
         break
 
 
+
+# Terminating if no font file can be found
 if fontFileDir == None:
 
     print("--> No font file found!\n")
@@ -117,6 +119,8 @@ for root, dirs, files in os.walk(r"/Users"):
         break
 
 
+
+# Determining whether a glossary can/will be written
 if glossDir == None:
 
     print("--> No glossary file found!\n")
@@ -139,6 +143,8 @@ for folder in directory_contents:
 
         subjects = []
 
+
+        # Looping over subject subdirectories
         for subject in os.listdir(os.path.join(in_dir, folder)):
 
             if (os.path.isdir(os.path.join(in_dir, folder, subject))) and ("." not in subject):
@@ -157,6 +163,8 @@ for folder in directory_contents:
             themes.append(folder)
 
 
+
+# Terminating if no folders are found
 if themes == []:
 
     print("\n--> No folders found to analyse!\n")
@@ -164,17 +172,25 @@ if themes == []:
     exit()
 
 
+
+# Establishing if all themes are subject-like
 if subjectLikeThemeCount == len(themes):
 
     doThemesTable = False
 
 
+
+# Sorting themes & subjects alphabetically
 def get_theme_name(element):
 
+
+    # If we have a theme with subjects
     if isinstance(element, list):
 
         return element[0]
     
+
+    # If we have a subject-like theme
     else:
 
         return element
@@ -185,6 +201,8 @@ num_themes = len(themes)
 
 for theme in themes:
 
+
+    # Only need to sort the subjects if we have subjects
     if isinstance(theme, list):
 
         themes[themes.index(theme)][1] = sorted(theme[1])
@@ -244,6 +262,8 @@ for theme in themes:
             print(f"\n--> Doing {theme[0]}...")
 
 
+
+        # Running through all subjects
         for subject in theme[1]:
 
             topicsSubject = []
@@ -263,6 +283,8 @@ for theme in themes:
             # Going through each of the files
             for filename in os.listdir(os.path.join(in_dir, theme[0], subject)):
 
+
+                # If we have a PDF
                 if ext in filename:
                     
 
@@ -503,11 +525,14 @@ for theme in themes:
             # Getting counts of each flag
             for flaggedTopic in topicsSubjectActual:
                 
+
+                # If we have flags
                 if isinstance(flaggedTopic, list):
                     
                     for flag in flaggedTopic[1]:
 
                         countFlag = flaggedTopic[1].count(flag)
+
 
                         if countFlag == len(flaggedTopic[1]) and countFlag > 1:
 
@@ -533,7 +558,7 @@ for theme in themes:
                 
             
 
-            # Getting counts for each topic
+            # Getting and adding counts for each topic
             topicsSubjectDupes = []
 
             for topic in topicsSubject:
@@ -571,7 +596,7 @@ for theme in themes:
 
 
         # Appending all necessary values
-        themesData.append([theme[0], "("+ str(subjects) + ")\n" + running_subjects, str(topics), str(docs), str(pages), size])
+        themesData.append([theme[0], "["+ str(subjects) + "]\n" + running_subjects, str(topics), str(docs), str(pages), size])
 
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
@@ -609,6 +634,8 @@ for theme in themes:
         # Going through all files
         for filename in os.listdir(os.path.join(in_dir, theme)):
 
+
+            # If we have a PDF
             if ext in filename:
 
 
@@ -851,6 +878,8 @@ for theme in themes:
         # Getting counts for each flag
         for flaggedTopic in topicsSubjectActual:
 
+
+            # If we have flags
             if isinstance(flaggedTopic, list):
 
                 for flag in flaggedTopic[1]:
@@ -879,7 +908,7 @@ for theme in themes:
 
 
 
-        # Getting counts for each topic
+        # Getting and adding counts for each topic
         topicsSubjectDupes = []
 
         for topic in topicsSubject:
@@ -910,6 +939,8 @@ for theme in themes:
                     topicsSubjectActual[index] = topicsSubjectActual[index] + f" [{count}]"
 
 
+
+        # Appending all data to the lists
         themeTopics.append(topicsSubjectActual)
 
         themesData.append([theme, "N/A", str(topics), str(docs), str(pages), size])
@@ -918,6 +949,8 @@ for theme in themes:
         topicsOverall.append(themeTopics)
 
 
+
+# Terminating if not PDFs found
 if totalsData[3] == 0:
 
     print("\n--> No PDF documents found\n")
@@ -969,11 +1002,16 @@ if doThemesTable:
     themePageVals = []
     themeSizeVals = []
 
+
+
+    # Looping through the themes to find the highest values
     for theme in themesData:
 
+
+        # Only doing this for non-subject-like themes
         if "N/A" not in theme[1]:
             
-            endSubNum = theme[1].index(")")
+            endSubNum = theme[1].index("]")
 
             themeSubVals.append(int(theme[1][1:endSubNum]))
 
@@ -986,6 +1024,8 @@ if doThemesTable:
         themeSizeVals.append(int(theme[5]))
 
     
+
+    # Finding the maxima
     maxThemesSubs = max(themeSubVals)
     maxThemesTops = max(themeTopVals)
     maxThemesDocs = max(themeDocVals)
@@ -993,41 +1033,45 @@ if doThemesTable:
     maxThemesSize = max(themeSizeVals)
 
 
+
+    # Adding in the indicators, where necessary
     for theme in themesData:
 
         if "N/A" not in theme[1]:
 
-            endSubNum = theme[1].index(")")
+            endSubNum = theme[1].index("]")
 
             if int(theme[1][1:endSubNum]) == maxThemesSubs:
 
-                themesData[themesData.index(theme)][1] = "{" + str(maxThemesSubs) + "}" + theme[1][endSubNum + 1:]
+                themesData[themesData.index(theme)][1] = "⟨[" + str(maxThemesSubs) + "]⟩" + theme[1][endSubNum + 1:]
 
 
         if int(theme[2]) == maxThemesTops:
 
-            themesData[themesData.index(theme)][2] = "{" + str(maxThemesTops) + "}"
+            themesData[themesData.index(theme)][2] = "⟨" + str(maxThemesTops) + "⟩"
 
 
         if int(theme[3]) == maxThemesDocs:
 
-            themesData[themesData.index(theme)][3] = "{" + str(maxThemesDocs) + "}"
+            themesData[themesData.index(theme)][3] = "⟨" + str(maxThemesDocs) + "⟩"
 
         
         if int(theme[4]) == maxThemesPages:
 
-            themesData[themesData.index(theme)][4] = "{" + str(maxThemesPages) + "}"
+            themesData[themesData.index(theme)][4] = "⟨" + str(maxThemesPages) + "⟩"
 
         
         if int(theme[5]) == maxThemesSize:
 
-            themesData[themesData.index(theme)][5] = "{" + humanize.naturalsize(maxThemesSize, binary=False, format="%.1f") + "}"
+            themesData[themesData.index(theme)][5] = "⟨" + humanize.naturalsize(maxThemesSize, binary=False, format="%.1f") + "⟩"
         
         else:
 
             themesData[themesData.index(theme)][5] = humanize.naturalsize(theme[5], binary=False, format="%.1f")
 
 
+
+    # Forming the table
     theme_headers = ["Theme", " Subjects ", " Topics ", " Documents ", " Pages ", " Size "]
     theme_table = tabulate(themesData, theme_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center", "center"))
     theme_table = theme_table.split("\n")
@@ -1044,69 +1088,66 @@ if doThemesTable:
 
 
 
-    # Getting positions of bars for totals table
-    barIndicies = []
-
-    for index in range(len(theme_table[1])):
-
-        if theme_table[1][index] == "│":
-
-            barIndicies.append(index)
-
-
-
-# Getting the highest values and formatting them in their respective lists
+# Getting the highest values within subhect data and formatting them in their respective lists
 maxTopics = max(subjectTopicVals)
 maxDocuments = max(subjectDocumentVals)
 maxPages = max(subjectPageVals)
 maxSize = max(subjectSizeVals)
 
+
 for theme in overallData:
 
+
+    # Non-subject-like theme
     if isinstance(theme[1], list):
 
+
+        # Running through all subjects
         for subject in theme[1]:
+
 
             if int(subject[1]) == maxTopics:
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][1] = "{" + subject[1] + "}"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][1] = "⟨" + str(maxTopics) + "⟩"
 
 
             if int(subject[2]) == maxDocuments:
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][2] = "{" + subject[2] + "}"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][2] = "⟨" + str(maxDocuments) + "⟩"
 
 
             if int(subject[3]) == maxPages:
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][3] = "{" + subject[3] + "}"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][3] = "⟨" + str(maxPages) + "⟩"
 
 
             if subject[4] == humanize.naturalsize(maxSize, binary=False, format="%.1f"):
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][4] = "{" + subject[4] + "}"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][4] = "⟨" + humanize.naturalsize(maxSize, binary=False, format="%.1f") + "⟩"
     
 
+
+    # Subject-like theme
     else:
 
         if int(theme[1]) == maxTopics:
 
-            overallData[overallData.index(theme)][1] = "{ " + theme[1] + " }"
+            overallData[overallData.index(theme)][1] = "⟨" + str(maxTopics) + "⟩"
 
 
         if int(theme[2]) == maxDocuments:
 
-            overallData[overallData.index(theme)][2] = "{ " + theme[2] + " }"
+            overallData[overallData.index(theme)][2] = "⟨" + str(maxDocuments) + "⟩"
 
 
         if int(theme[3]) == maxPages:
 
-            overallData[overallData.index(theme)][3] = "{ " + theme[3] + " }"
+            overallData[overallData.index(theme)][3] = "⟨" + str(maxPages) + "⟩"
 
 
         if theme[4] == humanize.naturalsize(maxSize, binary=False, format="%.1f"):
 
-            overallData[overallData.index(theme)][4] = "{ " + theme[4] + " }"
+            overallData[overallData.index(theme)][4] = "⟨" + humanize.naturalsize(maxSize, binary=False, format="%.1f") + "⟩"
 
 
 
@@ -1114,10 +1155,14 @@ for theme in overallData:
 subjectRows = []
 for theme in overallData:
 
+
+    # If we have a subject-like theme
     if not isinstance(theme[1], list):
 
         subjectRows.append(theme)
 
+
+    # If we have a theme with subjects
     else:
 
         for subject in theme[1]:
@@ -1175,6 +1220,8 @@ if doGlossary == True:
     extraLines += 3
 
 
+
+# Finding and adding the maximum number of lines to 'centre' the contents page vertically
 maxNumSubjectsForPush = pageLength - extraLines - subjectLikeThemeCount - 2 * (totalsData[0] - subjectLikeThemeCount)
 
 blankLinesNum = int(np.ceil((maxNumSubjectsForPush - int(len(subjectRows))) / 2)) - 1
@@ -1183,12 +1230,18 @@ for n in range(blankLinesNum):
 
     text.append("")
 
+
+
+# Writing the contents line
 contentsLine = " " * 28 + "├" + singleSep * 10 + "  Contents  " + singleSep * 10 + "┤"
 text.append(contentsLine)
 
 text.append("")
 text.append("")
 
+
+
+# Writing the tables lines
 if doThemesTable == True:
 
     dollarsNum = 60 - (len("Themes table") + 1)
@@ -1210,8 +1263,13 @@ else:
 text.append("")
 text.append("")
 
+
+
+# Adding each of the subjects' lines
 for theme in themes:
 
+
+    # If we have a subject-like theme
     if not isinstance(theme, list):
 
         dollarsNum = 60 - (len(theme) + 1)
@@ -1219,10 +1277,14 @@ for theme in themes:
         text.append(" " * 14 + theme + " " + "$" * dollarsNum)
         text.append("")
     
+
+    # If we have a theme with subjects
     else:
 
         text.append(" " * 14 + theme[0])
         
+
+        # Running through all subjects
         for subject in theme[1]:
 
             dollarsNum = 60 - (len(subject) + 1 + 2)
@@ -1232,6 +1294,8 @@ for theme in themes:
         text.append("")
 
 
+
+# Adding the glossary's line
 if doGlossary == True:
 
     text.append("")
@@ -1262,6 +1326,8 @@ if doThemesTable == True:
     text.append("")
 
 
+
+    # Writing themes table
     for line in theme_table:
 
         text.append(line)
@@ -1289,12 +1355,17 @@ text.append(subjectsLine)
 text.append("")
 
 
+
+# Writing subjects table
 for line in subjects_table:
 
     text.append(line)
 
 text.append("")
 
+
+
+# Writing topics line
 topicsLine = " " * 19 + "┌" + singleSep * 19 + "  Topics  " + singleSep * 19 + "┐"
 text.append(topicsLine)
 text.append("")
@@ -1305,10 +1376,11 @@ text.append("")
 for theme in topicsOverall:
 
 
-
     # Theme with no subjects
     if theme[0] in themes:
 
+
+        # Adding the header
         text.append(doubleSep * pageWidth)
         text.append("")
 
@@ -1321,14 +1393,21 @@ for theme in topicsOverall:
         text.append(doubleSep * pageWidth)
         text.append("")
 
+
+
+        # Giving a statement if the theme is empty
         if theme[1] == []:
 
             text.append("No PDF documents found in this folder")
 
+
+        # Otherwise, writing the topics list
         else:
 
             for topic in theme[1]:
 
+
+                # If we have flags
                 if isinstance(topic, list):
 
                     text.append(f"• {topic[0]}")
@@ -1338,6 +1417,7 @@ for theme in topicsOverall:
                         text.append(f"    ‣ {flag}")
 
 
+                # If we have no flags
                 else:
                     text.append(f"• {topic}")
     
@@ -1346,6 +1426,8 @@ for theme in topicsOverall:
     # Theme with subjects
     else:
 
+
+        # Writing header
         text.append(doubleSep * pageWidth)
         text.append("")
 
@@ -1364,6 +1446,9 @@ for theme in topicsOverall:
         text.append(doubleSep * pageWidth)
         text.append("")
 
+
+
+        # Getting subjects for current theme
         subjects = []
 
         for item in theme:
@@ -1375,8 +1460,13 @@ for theme in topicsOverall:
                     subjects.append(subject)
 
 
+
+        # Looping over subjects
         for subject in subjects:
 
+
+
+            # Writing 'header' for subject
             subjectLength = len(" " + subject[0] + " ")
             extraBit = (pageWidth - subjectLength) / 2
 
@@ -1393,14 +1483,22 @@ for theme in topicsOverall:
 
             text.append("")
 
+
+
+            # Writing a statement if subject is empty
             if subject[1] == []:
 
                 text.append("No PDF documents found in this subfolder")
             
+
+
+            # Otherwise, writing the topics list
             else:
 
                 for topic in subject[1]:
 
+
+                    # If we have flags
                     if isinstance(topic, list):
 
                         text.append(f"• {topic[0]}")
@@ -1410,6 +1508,7 @@ for theme in topicsOverall:
                             text.append(f"    ‣ {flag}")
 
 
+                    # If we have no flags
                     else:
                         text.append(f"• {topic}")
 
@@ -1418,18 +1517,28 @@ for theme in topicsOverall:
 # Appending glossary at the end of the document
 if doGlossary == True:
 
+
+    # Writing glossary line
     glossaryLine = " " * 19 + "┌" + singleSep * 19 + "  Glossary  " + singleSep * 19 + "┐"
     text.append(glossaryLine)
     text.append("")
     text.append("")
 
+
+
+    # Reading from glossary file
     with open(glossDir + glossName, "r") as f:
 
         lines = f.readlines()
 
 
+
+    # Establising the length of the glossary
     lengthGloss = (len(lines) - 3 + 1) / 2
 
+
+
+    # Getting all the entries, and replacing their bullets
     glossEntries = []
     
     for line in lines:
@@ -1443,6 +1552,8 @@ if doGlossary == True:
             glossEntries.append([subName, line[:-1].replace("*", "▪")])
 
 
+
+    # Alphabetising the entries
     def get_subject(subject):
 
         return subject[0]
@@ -1450,6 +1561,9 @@ if doGlossary == True:
 
     glossEntries = sorted(glossEntries, key=get_subject)
 
+
+
+    # Writing all the glossary entries
     for line in glossEntries:
 
         text.append(line[1])
@@ -1486,19 +1600,29 @@ inGloss = False
 
 for line in text:
 
+
+
+    # Getting ready for a different case when we're in the glossary
     if line == glossaryLine:
 
         inGloss = True
 
 
+
+    # If line is too long
     if len(line) > pageWidth:
 
+
+
+        # 'Regular' wrapping
         if not inGloss:
 
             wrappedText = textwrap.wrap(line, width = pageWidth)
 
             for elem in wrappedText:
 
+
+                # If no flag, add either no indent or a double-space indent, for alignment
                 if "‣" not in line:
 
                     if elem == wrappedText[0]:
@@ -1510,6 +1634,7 @@ for line in text:
                         textWrapped.append("  " + elem)
                 
 
+                # If we have a flag, add a four-space indent or a six-space indent, for alignment
                 elif "‣" in line:
 
                     if elem == wrappedText[0]:
@@ -1521,23 +1646,33 @@ for line in text:
                         textWrapped.append("      " + elem)
         
 
+
+        # If we're in the glossary
         else:
 
+
+            # Finding how wide the subject of the line is
             endSubject = line.index("-") + 2
 
             wrappedText = textwrap.wrap(line, width = (pageWidth - endSubject))
 
             for elem in wrappedText:
 
+
+                # If no indent is needed
                 if elem == wrappedText[0]:
 
                         textWrapped.append(elem)
 
+
+                # If indent is needed
                 else:
 
                     textWrapped.append(" " * (endSubject) + elem)
 
 
+
+    # If no wrap is needed
     else:
 
         textWrapped.append(line)
@@ -1551,6 +1686,9 @@ subjectsStartLine = textWrapped.index(subjectsLine)
 
 corrections = 0
 
+
+# Looping through all lines to see if there are any strange cross-page formatting issues, and then correcting them
+# Corrections count is to correct spacing later on
 for index in range(len(textWrapped)):
 
     if index % pageLength == (pageLength - 1) and "┼" in textWrapped[index]:
@@ -1601,10 +1739,17 @@ for index in range(len(textWrapped)):
         textTablesDone.append(textWrapped[index])
 
 
+
+# Now to remove any extra spaces which are no longer needed
+# These are redundant now that the table has been effectively extended
 textTablesReallyDone = []
 
+
+# Finding the start of the subjects table
 subjectsStartLine = textTablesDone.index(subjectsLine)
 
+
+# Finding the bottom of the themes table
 for x in range(len(textTablesDone)):
 
     line = textTablesDone[x]
@@ -1616,6 +1761,8 @@ for x in range(len(textTablesDone)):
         break
 
 
+
+# Removing any of the excess lines
 for y in range(len(textTablesDone)):
 
     if y < bottomThemesTableLine or y >= subjectsStartLine:
@@ -1641,6 +1788,8 @@ for y in range(len(textTablesDone)):
                 textTablesReallyDone.append(textTablesDone[y])
 
 
+
+# Removing any potential extra lines at the top of pages that are not necessary
 textTablesReallyReallyDone = []
 
 themesStartLine = textTablesReallyDone.index(themesLine)
@@ -1666,10 +1815,14 @@ finalText = []
 runningIndex = 0
 finalIndex = len(textTablesReallyReallyDone)
 
+
+# While loop to only terminate once all lines have been fixed
 while runningIndex < finalIndex:
 
     listToSort = []
 
+
+    # Determining the list that needs fixing
     if runningIndex == 0:
 
         for line in textTablesReallyReallyDone:
@@ -1685,6 +1838,8 @@ while runningIndex < finalIndex:
 
     finalText = []
 
+
+    # Finding the key lines
     subjectsStartLine = listToSort.index(subjectsLine)
     topicsStartLine = listToSort.index(topicsLine)
 
@@ -1693,6 +1848,8 @@ while runningIndex < finalIndex:
         glossaryStartLine = listToSort.index(glossaryLine)
 
 
+
+    # Looping over all the lines
     for x in range(len(listToSort)):
 
         line = listToSort[x]
@@ -1760,6 +1917,8 @@ while runningIndex < finalIndex:
                 # This implies the next bullet is on the next page
                 else:
 
+
+                    # Forcing a lack of push
                     if entryWidth == 1 and currentBulletModulo == 68 and listToSort[x+1] == "":
 
                         finalText.append(line)
@@ -1830,6 +1989,7 @@ while runningIndex < finalIndex:
                                 continue
 
 
+                        # If no push is needed
                         else:
 
                             finalText.append(line)
@@ -1841,6 +2001,8 @@ while runningIndex < finalIndex:
                             continue
 
 
+
+            # If not in glossary list
             else:
 
 
@@ -1988,6 +2150,7 @@ while runningIndex < finalIndex:
 
                     continue
 
+
             nextBulletModulo = nextBulletIndex % pageLength
 
             
@@ -2083,11 +2246,15 @@ if doGlossary == True:
     glossaryStartLine = finalText.index(glossaryLine)
 
 
+
+# Finding when topics line starts
 topicsStartLine = finalText.index(topicsLine)
 
 pageNums = []
 
 
+
+# Looping over themes
 for theme in themes:
 
 
@@ -2095,8 +2262,12 @@ for theme in themes:
     # If we have a subject-like theme
     if not isinstance(theme, list):
 
+
+        # Looping over lines to find subject headers and thus calculate their page numbers
         for x in range(len(finalText)):
 
+
+            # Only want to search topics list, so ignoring the glossary
             if doGlossary == True:
 
                 if x < glossaryStartLine and x > topicsStartLine:
@@ -2111,6 +2282,9 @@ for theme in themes:
 
                         break
             
+
+
+            # Searching everywhere after topics list starts if no glossary
             else:
 
                 if x > topicsStartLine:
@@ -2130,10 +2304,15 @@ for theme in themes:
     # If we do not have a subject-like theme
     elif isinstance(theme, list):
 
+
+        # Looping over subjects
         for subject in theme[1]:
 
+
+            # Looping over lines to find subject headers and thus calculate their page numbers
             for x in range(len(finalText)):
 
+                # Only want to search topics list, so ignoring the glossary
                 if doGlossary == True:
 
                     if x < glossaryStartLine and x > topicsStartLine:
@@ -2149,6 +2328,7 @@ for theme in themes:
                             break
                 
 
+                # Searching everywhere after topics list starts if no glossary
                 else:
 
                     if x > topicsStartLine:
@@ -2212,7 +2392,7 @@ for x in range(len(finalText)):
 
 
 
-# Adding page numbers back into the glossary
+# Finding the key lines
 if doThemesTable == True:
 
     themesStartLine = finalText.index(themesLine)
@@ -2224,10 +2404,15 @@ else:
 
 contentsStartLine = finalText.index(contentsLine)
 
+
+
+# Adding page numbers back into the contents
 for x in range(len(finalText)):
 
     line = finalText[x]
 
+
+    # Only checking lines where entries need to be placed
     if "$" in line:
 
 
@@ -2250,11 +2435,14 @@ for x in range(len(finalText)):
 
                 break
         
+
+        
+        # Getting subject name
         subjectName = line[subjectNameStart:subjectNameEnd + 1]
 
 
 
-        # Swapping out $ signs for the dots and the page numbers
+        # Swapping out $ signs for the dots and the page numbers, and then aligning everything correctly too
         for subject in pageNums:
 
             if subjectName == subject[0]:
@@ -2287,6 +2475,8 @@ for x in range(len(finalText)):
 print("--> Lines prepared!\n")
 
 
+
+# Warning the user if there is a mismatch between the glossary the subdirectories count
 if doGlossary:
 
     if totalsData[1] > int(lengthGloss):
@@ -2397,10 +2587,14 @@ docsNum = str(totalsData[3])
 pagesNum = str(totalsData[4])
 sizeNum = humanize.naturalsize(totalsData[5], binary=False, format="%.2f")
 
+
+# Getting lengths of numbers, and then the maximum
 numLineLengths = [len(themesNum), len(subsNum), len(topsNum), len(docsNum), len(pagesNum), len(sizeNum)]
 
 longestNum = max(numLineLengths)
 
+
+# Determining box & centring parameters
 boxWidth = longestNum + len("Documents: ") + 6
 
 leftWidth = int(np.ceil(boxWidth / 2))
@@ -2410,6 +2604,8 @@ rightWidth = int(np.floor(boxWidth / 2))
 extraBitAll = int(np.ceil((63 - (boxWidth + 2)) / 2))
 
 
+
+# Setting the lines depending on whether we have a themes table or not
 if doThemesTable == True:
 
     summaryBoxLines = [["Themes: ", themesNum], ["Subjects: ", subsNum], ["Topics: ", topsNum], ["Documents: ", docsNum], ["Pages: ", pagesNum], ["Size: ", sizeNum]]
@@ -2419,12 +2615,16 @@ else:
     summaryBoxLines = [["Subjects: ", subsNum], ["Topics: ", topsNum], ["Documents: ", docsNum], ["Pages: ", pagesNum], ["Size: ", sizeNum]]
 
 
+
+# Writing the box top
 pdf.set_font("Menlo", size = 14)
 
 pdf.cell(0, 4, txt=(" " * extraBitAll + "┌" + "─" * boxWidth + "┐"), ln=1)
 pdf.cell(0, 4, txt=(" " * extraBitAll + "│" + " " * boxWidth + "│"), ln=1)
 
 
+
+# Writing the main box lines
 for line in summaryBoxLines:
 
     leftBit = leftWidth - len(line[0])
@@ -2435,11 +2635,13 @@ for line in summaryBoxLines:
     pdf.cell(0, 4, txt=(" " * extraBitAll + "│" + " " * boxWidth + "│"), ln=1)
 
 
+# Writing the box bottom
 pdf.cell(0, 4, txt=(" " * extraBitAll + "└" + "─" * boxWidth + "┘"), ln=1)
 
 pdf.set_font("Menlo", size= 10)
 
 
+# Final push lines before version number
 if doThemesTable == True:
 
     for i in range(26):
@@ -2489,6 +2691,7 @@ try:
 except FileNotFoundError:
 
     pass
+
 
 os.remove(fontFileDir + f"{fontFile[:-4]}.pkl")
 
