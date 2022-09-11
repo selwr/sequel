@@ -56,6 +56,8 @@ The spaces shown in the filename above (between the end of the topic & the openi
 
 Round and/or square brackets should not appear anywhere else in the filename, other than the positions shown above.
 
+When the files are read, they will be individually checked to see if they are corrupt. If any corrupt files are found, these will be added to a plaintext file and the program terminated so that the list of files can be repaired before a full and proper report can be generated.
+
 
 ### Directory structure
 The root of the archive should contain folders in which the PDF files reside. This highest-level of folder within the archive is denoted a 'theme', and can itself contain subfolders, which are denoted 'subjects'. No further recursive folders can be analysed.
