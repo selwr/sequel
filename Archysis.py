@@ -25,7 +25,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.9"
+version = "v3.10"
 
 ext = ".pdf"
 
@@ -46,7 +46,7 @@ startTime = time.time()
 # Printing beginning verbose lines
 startLine = f"Archysis {version}"
 
-numSep = int(np.ceil((48 - len(f" {startLine} ")) / 2))
+numSep = int(np.ceil((66 - len(f" {startLine} ")) / 2))
 print(f"\n\n{runningSep * (numSep + 1)} {startLine} {runningSep * (numSep + 1)}")
 
 
@@ -596,7 +596,7 @@ for theme in themes:
 
 
         # Appending all necessary values
-        themesData.append([theme[0], "["+ str(subjects) + "]\n" + running_subjects, str(topics), str(docs), str(pages), size])
+        themesData.append([theme[0], "[ "+ str(subjects) + " ]\n" + running_subjects, str(topics), str(docs), str(pages), size])
 
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
@@ -989,7 +989,7 @@ DATA FORMATTING FOR REPORT
 '''
 
 
-print("--> Preparing lines for writing...")
+print("--> Formatting data for writing...")
 
 
 
@@ -1036,15 +1036,15 @@ if doThemesTable:
 
     # Adding in the indicators, where necessary
     for theme in themesData:
-
+        
         if "N/A" not in theme[1]:
 
             endSubNum = theme[1].index("]")
 
             if int(theme[1][1:endSubNum]) == maxThemesSubs:
 
-                themesData[themesData.index(theme)][1] = "⟨[" + str(maxThemesSubs) + "]⟩" + theme[1][endSubNum + 1:]
-
+                themesData[themesData.index(theme)][1] = "⟨ " + str(maxThemesSubs) + " ⟩" + theme[1][endSubNum + 1:]
+        
 
         if int(theme[2]) == maxThemesTops:
 
@@ -1261,7 +1261,6 @@ else:
 
 
 text.append("")
-text.append("")
 
 
 
@@ -1272,14 +1271,31 @@ for theme in themes:
     # If we have a subject-like theme
     if not isinstance(theme, list):
 
+        lineModulo = len(text) % pageLength
+
+
+        # Only want a new line if not at top of page
+        if lineModulo != 0:
+
+            text.append("")
+
         dollarsNum = 60 - (len(theme) + 1)
 
         text.append(" " * 14 + theme + " " + "$" * dollarsNum)
-        text.append("")
+
     
 
     # If we have a theme with subjects
     else:
+
+        lineModulo = len(text) % pageLength
+
+
+        # Only want a new line if not at top of page
+        if lineModulo != 0:
+
+            text.append("")
+
 
         text.append(" " * 14 + theme[0])
         
@@ -1291,13 +1307,12 @@ for theme in themes:
 
             text.append(" " * 14 + "- " + subject + " " + "$" * dollarsNum)
         
-        text.append("")
-
 
 
 # Adding the glossary's line
 if doGlossary == True:
 
+    text.append("")
     text.append("")
 
     dollarsNum = 60 - (len("Glossary") + 1)
@@ -1715,11 +1730,15 @@ for index in range(len(textWrapped)):
         threeReplaced = textWrapped[index].replace("┼", "┴").replace("├", "└").replace("┤", "┘")
 
         textTablesDone.append(threeReplaced)
-        textTablesDone.append("")
         
+
+        # Only themes table needs the extra blank line
         if index < subjectsStartLine:
 
+            textTablesDone.append("")
+
             corrections += 1
+        
 
 
     elif index % pageLength == (pageLength - 1) and "┼" in textWrapped[index - 1]:
@@ -1789,31 +1808,11 @@ for y in range(len(textTablesDone)):
 
 
 
-# Removing any potential extra lines at the top of pages that are not necessary
-textTablesReallyReallyDone = []
-
-themesStartLine = textTablesReallyDone.index(themesLine)
-topicsStartLine = textTablesReallyDone.index(topicsLine)
-
-for x in range(len(textTablesReallyDone)):
-
-    line = textTablesReallyDone[x]
-
-    if x % pageLength == 0 and line == "" and x < topicsStartLine and x > themesStartLine:
-
-        continue
-
-    else:
-
-        textTablesReallyReallyDone.append(line)
-
-
-
 # Correcting any cross-page topics/flags and moving all new sections/subjects/themes onto a new page
 finalText = []
 
 runningIndex = 0
-finalIndex = len(textTablesReallyReallyDone)
+finalIndex = len(textTablesReallyDone)
 
 
 # While loop to only terminate once all lines have been fixed
@@ -1825,7 +1824,7 @@ while runningIndex < finalIndex:
     # Determining the list that needs fixing
     if runningIndex == 0:
 
-        for line in textTablesReallyReallyDone:
+        for line in textTablesReallyDone:
 
             listToSort.append(line)
         
@@ -2472,7 +2471,7 @@ for x in range(len(finalText)):
         continue
 
 
-print("--> Lines prepared!\n")
+print("--> Data formatted!\n")
 
 
 
