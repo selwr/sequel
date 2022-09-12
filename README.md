@@ -15,7 +15,7 @@ The report will contain:
 * a topic list (with any flags & multiplicities)
 * a glossary
 
-A summary of the archive as well as the date & time of generation are given on the title page.
+A summary of the archive, as well as the date & time of generation, are given on the title page.
 
 The title of the report, and its filename, will be "{archive_name} Report", where archive_name is the name of the root of the archive.
 
@@ -23,11 +23,9 @@ The page numbers given in the contents refer to the absolute page numbers of the
 
 The highest value of a particular metric in each data column of the tables is enclosed by angle brackets to illustrate its size.
 
-Multiplicity of anything in particular (such as subjects, topics and flags) will be given in square brackets, and any single flags will be given in round brackets.
+The multiplicity of any metric (such as subjects, topics and flags) will be given in square brackets, and any single flags will be given in round brackets.
 
-Round bullets illustrate topics. Triangular bullets illustrate flags. Square bullets illustrate glossary entries.
-
-The report is automatically formatted to ensure a high level of readability.
+Round bullets indicate topics. Triangular bullets indicate flags. Square bullets indicate subject.
 
 
 
@@ -81,7 +79,7 @@ The code will generate two .pkl files during its execution, but these will be au
 ### Glossary
 A glossary can be included in the report, and will be automatically alphabetised by subject. Each entry in its plaintext file, on a new line, should be formatted as follows:
 
-> \* SubjectName - Field1, Field2, Field3, ...
+> \* SubjectName: Field1, Field2, Field3, ...
 
 The glossary file must end with a blank line to prevent any fields from being cut off.
 

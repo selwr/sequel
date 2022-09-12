@@ -25,7 +25,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.11"
+version = "v3.12"
 
 ext = ".pdf"
 
@@ -225,7 +225,7 @@ themesData = []
 topicsOverall = []
 
 subjectTopicVals = []
-subjectDocumentVals = []
+subjectFileVals = []
 subjectPageVals = []
 subjectSizeVals = []
 
@@ -238,7 +238,7 @@ for theme in themes:
 
     subjects = 0
     topics = 0
-    docs = 0
+    files = 0
     pages = 0
     size = 0
 
@@ -269,14 +269,14 @@ for theme in themes:
             topicsSubject = []
 
             subjectTopics = 0
-            subjectDocuments = 0
+            subjectFiles = 0
             subjectPages = 0
             subjectSize = 0
 
             subjects += 1
             totalsData[1] += 1
 
-            running_subjects += subject + "\n"
+            running_subjects += "▪ " + subject + "\n"
 
 
 
@@ -289,10 +289,10 @@ for theme in themes:
                     
 
 
-                    # Getting documents data
+                    # Getting files data
                     totalsData[3] += 1
-                    subjectDocuments += 1
-                    docs += 1
+                    subjectFiles += 1
+                    files += 1
 
 
 
@@ -360,11 +360,11 @@ for theme in themes:
 
             # Appending all values to necessary lists
             subjectTopicVals.append(subjectTopics)
-            subjectDocumentVals.append(subjectDocuments)
+            subjectFileVals.append(subjectFiles)
             subjectPageVals.append(subjectPages)
             subjectSizeVals.append(subjectSize)
 
-            themeData[1].append([subject,  str(subjectTopics), str(subjectDocuments), str(subjectPages), humanize.naturalsize(subjectSize, binary=False, format="%.1f")])
+            themeData[1].append([subject,  str(subjectTopics), str(subjectFiles), str(subjectPages), humanize.naturalsize(subjectSize, binary=False, format="%.1f")])
 
 
 
@@ -596,7 +596,7 @@ for theme in themes:
 
 
         # Appending all necessary values
-        themesData.append([theme[0], "["+ str(subjects) + "]\n" + running_subjects, str(topics), str(docs), str(pages), size])
+        themesData.append([theme[0], "["+ str(subjects) + "]\n\n" + running_subjects + "§", str(topics), str(files), str(pages), size])
 
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
@@ -613,11 +613,9 @@ for theme in themes:
         topicsSubject = []
 
         subjectTopics = 0
-        subjectDocuments = 0
+        subjectFiles = 0
         subjectPages = 0
         subjectSize = 0
-
-        running_subjects += theme + "\n"
 
         totalsData[1] += 1
 
@@ -640,10 +638,10 @@ for theme in themes:
 
 
 
-                # Getting documents data
+                # Getting file data
                 totalsData[3] += 1
-                subjectDocuments += 1
-                docs += 1
+                subjectFiles += 1
+                files += 1
 
 
 
@@ -710,12 +708,12 @@ for theme in themes:
 
         # Appending all values to necessary lists
         subjectTopicVals.append(subjectTopics)
-        subjectDocumentVals.append(subjectDocuments)
+        subjectFileVals.append(subjectFiles)
         subjectPageVals.append(subjectPages)
         subjectSizeVals.append(subjectSize)
 
         themeData.append(str(subjectTopics))
-        themeData.append(str(subjectDocuments))
+        themeData.append(str(subjectFiles))
         themeData.append(str(subjectPages))
         themeData.append(humanize.naturalsize(subjectSize, binary=False, format="%.1f"))
 
@@ -943,7 +941,7 @@ for theme in themes:
         # Appending all data to the lists
         themeTopics.append(topicsSubjectActual)
 
-        themesData.append([theme, "---", str(topics), str(docs), str(pages), size])
+        themesData.append([theme, "---", str(topics), str(files), str(pages), size])
 
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
@@ -953,7 +951,7 @@ for theme in themes:
 # Terminating if not PDFs found
 if totalsData[3] == 0:
 
-    print("\n--> No PDF documents found\n")
+    print("\n--> No PDF files found\n")
 
     exit()
 
@@ -998,7 +996,7 @@ if doThemesTable:
 
     themeSubVals = []
     themeTopVals = []
-    themeDocVals = []
+    themeFileVals = []
     themePageVals = []
     themeSizeVals = []
 
@@ -1017,7 +1015,7 @@ if doThemesTable:
 
         themeTopVals.append(int(theme[2]))
 
-        themeDocVals.append(int(theme[3]))
+        themeFileVals.append(int(theme[3]))
 
         themePageVals.append(int(theme[4]))
 
@@ -1028,7 +1026,7 @@ if doThemesTable:
     # Finding the maxima
     maxThemesSubs = max(themeSubVals)
     maxThemesTops = max(themeTopVals)
-    maxThemesDocs = max(themeDocVals)
+    maxThemesFiles = max(themeFileVals)
     maxThemesPages = max(themePageVals)
     maxThemesSize = max(themeSizeVals)
 
@@ -1051,9 +1049,9 @@ if doThemesTable:
             themesData[themesData.index(theme)][2] = "> " + str(maxThemesTops) + " <"
 
 
-        if int(theme[3]) == maxThemesDocs:
+        if int(theme[3]) == maxThemesFiles:
 
-            themesData[themesData.index(theme)][3] = "> " + str(maxThemesDocs) + " <"
+            themesData[themesData.index(theme)][3] = "> " + str(maxThemesFiles) + " <"
 
         
         if int(theme[4]) == maxThemesPages:
@@ -1072,8 +1070,9 @@ if doThemesTable:
 
 
     # Forming the table
-    theme_headers = ["Theme", "Subjects", " Topics ", "Documents", "Pages", "Size"]
+    theme_headers = ["Theme", "Subjects", "Topics", "Files", "Pages", "Size"]
     theme_table = tabulate(themesData, theme_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center", "center"))
+    theme_table = theme_table.replace("§", " ")
     theme_table = theme_table.split("\n")
 
 
@@ -1084,13 +1083,13 @@ if doThemesTable:
         lineLength = len(line)
         extraBit = (pageWidth - lineLength) / 2
 
-        theme_table[theme_table.index(line)] = (" " * int(np.floor(extraBit))) + theme_table[theme_table.index(line)]
+        theme_table[theme_table.index(line)] = (" " * int(np.ceil(extraBit))) + theme_table[theme_table.index(line)]
 
 
 
 # Getting the highest values within subhect data and formatting them in their respective lists
 maxTopics = max(subjectTopicVals)
-maxDocuments = max(subjectDocumentVals)
+maxFiles = max(subjectFileVals)
 maxPages = max(subjectPageVals)
 maxSize = max(subjectSizeVals)
 
@@ -1111,9 +1110,9 @@ for theme in overallData:
                 overallData[overallData.index(theme)][1][theme[1].index(subject)][1] = "> " + str(maxTopics) + " <"
 
 
-            if int(subject[2]) == maxDocuments:
+            if int(subject[2]) == maxFiles:
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][2] = "> " + str(maxDocuments) + " <"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][2] = "> " + str(maxFiles) + " <"
 
 
             if int(subject[3]) == maxPages:
@@ -1135,9 +1134,9 @@ for theme in overallData:
             overallData[overallData.index(theme)][1] = "> " + str(maxTopics) + " <"
 
 
-        if int(theme[2]) == maxDocuments:
+        if int(theme[2]) == maxFiles:
 
-            overallData[overallData.index(theme)][2] = "> " + str(maxDocuments) + " <"
+            overallData[overallData.index(theme)][2] = "> " + str(maxFiles) + " <"
 
 
         if int(theme[3]) == maxPages:
@@ -1180,7 +1179,7 @@ subjectRows = sorted(subjectRows, key=subject_name)
 
 
 # Formatting and tabulating the subject data
-subject_headers = ["Subject", "  Topics  ", " Documents ", "  Pages  ", "   Size   "]
+subject_headers = ["Subject", "  Topics  ", "  Files  ", "  Pages  ", "   Size   "]
 subjects_table = tabulate(subjectRows, subject_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center"))
 subjects_table = subjects_table.split("\n")
 
@@ -1192,7 +1191,7 @@ for line in subjects_table:
     lineLength = len(line)
     extraBit = (pageWidth - lineLength) / 2
 
-    subjects_table[subjects_table.index(line)] = (" " * int(np.floor(extraBit))) + subjects_table[subjects_table.index(line)]
+    subjects_table[subjects_table.index(line)] = (" " * int(np.ceil(extraBit))) + subjects_table[subjects_table.index(line)]
 
 
 
@@ -1262,7 +1261,7 @@ if longestDirNameLength > 60 and longestDirNameLength < pageWidth:
 
     contentsWidth = longestDirNameLength
 
-    gapWidth = int(np.floor((pageWidth - contentsWidth) / 2))
+    gapWidth = int(np.ceil((pageWidth - contentsWidth) / 2))
 
 
 elif longestDirNameLength > pageWidth:
@@ -1276,7 +1275,7 @@ else:
 
     contentsWidth = 60
 
-    gapWidth = int(np.floor((pageWidth - contentsWidth) / 2))
+    gapWidth = int(np.ceil((pageWidth - contentsWidth) / 2))
 
 
 
@@ -1365,7 +1364,7 @@ for theme in themes:
 
             dollarsNum = contentsWidth - (len(subject) + 1 + 2)
 
-            text.append(" " * gapWidth + "- " + subject + " " + "$" * dollarsNum)
+            text.append(" " * gapWidth + "▪ " + subject + " " + "$" * dollarsNum)
         
 
 
@@ -1490,7 +1489,7 @@ for theme in topicsOverall:
         # Giving a statement if the theme is empty
         if theme[1] == []:
 
-            text.append("No PDF documents found in this folder")
+            text.append("No PDF files found in this folder")
 
 
         # Otherwise, writing the topics list
@@ -1580,7 +1579,7 @@ for theme in topicsOverall:
             # Writing a statement if subject is empty
             if subject[1] == []:
 
-                text.append("No PDF documents found in this subfolder")
+                text.append("No PDF files found in this subfolder")
             
 
 
@@ -1606,7 +1605,7 @@ for theme in topicsOverall:
 
 
 
-# Appending glossary at the end of the document
+# Appending glossary at the end of the report
 if doGlossary == True:
 
 
@@ -1637,7 +1636,7 @@ if doGlossary == True:
         
         if "*" in line:
 
-            endSubIndex = line.index("-") - 1
+            endSubIndex = line.index(":")
 
             subName = line[2:endSubIndex]
 
@@ -1680,7 +1679,7 @@ PDF LINE FORMATTING
 # Replacing the colons
 for line in text:
 
-    if ":" in line:
+    if ":" in line and "▪" not in line:
 
         text[text.index(line)] = text[text.index(line)].replace(":", "/")
 
@@ -1742,25 +1741,15 @@ for line in text:
         # If we're in the glossary
         else:
 
+            
+            # Finding how wide the subject of the line is, and then wrapping the line
+            endSubject = line.index(":") + 2
 
-            # Finding how wide the subject of the line is
-            endSubject = line.index("-") + 2
-
-            wrappedText = textwrap.wrap(line, width = (pageWidth - endSubject))
+            wrappedText = textwrap.wrap(line, width = pageWidth, subsequent_indent=(" " * endSubject))
 
             for elem in wrappedText:
 
-
-                # If no indent is needed
-                if elem == wrappedText[0]:
-
-                        textWrapped.append(elem)
-
-
-                # If indent is needed
-                else:
-
-                    textWrapped.append(" " * (endSubject) + elem)
+                textWrapped.append(elem)
 
 
 
@@ -1940,7 +1929,7 @@ while runningIndex < finalIndex:
 
 
             # Fixing the cross-page formatting of the glossary
-            if "▪" in line:
+            if "▪" in line and x > topicsStartLine:
 
                 currentBulletIndex = listToSort.index(line)
 
@@ -2139,7 +2128,7 @@ while runningIndex < finalIndex:
 
 
                 # Moving subjects onto new pages
-                elif x > topicsStartLine and x % pageLength != 0 and x != (len(listToSort) - 1) and singleSep in listToSort[x+1] and (doubleSep not in listToSort[x-2]) and (("•" in listToSort[x+3]) or ("No PDF documents found in this subfolder" in listToSort[x+3])):
+                elif x > topicsStartLine and x % pageLength != 0 and x != (len(listToSort) - 1) and singleSep in listToSort[x+1] and (doubleSep not in listToSort[x-2]) and (("•" in listToSort[x+3]) or ("No PDF files found in this subfolder" in listToSort[x+3])):
 
                     currentSubjectIndex = x
 
@@ -2496,7 +2485,7 @@ for x in range(len(finalText)):
         # Finding position of subject name
         for char in line:
 
-            if char != " " and char != "-":
+            if char != " " and char != "▪":
 
                 subjectNameStart = line.index(char)
 
@@ -2534,7 +2523,8 @@ for x in range(len(finalText)):
 
                     numDots = (pageWidth - gapWidth) - 2 - gapWidth - 2 - len(subjectName) - len(str(subject[1]))
 
-                    finalText[x] = " " * gapWidth + "- " + subjectName + " " + "." * numDots + " " + str(subject[1])
+                    finalText[x] = " " * gapWidth + "▪ " + subjectName + \
+                        " " + "." * numDots + " " + str(subject[1])
 
 
 
@@ -2659,19 +2649,19 @@ for i in range(3):
 themesNum = str(totalsData[0])
 subsNum = str(totalsData[1])
 topsNum = str(totalsData[2])
-docsNum = str(totalsData[3])
+filesNum = str(totalsData[3])
 pagesNum = str(totalsData[4])
 sizeNum = humanize.naturalsize(totalsData[5], binary=False, format="%.2f")
 
 
 # Getting lengths of numbers, and then the maximum
-numLineLengths = [len(themesNum), len(subsNum), len(topsNum), len(docsNum), len(pagesNum), len(sizeNum)]
+numLineLengths = [len(themesNum), len(subsNum), len(topsNum), len(filesNum), len(pagesNum), len(sizeNum)]
 
 longestNum = max(numLineLengths)
 
 
 # Determining box & centring parameters
-boxWidth = longestNum + len("Documents: ") + 6
+boxWidth = longestNum + len("Subjects: ") + 7
 
 leftWidth = int(np.ceil(boxWidth / 2))
 
@@ -2684,11 +2674,11 @@ extraBitAll = int(np.ceil((63 - (boxWidth + 2)) / 2))
 # Setting the lines depending on whether we have a themes table or not
 if doThemesTable == True:
 
-    summaryBoxLines = [["Themes: ", themesNum], ["Subjects: ", subsNum], ["Topics: ", topsNum], ["Documents: ", docsNum], ["Pages: ", pagesNum], ["Size: ", sizeNum]]
+    summaryBoxLines = [["Themes: ", themesNum], ["Subjects: ", subsNum], ["Topics: ", topsNum], ["Files: ", filesNum], ["Pages: ", pagesNum], ["Size: ", sizeNum]]
 
 else:
 
-    summaryBoxLines = [["Subjects: ", subsNum], ["Topics: ", topsNum], ["Documents: ", docsNum], ["Pages: ", pagesNum], ["Size: ", sizeNum]]
+    summaryBoxLines = [["Subjects: ", subsNum], ["Topics: ", topsNum], ["Files: ", filesNum], ["Pages: ", pagesNum], ["Size: ", sizeNum]]
 
 
 
@@ -2737,7 +2727,7 @@ else:
 # Writing version number
 pdf.set_font("Menlo", size = 18)
 versionLength = len(version)
-versionLine = int(np.ceil((50 - versionLength)/2)) * " " + version
+versionLine = int(np.ceil((49 - versionLength)/2)) * " " + version
 pdf.cell(0, 4, txt=versionLine, ln=1)
 
 pdf.set_font("Menlo", size = 10)
