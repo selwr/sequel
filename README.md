@@ -21,7 +21,7 @@ The title of the report, and its filename, will be "{archive_name} Report", wher
 
 The page numbers given in the contents refer to the absolute page numbers of the report document.
 
-The highest value of a particular metric in each data column of the tables is enclosed by tall angle brackets to illustrate its size.
+The highest value of a particular metric in each data column of the tables is enclosed by angle brackets to illustrate its size.
 
 Multiplicity of anything in particular (such as subjects, topics and flags) will be given in square brackets, and any single flags will be given in round brackets.
 

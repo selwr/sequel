@@ -25,7 +25,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.10"
+version = "v3.11"
 
 ext = ".pdf"
 
@@ -312,7 +312,7 @@ for theme in themes:
 
                         except PyPDF2.errors.PdfReadError:
 
-                            corruptFiles.append(f"{subject}: {filename}")
+                            corruptFiles.append(f"{theme[0]} - {subject}: {filename}")
 
                             continue
 
@@ -325,13 +325,13 @@ for theme in themes:
 
                         except PyPDF2.errors.PdfReadError:
 
-                            corruptFiles.append(f"{subject}: {filename}")
+                            corruptFiles.append(f"{theme[0]} - {subject}: {filename}")
 
                             continue
 
                         except ValueError:
 
-                            corruptFiles.append(f"{subject}: {filename}")
+                            corruptFiles.append(f"{theme[0]} - {subject}: {filename}")
 
                             continue
 
@@ -596,7 +596,7 @@ for theme in themes:
 
 
         # Appending all necessary values
-        themesData.append([theme[0], "[ "+ str(subjects) + " ]\n" + running_subjects, str(topics), str(docs), str(pages), size])
+        themesData.append([theme[0], "["+ str(subjects) + "]\n" + running_subjects, str(topics), str(docs), str(pages), size])
 
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
@@ -943,7 +943,7 @@ for theme in themes:
         # Appending all data to the lists
         themeTopics.append(topicsSubjectActual)
 
-        themesData.append([theme, "N/A", str(topics), str(docs), str(pages), size])
+        themesData.append([theme, "---", str(topics), str(docs), str(pages), size])
 
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
@@ -1009,7 +1009,7 @@ if doThemesTable:
 
 
         # Only doing this for non-subject-like themes
-        if "N/A" not in theme[1]:
+        if "---" not in theme[1]:
             
             endSubNum = theme[1].index("]")
 
@@ -1037,33 +1037,33 @@ if doThemesTable:
     # Adding in the indicators, where necessary
     for theme in themesData:
         
-        if "N/A" not in theme[1]:
+        if "---" not in theme[1]:
 
             endSubNum = theme[1].index("]")
 
             if int(theme[1][1:endSubNum]) == maxThemesSubs:
 
-                themesData[themesData.index(theme)][1] = "⟨ " + str(maxThemesSubs) + " ⟩" + theme[1][endSubNum + 1:]
+                themesData[themesData.index(theme)][1] = "> [" + str(maxThemesSubs) + "] <" + theme[1][endSubNum + 1:]
         
 
         if int(theme[2]) == maxThemesTops:
 
-            themesData[themesData.index(theme)][2] = "⟨" + str(maxThemesTops) + "⟩"
+            themesData[themesData.index(theme)][2] = "> " + str(maxThemesTops) + " <"
 
 
         if int(theme[3]) == maxThemesDocs:
 
-            themesData[themesData.index(theme)][3] = "⟨" + str(maxThemesDocs) + "⟩"
+            themesData[themesData.index(theme)][3] = "> " + str(maxThemesDocs) + " <"
 
         
         if int(theme[4]) == maxThemesPages:
 
-            themesData[themesData.index(theme)][4] = "⟨" + str(maxThemesPages) + "⟩"
+            themesData[themesData.index(theme)][4] = "> " + str(maxThemesPages) + " <"
 
         
         if int(theme[5]) == maxThemesSize:
 
-            themesData[themesData.index(theme)][5] = "⟨" + humanize.naturalsize(maxThemesSize, binary=False, format="%.1f") + "⟩"
+            themesData[themesData.index(theme)][5] = "> " + humanize.naturalsize(maxThemesSize, binary=False, format="%.1f") + " <"
         
         else:
 
@@ -1072,7 +1072,7 @@ if doThemesTable:
 
 
     # Forming the table
-    theme_headers = ["Theme", " Subjects ", " Topics ", " Documents ", " Pages ", " Size "]
+    theme_headers = ["Theme", "Subjects", " Topics ", "Documents", "Pages", "Size"]
     theme_table = tabulate(themesData, theme_headers, tablefmt="fancy_grid", colalign=("center", "center", "center", "center", "center", "center"))
     theme_table = theme_table.split("\n")
 
@@ -1108,22 +1108,22 @@ for theme in overallData:
 
             if int(subject[1]) == maxTopics:
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][1] = "⟨" + str(maxTopics) + "⟩"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][1] = "> " + str(maxTopics) + " <"
 
 
             if int(subject[2]) == maxDocuments:
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][2] = "⟨" + str(maxDocuments) + "⟩"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][2] = "> " + str(maxDocuments) + " <"
 
 
             if int(subject[3]) == maxPages:
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][3] = "⟨" + str(maxPages) + "⟩"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][3] = "> " + str(maxPages) + " <"
 
 
             if subject[4] == humanize.naturalsize(maxSize, binary=False, format="%.1f"):
 
-                overallData[overallData.index(theme)][1][theme[1].index(subject)][4] = "⟨" + humanize.naturalsize(maxSize, binary=False, format="%.1f") + "⟩"
+                overallData[overallData.index(theme)][1][theme[1].index(subject)][4] = "> " + humanize.naturalsize(maxSize, binary=False, format="%.1f") + " <"
     
 
 
@@ -1132,22 +1132,22 @@ for theme in overallData:
 
         if int(theme[1]) == maxTopics:
 
-            overallData[overallData.index(theme)][1] = "⟨" + str(maxTopics) + "⟩"
+            overallData[overallData.index(theme)][1] = "> " + str(maxTopics) + " <"
 
 
         if int(theme[2]) == maxDocuments:
 
-            overallData[overallData.index(theme)][2] = "⟨" + str(maxDocuments) + "⟩"
+            overallData[overallData.index(theme)][2] = "> " + str(maxDocuments) + " <"
 
 
         if int(theme[3]) == maxPages:
 
-            overallData[overallData.index(theme)][3] = "⟨" + str(maxPages) + "⟩"
+            overallData[overallData.index(theme)][3] = "> " + str(maxPages) + " <"
 
 
         if theme[4] == humanize.naturalsize(maxSize, binary=False, format="%.1f"):
 
-            overallData[overallData.index(theme)][4] = "⟨" + humanize.naturalsize(maxSize, binary=False, format="%.1f") + "⟩"
+            overallData[overallData.index(theme)][4] = "> " + humanize.naturalsize(maxSize, binary=False, format="%.1f") + " <"
 
 
 
@@ -1232,6 +1232,54 @@ for n in range(blankLinesNum):
 
 
 
+# Getting lengths of theme names
+themeLengths = []
+
+for theme in themesData:
+
+    themeLengths.append(len(theme[0]))
+
+longestThemeNameLength = max(themeLengths)
+
+
+
+# Getting lengths of subject names
+subjectLengths = []
+
+for subject in subjectRows:
+
+    subjectLengths.append(len(subject[0]))
+
+longestSubjectNameLength = max(subjectLengths)
+
+
+longestDirNameLength = max([longestSubjectNameLength, longestThemeNameLength])
+
+
+
+# Sorting width of contents
+if longestDirNameLength > 60 and longestDirNameLength < pageWidth:
+
+    contentsWidth = longestDirNameLength
+
+    gapWidth = int(np.floor((pageWidth - contentsWidth) / 2))
+
+
+elif longestDirNameLength > pageWidth:
+
+    contentsWidth = pageWidth
+
+    gapWidth = 0
+
+
+else:
+
+    contentsWidth = 60
+
+    gapWidth = int(np.floor((pageWidth - contentsWidth) / 2))
+
+
+
 # Writing the contents line
 contentsLine = " " * 28 + "├" + singleSep * 10 + "  Contents  " + singleSep * 10 + "┤"
 text.append(contentsLine)
@@ -1244,20 +1292,20 @@ text.append("")
 # Writing the tables lines
 if doThemesTable == True:
 
-    dollarsNum = 60 - (len("Themes table") + 1)
+    dollarsNum = contentsWidth - (len("Themes table") + 1)
 
-    text.append(" " * 14 + "Themes table" + " " + "$" * dollarsNum)
+    text.append(" " * gapWidth + "Themes table" + " " + "$" * dollarsNum)
 
 
-    dollarsNum = 60 - (len("Subjects table") + 1)
+    dollarsNum = contentsWidth - (len("Subjects table") + 1)
 
-    text.append(" " * 14 + "Subjects table" + " " + "$" * dollarsNum)
+    text.append(" " * gapWidth + "Subjects table" + " " + "$" * dollarsNum)
 
 else:
 
-    dollarsNum = 60 - (len("Subjects table") + 1)
+    dollarsNum = contentsWidth - (len("Subjects table") + 1)
 
-    text.append(" " * 14 + "Subjects table" + " " + "$" * dollarsNum)
+    text.append(" " * gapWidth + "Subjects table" + " " + "$" * dollarsNum)
 
 
 text.append("")
@@ -1279,9 +1327,9 @@ for theme in themes:
 
             text.append("")
 
-        dollarsNum = 60 - (len(theme) + 1)
+        dollarsNum = contentsWidth - (len(theme) + 1)
 
-        text.append(" " * 14 + theme + " " + "$" * dollarsNum)
+        text.append(" " * gapWidth + theme + " " + "$" * dollarsNum)
 
     
 
@@ -1297,26 +1345,50 @@ for theme in themes:
             text.append("")
 
 
-        text.append(" " * 14 + theme[0])
+
+        # Don't want to start new theme at bottom of page
+        lineModulo = len(text) % pageLength
+
+        if lineModulo != (pageLength - 1):
+
+            text.append(" " * gapWidth + theme[0])
+
+        elif lineModulo == (pageLength - 1):
+
+            text.append("")
+            text.append(" " * gapWidth + theme[0])
         
+
 
         # Running through all subjects
         for subject in theme[1]:
 
-            dollarsNum = 60 - (len(subject) + 1 + 2)
+            dollarsNum = contentsWidth - (len(subject) + 1 + 2)
 
-            text.append(" " * 14 + "- " + subject + " " + "$" * dollarsNum)
+            text.append(" " * gapWidth + "- " + subject + " " + "$" * dollarsNum)
         
 
 
 # Adding the glossary's line
 if doGlossary == True:
 
-    text.append("")
-    text.append("")
+    lineModulo = len(text) % pageLength
 
-    dollarsNum = 60 - (len("Glossary") + 1)
-    text.append(" " * 14 + "Glossary " + "$" * dollarsNum)
+    # Only want a new line if not at top of page
+    if lineModulo != 0:
+
+        text.append("")
+
+
+    lineModulo = len(text) % pageLength
+
+    # Only want a new line if not at top of page
+    if lineModulo != 0:
+
+        text.append("")
+
+    dollarsNum = contentsWidth - (len("Glossary") + 1)
+    text.append(" " * gapWidth + "Glossary " + "$" * dollarsNum)
 
 
 
@@ -1361,6 +1433,11 @@ if doThemesTable == True:
     for x in range(push):
 
         text.append("")
+
+
+else:
+
+    themesLine = None
 
 
 
@@ -1918,7 +1995,7 @@ while runningIndex < finalIndex:
 
 
                     # Forcing a lack of push
-                    if entryWidth == 1 and currentBulletModulo == 68 and listToSort[x+1] == "":
+                    if entryWidth == 1 and currentBulletModulo == (pageLength - 1) and listToSort[x+1] == "":
 
                         finalText.append(line)
 
@@ -2448,16 +2525,16 @@ for x in range(len(finalText)):
 
                 if subjectName in themes or subjectName == "Glossary" or subjectName == "Themes table" or subjectName == "Subjects table":
 
-                    numDots = 74 - 2 - 14 - len(subjectName) - len(str(subject[1]))
+                    numDots = (pageWidth - gapWidth) - 2 - gapWidth - len(subjectName) - len(str(subject[1]))
 
-                    finalText[x] = " " * 14 + subjectName + " " + "." * numDots + " " + str(subject[1])
+                    finalText[x] = " " * gapWidth + subjectName + " " + "." * numDots + " " + str(subject[1])
 
 
                 else:
 
-                    numDots = 74 - 2 - 14 - 2 - len(subjectName) - len(str(subject[1]))
+                    numDots = (pageWidth - gapWidth) - 2 - gapWidth - 2 - len(subjectName) - len(str(subject[1]))
 
-                    finalText[x] = " " * 14 + "- " + subjectName + " " + "." * numDots + " " + str(subject[1])
+                    finalText[x] = " " * gapWidth + "- " + subjectName + " " + "." * numDots + " " + str(subject[1])
 
 
 
@@ -2634,10 +2711,12 @@ for line in summaryBoxLines:
     pdf.cell(0, 4, txt=(" " * extraBitAll + "│" + " " * boxWidth + "│"), ln=1)
 
 
+
 # Writing the box bottom
 pdf.cell(0, 4, txt=(" " * extraBitAll + "└" + "─" * boxWidth + "┘"), ln=1)
 
 pdf.set_font("Menlo", size= 10)
+
 
 
 # Final push lines before version number
