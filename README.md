@@ -27,6 +27,8 @@ The multiplicity of any metric (such as subjects, topics and flags) will be give
 
 Round bullets indicate topics. Triangular bullets indicate flags. Square bullets indicate subjects. Rhombus bullets indicate subject-like themes.
 
+Themes are indicated by '╾ {theme} ╼'. However, subject-like themes are indicated by '━ {theme} ━' (both in the subjects table, and the topics list).
+
 
 
 ## Pre-requisites

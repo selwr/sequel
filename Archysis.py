@@ -25,7 +25,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.13"
+version = "v3.13.1"
 
 ext = ".pdf"
 
@@ -1159,7 +1159,11 @@ for theme in overallData:
     # If we have a subject-like theme
     if not isinstance(theme[1], list):
 
-        subjectRows.append(theme)
+        tempRow = theme
+
+        tempRow[0] = f"━ {tempRow[0]} ━"
+
+        subjectRows.append(tempRow)
 
 
     # If we have a theme with subjects
@@ -1172,7 +1176,14 @@ for theme in overallData:
 
 def subject_name(element):
 
-    return element[0]
+    if "━" in element[0]:
+
+        return element[0][2:]
+    
+
+    else:
+
+        return element[0]
 
 
 subjectRows = sorted(subjectRows, key=subject_name)
@@ -1327,9 +1338,9 @@ for theme in themes:
 
             text.append("")
 
-        dollarsNum = contentsWidth - (len("╸ " + theme + " ╺ "))
+        dollarsNum = contentsWidth - (len(theme) + 1)
 
-        text.append(" " * gapWidth + f"╸ " + theme + " ╺ " + "$" * dollarsNum)
+        text.append(" " * gapWidth + theme + " " + "$" * dollarsNum)
 
     
 
@@ -1476,10 +1487,10 @@ for theme in topicsOverall:
         text.append(doubleSep * pageWidth)
         text.append("")
 
-        subjectLength = len("╸ " + theme[0] + " ╺")
+        subjectLength = len("━ " + theme[0] + " ━")
         extraBit = (pageWidth - subjectLength) / 2
 
-        text.append(" " * int(np.ceil(extraBit)) + f"╸ {theme[0]} ╺")
+        text.append(" " * int(np.ceil(extraBit)) + f"━ {theme[0]} ━")
 
         text.append("")
         text.append(doubleSep * pageWidth)
@@ -2346,7 +2357,7 @@ for theme in themes:
 
                     line = finalText[x]
 
-                    if f" ╸ {theme} ╺" in line:
+                    if f" ━ {theme} ━" in line:
                         
                         pageNum = (x // pageLength) + 2
 
@@ -2363,7 +2374,7 @@ for theme in themes:
 
                     line = finalText[x]
 
-                    if f" ╸ {theme} ╺" in line:
+                    if f" ━ {theme} ━" in line:
 
                         pageNum = (x // pageLength) + 2
 
@@ -2391,7 +2402,7 @@ for theme in themes:
 
                         line = finalText[x]
                         
-                        if f" {subject} " in line and singleSep in finalText[x+1]:
+                        if f"  {subject} " in line and singleSep in finalText[x+1]:
 
                             pageNum = (x // pageLength) + 2
 
@@ -2407,7 +2418,7 @@ for theme in themes:
 
                         line = finalText[x]
 
-                        if f" {subject} " in line and singleSep in finalText[x+1]:
+                        if f"  {subject} " in line and singleSep in finalText[x+1]:
 
                             pageNum = (x // pageLength) + 2
 
@@ -2492,7 +2503,7 @@ for x in range(len(finalText)):
         # Finding position of subject name
         for char in line:
 
-            if char != " " and char != "▪" and char != "╸":
+            if char != " " and char != "▪" and char != "━":
 
                 subjectNameStart = line.index(char)
 
@@ -2501,7 +2512,12 @@ for x in range(len(finalText)):
 
         for char in line:
 
-            if char == "$" or char == "╺":
+            if char == "━":
+
+                continue
+
+
+            if char == "$":
 
                 subjectNameEnd = line.index(char) - 2
 
