@@ -25,7 +25,7 @@ The highest value of a particular metric in each data column of the tables is en
 
 The multiplicity of any metric (such as subjects, topics and flags) will be given in square brackets, and any single flags will be given in round brackets.
 
-Round bullets indicate topics. Triangular bullets indicate flags. Square bullets indicate subject.
+Round bullets indicate topics. Triangular bullets indicate flags. Square bullets indicate subjects. Rhombus bullets indicate subject-like themes.
 
 
 

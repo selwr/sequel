@@ -25,13 +25,12 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.12"
+version = "v3.13"
 
 ext = ".pdf"
 
 singleSep = "─"
 doubleSep = "═"
-runningSep = "~"
 
 pageWidth = 88
 pageLength = 69
@@ -47,7 +46,7 @@ startTime = time.time()
 startLine = f"Archysis {version}"
 
 numSep = int(np.ceil((66 - len(f" {startLine} ")) / 2))
-print(f"\n\n{runningSep * (numSep + 1)} {startLine} {runningSep * (numSep + 1)}")
+print(f"\n\n{singleSep * (numSep + 1)} {startLine} {singleSep * (numSep + 1)}")
 
 
 
@@ -58,7 +57,7 @@ archive_name = in_dir.split(os.sep)[-1]
 
 directory_contents = os.listdir(in_dir)
 
-print(f"\n--> Report for '{archive_name}' will be generated!\n")
+print(f"\n──▶ {archive_name} Report will be generated!\n")
 
 
 
@@ -66,7 +65,7 @@ print(f"\n--> Report for '{archive_name}' will be generated!\n")
 fontFile = "archysis_font.ttf"
 fontFileDir = None
 
-print("--> Searching for font file...")
+print("──▶ Searching for font file...")
 
 for root, dirs, files in os.walk(r"/Users"):
 
@@ -88,12 +87,12 @@ for root, dirs, files in os.walk(r"/Users"):
 # Terminating if no font file can be found
 if fontFileDir == None:
 
-    print("--> No font file found!\n")
+    print("──▶ No font file found!\n")
     exit()
 
 else:
 
-    print("--> Font file found!\n")
+    print("──▶ Font file found!\n")
 
 
 
@@ -101,7 +100,7 @@ else:
 glossDir = None
 glossName = f"{archive_name.lower()}_glossary.txt"
 
-print("--> Searching for glossary file...")
+print("──▶ Searching for glossary file...")
 
 for root, dirs, files in os.walk(r"/Users"):
 
@@ -123,12 +122,12 @@ for root, dirs, files in os.walk(r"/Users"):
 # Determining whether a glossary can/will be written
 if glossDir == None:
 
-    print("--> No glossary file found!\n")
+    print("──▶ No glossary file found!\n")
     doGlossary = False
 
 else:
 
-    print("--> Glossary file found!\n")
+    print("──▶ Glossary file found!\n")
 
 
 
@@ -167,7 +166,7 @@ for folder in directory_contents:
 # Terminating if no folders are found
 if themes == []:
 
-    print("\n--> No folders found to analyse!\n")
+    print("\n──▶ No folders found to analyse!\n")
 
     exit()
 
@@ -255,11 +254,11 @@ for theme in themes:
 
         if themes.index(theme) == 0:
 
-            print(f"--> Doing {theme[0]}...")
+            print(f"──▶ Reading {theme[0]} folder...")
 
         else:
 
-            print(f"\n--> Doing {theme[0]}...")
+            print(f"\n──▶ Reading {theme[0]} folder...")
 
 
 
@@ -312,7 +311,7 @@ for theme in themes:
 
                         except PyPDF2.errors.PdfReadError:
 
-                            corruptFiles.append(f"{theme[0]} - {subject}: {filename}")
+                            corruptFiles.append(f"{theme[0]} | {subject}: {filename}")
 
                             continue
 
@@ -325,13 +324,13 @@ for theme in themes:
 
                         except PyPDF2.errors.PdfReadError:
 
-                            corruptFiles.append(f"{theme[0]} - {subject}: {filename}")
+                            corruptFiles.append(f"{theme[0]} | {subject}: {filename}")
 
                             continue
 
                         except ValueError:
 
-                            corruptFiles.append(f"{theme[0]} - {subject}: {filename}")
+                            corruptFiles.append(f"{theme[0]} | {subject}: {filename}")
 
                             continue
 
@@ -591,7 +590,7 @@ for theme in themes:
 
             themeTopics[1].append([subject, topicsSubjectActual])
 
-            print(f"    ✓ {subject} done!")
+            print(f"    ▪ {subject} ✓")
         
 
 
@@ -621,11 +620,11 @@ for theme in themes:
 
         if themes.index(theme) == 0:
 
-            print(f"--> Doing {theme}...")
+            print(f"──▶ Reading {theme} folder...")
 
         else:
 
-            print(f"\n--> Doing {theme}...")
+            print(f"\n──▶ Reading {theme} folder...")
 
 
 
@@ -941,17 +940,19 @@ for theme in themes:
         # Appending all data to the lists
         themeTopics.append(topicsSubjectActual)
 
-        themesData.append([theme, "---", str(topics), str(files), str(pages), size])
+        themesData.append([theme, 3 * singleSep, str(topics), str(files), str(pages), size])
 
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
+
+        print(f"    ◆ {theme} ✓")
 
 
 
 # Terminating if not PDFs found
 if totalsData[3] == 0:
 
-    print("\n--> No PDF files found\n")
+    print("\n──▶ No PDF files found\n")
 
     exit()
 
@@ -969,15 +970,15 @@ if corruptFiles != []:
             f.write(f"* {filename}\n")
 
 
-    print("\n--> File check & read complete!\n")
-    print("\n--> Fix files listed in 'Corruptions.txt'\n")
+    print("\n──▶ File check & read complete!\n")
+    print("\n──▶ Fix files listed in 'Corruptions.txt'\n")
 
     exit()
 
 else:
 
-    print("\n--> File check & read complete!")
-    print("--> All files OK!\n")
+    print("\n──▶ File check & read complete!")
+    print("──▶ All files OK!\n")
 
 
 
@@ -987,7 +988,7 @@ DATA FORMATTING FOR REPORT
 '''
 
 
-print("--> Formatting data for writing...")
+print("──▶ Formatting data for writing...")
 
 
 
@@ -1007,7 +1008,7 @@ if doThemesTable:
 
 
         # Only doing this for non-subject-like themes
-        if "---" not in theme[1]:
+        if (3 * singleSep) not in theme[1]:
             
             endSubNum = theme[1].index("]")
 
@@ -1035,7 +1036,7 @@ if doThemesTable:
     # Adding in the indicators, where necessary
     for theme in themesData:
         
-        if "---" not in theme[1]:
+        if (3 * singleSep) not in theme[1]:
 
             endSubNum = theme[1].index("]")
 
@@ -1280,7 +1281,7 @@ else:
 
 
 # Writing the contents line
-contentsLine = " " * 28 + "├" + singleSep * 10 + "  Contents  " + singleSep * 10 + "┤"
+contentsLine = " " * 28 + "╉" + singleSep * 10 + "  Contents  " + singleSep * 10 + "╊"
 text.append(contentsLine)
 
 text.append("")
@@ -1326,9 +1327,9 @@ for theme in themes:
 
             text.append("")
 
-        dollarsNum = contentsWidth - (len(theme) + 1)
+        dollarsNum = contentsWidth - (len("╸ " + theme + " ╺ "))
 
-        text.append(" " * gapWidth + theme + " " + "$" * dollarsNum)
+        text.append(" " * gapWidth + f"╸ " + theme + " ╺ " + "$" * dollarsNum)
 
     
 
@@ -1350,12 +1351,12 @@ for theme in themes:
 
         if lineModulo != (pageLength - 1):
 
-            text.append(" " * gapWidth + theme[0])
+            text.append(" " * gapWidth + "╾ " + theme[0] + " ╼")
 
         elif lineModulo == (pageLength - 1):
 
             text.append("")
-            text.append(" " * gapWidth + theme[0])
+            text.append(" " * gapWidth + "╾ " + theme[0] + " ╼")
         
 
 
@@ -1406,7 +1407,7 @@ for x in range(push):
 # Themes table
 if doThemesTable == True:
 
-    themesLine = " " * 9 + "┌" + singleSep * 30 + "  Themes  " + singleSep * 30 + "┐"
+    themesLine = " " * 9 + "┠" + singleSep * 30 + "  Themes  " + singleSep * 30 + "┨"
     text.append(themesLine)
 
     text.append("")
@@ -1441,7 +1442,7 @@ else:
 
 
 # Subjects table
-subjectsLine = " " * 14 + "┌" + singleSep * 24 + "  Subjects  " + singleSep * 24 + "┐"
+subjectsLine = " " * 14 + "┠" + singleSep * 24 + "  Subjects  " + singleSep * 24 + "┨"
 text.append(subjectsLine)
 text.append("")
 
@@ -1457,7 +1458,7 @@ text.append("")
 
 
 # Writing topics line
-topicsLine = " " * 19 + "┌" + singleSep * 19 + "  Topics  " + singleSep * 19 + "┐"
+topicsLine = " " * 19 + "┠" + singleSep * 19 + "  Topics  " + singleSep * 19 + "┨"
 text.append(topicsLine)
 text.append("")
 
@@ -1475,10 +1476,10 @@ for theme in topicsOverall:
         text.append(doubleSep * pageWidth)
         text.append("")
 
-        subjectLength = len("- " + theme[0] + " -")
+        subjectLength = len("╸ " + theme[0] + " ╺")
         extraBit = (pageWidth - subjectLength) / 2
 
-        text.append(" " * int(np.ceil(extraBit)) + f"- {theme[0]} -")
+        text.append(" " * int(np.ceil(extraBit)) + f"╸ {theme[0]} ╺")
 
         text.append("")
         text.append(doubleSep * pageWidth)
@@ -1527,11 +1528,11 @@ for theme in topicsOverall:
 
         if (pageWidth - themeLength) % 2 == 0:
 
-            text.append(" " * int(np.ceil(extraBit) + 1) + f"- {theme[0]} -")
+            text.append(" " * int(np.ceil(extraBit) + 1) + f"╾ {theme[0]} ╼")
 
         else:
 
-            text.append(" " * int(np.ceil(extraBit)) + f"- {theme[0]} -")
+            text.append(" " * int(np.ceil(extraBit)) + f"╾ {theme[0]} ╼")
 
         text.append("")
         text.append(doubleSep * pageWidth)
@@ -1610,7 +1611,7 @@ if doGlossary == True:
 
 
     # Writing glossary line
-    glossaryLine = " " * 19 + "┌" + singleSep * 19 + "  Glossary  " + singleSep * 19 + "┐"
+    glossaryLine = " " * 19 + "┠" + singleSep * 19 + "  Glossary  " + singleSep * 19 + "┨"
     text.append(glossaryLine)
     text.append("")
     text.append("")
@@ -1640,7 +1641,13 @@ if doGlossary == True:
 
             subName = line[2:endSubIndex]
 
-            glossEntries.append([subName, line[:-1].replace("*", "▪")])
+            if subName not in themes:
+
+                glossEntries.append([subName, line[:-1].replace("*", "▪")])
+            
+            else:
+
+                glossEntries.append([subName, line[:-1].replace("*", "◆")])
 
 
 
@@ -1679,7 +1686,7 @@ PDF LINE FORMATTING
 # Replacing the colons
 for line in text:
 
-    if ":" in line and "▪" not in line:
+    if ":" in line and "▪" not in line and "◆" not in line:
 
         text[text.index(line)] = text[text.index(line)].replace(":", "/")
 
@@ -1929,7 +1936,7 @@ while runningIndex < finalIndex:
 
 
             # Fixing the cross-page formatting of the glossary
-            if "▪" in line and x > topicsStartLine:
+            if ("▪" in line or "◆" in line) and x > topicsStartLine:
 
                 currentBulletIndex = listToSort.index(line)
 
@@ -1940,7 +1947,7 @@ while runningIndex < finalIndex:
                 # Finding the next bullet point
                 for part in listToSort[currentBulletIndex+1:]:
 
-                    if "▪" in part:
+                    if "▪" in part or "◆" in part:
 
                         nextBulletIndex = listToSort.index(part)
 
@@ -2100,7 +2107,7 @@ while runningIndex < finalIndex:
 
 
                 # Moving sections onto new pages
-                elif "┌" in line and x % pageLength != 0 and x >= topicsStartLine:
+                elif "┠" in line and x % pageLength != 0 and x >= topicsStartLine:
 
                     currentStartIndex = x
 
@@ -2339,7 +2346,7 @@ for theme in themes:
 
                     line = finalText[x]
 
-                    if f" - {theme} -" in line:
+                    if f" ╸ {theme} ╺" in line:
                         
                         pageNum = (x // pageLength) + 2
 
@@ -2356,7 +2363,7 @@ for theme in themes:
 
                     line = finalText[x]
 
-                    if f" - {theme} -" in line:
+                    if f" ╸ {theme} ╺" in line:
 
                         pageNum = (x // pageLength) + 2
 
@@ -2485,7 +2492,7 @@ for x in range(len(finalText)):
         # Finding position of subject name
         for char in line:
 
-            if char != " " and char != "▪":
+            if char != " " and char != "▪" and char != "╸":
 
                 subjectNameStart = line.index(char)
 
@@ -2494,7 +2501,7 @@ for x in range(len(finalText)):
 
         for char in line:
 
-            if char == "$":
+            if char == "$" or char == "╺":
 
                 subjectNameEnd = line.index(char) - 2
 
@@ -2512,19 +2519,29 @@ for x in range(len(finalText)):
 
             if subjectName == subject[0]:
 
-                if subjectName in themes or subjectName == "Glossary" or subjectName == "Themes table" or subjectName == "Subjects table":
+                
+                # Subject-like theme
+                if subjectName in themes:
+
+                    numDots = (pageWidth - gapWidth) - 4 - gapWidth - len(subjectName) - len(str(subject[1]))
+
+                    finalText[x] = " " * gapWidth + "◆ " + subjectName + " " + "." * numDots + " " + str(subject[1])
+                
+
+                # Glossary, themes table or subjects table
+                elif subjectName == "Glossary" or subjectName == "Themes table" or subjectName == "Subjects table":
 
                     numDots = (pageWidth - gapWidth) - 2 - gapWidth - len(subjectName) - len(str(subject[1]))
 
-                    finalText[x] = " " * gapWidth + subjectName + " " + "." * numDots + " " + str(subject[1])
+                    finalText[x] = " " * gapWidth + subjectName + " " + "." * numDots + " " + str(subject[1])                    
 
 
+                # Subjects
                 else:
 
                     numDots = (pageWidth - gapWidth) - 2 - gapWidth - 2 - len(subjectName) - len(str(subject[1]))
 
-                    finalText[x] = " " * gapWidth + "▪ " + subjectName + \
-                        " " + "." * numDots + " " + str(subject[1])
+                    finalText[x] = " " * gapWidth + "▪ " + subjectName + " " + "." * numDots + " " + str(subject[1])
 
 
 
@@ -2538,7 +2555,7 @@ for x in range(len(finalText)):
         continue
 
 
-print("--> Data formatted!\n")
+print("──▶ Data formatted!\n")
 
 
 
@@ -2547,11 +2564,11 @@ if doGlossary:
 
     if totalsData[1] > int(lengthGloss):
 
-        print("--> Warning! Not all subjects have an entry in the glossary!\n")
+        print("──▶ Warning! Not all subjects have an entry in the glossary!\n")
 
     elif totalsData[1] < int(lengthGloss):
 
-        print("--> Warning! Not all entries in the glossary have a directory!\n")
+        print("──▶ Warning! Not all entries in the glossary have a directory!\n")
 
 
 
@@ -2561,7 +2578,7 @@ WRITING TO PDF
 '''
 
 
-print("--> Writing to PDF...")
+print("──▶ Writing to PDF...")
 
 
 
@@ -2633,8 +2650,8 @@ for i in range(6):
 
 # Writing date and time
 pdf.set_font("Menlo", size = 18)
-datetimeLength = len(timeNow + "  ~  " + formattedDate)
-dateLine = int(np.ceil((49 - datetimeLength)/2)) * " " + timeNow + "  ~  " + formattedDate
+datetimeLength = len(timeNow + "  ❦  " + formattedDate)
+dateLine = int(np.ceil((49 - datetimeLength)/2)) * " " + timeNow + "  ❦  " + formattedDate
 pdf.cell(0, 4, txt=dateLine, ln=1)
 
 pdf.set_font("Menlo", size = 10)
@@ -2685,7 +2702,7 @@ else:
 # Writing the box top
 pdf.set_font("Menlo", size = 14)
 
-pdf.cell(0, 4, txt=(" " * extraBitAll + "┌" + "─" * boxWidth + "┐"), ln=1)
+pdf.cell(0, 4, txt=(" " * extraBitAll + "╭" + "─" * boxWidth + "╮"), ln=1)
 pdf.cell(0, 4, txt=(" " * extraBitAll + "│" + " " * boxWidth + "│"), ln=1)
 
 
@@ -2703,7 +2720,7 @@ for line in summaryBoxLines:
 
 
 # Writing the box bottom
-pdf.cell(0, 4, txt=(" " * extraBitAll + "└" + "─" * boxWidth + "┘"), ln=1)
+pdf.cell(0, 4, txt=(" " * extraBitAll + "╰" + "─" * boxWidth + "╯"), ln=1)
 
 pdf.set_font("Menlo", size= 10)
 
@@ -2747,7 +2764,7 @@ for x in range(len(finalText)):
 
 pdf.output(f"{archive_name} Report.pdf")
 
-print("--> PDF written!\n")
+print("──▶ PDF written!\n")
 
 
 
@@ -2769,6 +2786,6 @@ os.remove(fontFileDir + f"{fontFile[:-4]}.pkl")
 endTime = time.time()
 runningTime = round(endTime - startTime, 2)
 
-print(f"--> Finished in {runningTime}s!\n")
+print(f"──▶ Finished in {runningTime}s!\n")
 
-print(runningSep * (len(f"{runningSep * numSep} {startLine} {runningSep * numSep}") + 2) + "\n\n")
+print(singleSep * (len(f"{singleSep * numSep} {startLine} {singleSep * numSep}") + 2) + "\n\n")
