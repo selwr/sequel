@@ -70,7 +70,7 @@ The root of the archive should contain folders in which the PDF files reside. Th
 
 Under normal circumstances, PDF files should be placed in the subject folders. However, theme folders can be 'subject-like', containing no subfolders, and instead containing PDF files. This is fine, and will be properly analysed even if all 'theme' folders are subject-like. However, if a theme is subject-like, it shouldn't contain any subfolders.
 
-If all 'themes' are subject-like, then no themes table will be written in the report.
+If all 'themes' are subject-like, then no themes table will be written in the report. In this case, the 'theme' folders are termed 'subjects' and will be referred to as such in the report.
 
 NB: Subject-like themes will appear in the themes table to match their level of directory hierarchy, but will *not* appear in the subjects table as, in effect, they are <u>themes</u> and not <u>subjects</u>. Furthermore, the total subjects count will *not* include any subject-like themes for the same reason. However, given that they have no internal breakdown, subject-like themes can (and should!) have glossary entries.
 
