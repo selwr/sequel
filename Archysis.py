@@ -25,7 +25,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.13.1"
+version = "v3.14"
 
 ext = ".pdf"
 
@@ -616,7 +616,6 @@ for theme in themes:
         subjectPages = 0
         subjectSize = 0
 
-        totalsData[1] += 1
 
         if themes.index(theme) == 0:
 
@@ -706,11 +705,6 @@ for theme in themes:
 
 
         # Appending all values to necessary lists
-        subjectTopicVals.append(subjectTopics)
-        subjectFileVals.append(subjectFiles)
-        subjectPageVals.append(subjectPages)
-        subjectSizeVals.append(subjectSize)
-
         themeData.append(str(subjectTopics))
         themeData.append(str(subjectFiles))
         themeData.append(str(subjectPages))
@@ -1156,18 +1150,8 @@ subjectRows = []
 for theme in overallData:
 
 
-    # If we have a subject-like theme
-    if not isinstance(theme[1], list):
-
-        tempRow = theme
-
-        tempRow[0] = f"━ {tempRow[0]} ━"
-
-        subjectRows.append(tempRow)
-
-
     # If we have a theme with subjects
-    else:
+    if isinstance(theme[1], list):
 
         for subject in theme[1]:
 
@@ -1176,14 +1160,7 @@ for theme in overallData:
 
 def subject_name(element):
 
-    if "━" in element[0]:
-
-        return element[0][2:]
-    
-
-    else:
-
-        return element[0]
+    return element[0]
 
 
 subjectRows = sorted(subjectRows, key=subject_name)
@@ -1235,7 +1212,7 @@ if doGlossary == True:
 # Finding and adding the maximum number of lines to 'centre' the contents page vertically
 maxNumSubjectsForPush = pageLength - extraLines - subjectLikeThemeCount - 2 * (totalsData[0] - subjectLikeThemeCount)
 
-blankLinesNum = int(np.ceil((maxNumSubjectsForPush - int(len(subjectRows))) / 2)) - 1
+blankLinesNum = int(np.ceil((maxNumSubjectsForPush - (totalsData[1] + subjectLikeThemeCount)) / 2)) - 1
 
 for n in range(blankLinesNum):
 
@@ -2578,11 +2555,11 @@ print("──▶ Data formatted!\n")
 # Warning the user if there is a mismatch between the glossary the subdirectories count
 if doGlossary:
 
-    if totalsData[1] > int(lengthGloss):
+    if (totalsData[1] + subjectLikeThemeCount) > int(lengthGloss):
 
         print("──▶ Warning! Not all subjects have an entry in the glossary!\n")
 
-    elif totalsData[1] < int(lengthGloss):
+    elif (totalsData[1] + subjectLikeThemeCount) < int(lengthGloss):
 
         print("──▶ Warning! Not all entries in the glossary have a directory!\n")
 

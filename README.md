@@ -27,7 +27,7 @@ The multiplicity of any metric (such as subjects, topics and flags) will be give
 
 Round bullets indicate topics. Triangular bullets indicate flags. Square bullets indicate subjects. Rhombus bullets indicate subject-like themes.
 
-Themes are indicated by '╾ {theme} ╼'. However, subject-like themes are indicated by '━ {theme} ━' (both in the subjects table, and the topics list).
+Themes are indicated by '╾ {theme} ╼' and subject-like themes are indicated by '━ {theme} ━' (see *Directory structure* subsection).
 
 
 
@@ -60,6 +60,8 @@ The spaces shown in the filename above (between the end of the topic & the openi
 
 Round and/or square brackets should not appear anywhere else in the filename, other than the positions shown above.
 
+No bullets points (of any type) or box-drawing characters are permitted within filenames.
+
 When the files are read, they will be individually checked to see if they are corrupt. If any corrupt files are found, these will be added to a plaintext file and the program terminated so that the list of files can be repaired before a full and proper report can be generated.
 
 
@@ -69,6 +71,8 @@ The root of the archive should contain folders in which the PDF files reside. Th
 Under normal circumstances, PDF files should be placed in the subject folders. However, theme folders can be 'subject-like', containing no subfolders, and instead containing PDF files. This is fine, and will be properly analysed even if all 'theme' folders are subject-like. However, if a theme is subject-like, it shouldn't contain any subfolders.
 
 If all 'themes' are subject-like, then no themes table will be written in the report.
+
+NB: Subject-like themes will appear in the themes table to match their level of directory hierarchy, but will *not* appear in the subjects table as, in effect, they are <u>themes</u> and not <u>subjects</u>. Furthermore, the total subjects count will *not* include any subject-like themes for the same reason. However, given that they have no internal breakdown, subject-like themes can (and should!) have glossary entries.
 
 
 ### Fonts
