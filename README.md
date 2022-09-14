@@ -15,19 +15,27 @@ The report will contain:
 * a topic list (with any flags & multiplicities)
 * a glossary
 
-A summary of the archive, as well as the date & time of generation, are given on the title page.
+A summary of the archive, as well as the date & time of generation, is given on the title page.
 
 The title of the report, and its filename, will be "{archive_name} Report", where archive_name is the name of the root of the archive.
 
 The page numbers given in the contents refer to the absolute page numbers of the report document.
 
-The highest value of a particular metric in each data column of the tables is enclosed by angle brackets to illustrate its size.
 
-The multiplicity of any metric (such as subjects, topics and flags) will be given in square brackets, and any single flags will be given in round brackets.
+### House style continuity
+Throughout the report, a house style has been applied to aid the identification of different parts of the report at a glance.
 
-Round bullets indicate topics. Triangular bullets indicate flags. Square bullets indicate subjects. Rhombus bullets indicate subject-like themes.
+Sections are indicated by bold separators, themes are indicated by double-line separators and subjects are indicated by single-line separators.
 
-Themes are indicated by '╾ {theme} ╼' and subject-like themes are indicated by '━ {theme} ━' (see *Directory structure* subsection).
+In the contents, themes are indicated by '╼ {theme}' and subject-like themes are indicated by '― {theme}' (see ***Directory structure*** subsection)
+
+In headers, themes are indicated by '╼ {theme} ╾' and subject-like themes are indicated by '― {theme} ―'.
+
+In tables, the highest value of a column's metric is enclosed by angle brackets.
+
+The multiplicity of any metric (such as subjects, files and flags) is given in square brackets, and any lone flags are given in round brackets.
+
+In lists, round bullets (•) indicate topics, triangular bullets (‣) indicate flags, square bullets (▪) indicate subjects and rhombus bullets (◆) indicate subject-like themes.
 
 
 
@@ -60,9 +68,9 @@ The spaces shown in the filename above (between the end of the topic & the openi
 
 Round and/or square brackets should not appear anywhere else in the filename, other than the positions shown above.
 
-No bullets points (of any type) or box-drawing characters are permitted within filenames.
+No box-drawing characters or bullets points (of any type) are permitted within filenames.
 
-When the files are read, they will be individually checked to see if they are corrupt. If any corrupt files are found, these will be added to a plaintext file and the program terminated so that the list of files can be repaired before a full and proper report can be generated.
+When the files are read, they will be individually checked to see if they are corrupt. If any corrupt files are found, these will be added to a plaintext file and the program will be terminated so that the list of files can be repaired before a full report can be generated.
 
 
 ### Directory structure
@@ -72,24 +80,25 @@ Under normal circumstances, PDF files should be placed in the subject folders. H
 
 If all 'themes' are subject-like, then no themes table will be written in the report. In this case, the 'theme' folders are termed 'subjects' and will be referred to as such in the report.
 
-NB: Subject-like themes will appear in the themes table to match their level of directory hierarchy, but will *not* appear in the subjects table as, in effect, they are <u>themes</u> and not <u>subjects</u>. Furthermore, the total subjects count will *not* include any subject-like themes for the same reason. However, given that they have no internal breakdown, subject-like themes can (and should!) have glossary entries.
+NB: Subject-like themes will appear in the themes table to match their level of directory hierarchy, but will *not* appear in the subjects table as, in effect, they are <u>themes</u> and not <u>subjects</u>. Furthermore, the total subjects count will *not* include any subject-like themes. However, given that they have no subdirectories, subject-like themes can (and should!) have glossary entries.
 
 
 ### Fonts
-Due to the formatting of the report's tables, a monospaced UTF-8 Unicode font must be used. The default font (Menlo) is included within this repo. Once the repo has been downloaded, provided that the 'archysis_font.ttf' file is _somewhere_ on the hard drive, it will be found.
+Due to the formatting of the report's tables, a monospaced Unicode (UTF-8 and above) font must be used. The default font (Menlo) is included within this repo. Once the repo has been downloaded, provided that the 'archysis_font.ttf' file is _somewhere_ on the hard drive, it will be found.
 
-Other fonts can be used, provided that they conform to the above requirements and their file is renamed to be 'archysis_font.ttf'.
+Other fonts can be used, provided that they conform to the above requirements and that their filename is 'archysis_font' with a '.ttf' or '.otf' extension. Note that .otf files with Postscript Outlines are not supported.
 
 The code will generate two .pkl files during its execution, but these will be automatically deleted.
 
+
 ### Glossary
-A glossary can be included in the report, and will be automatically alphabetised by subject. Each entry in its plaintext file, on a new line, should be formatted as follows:
+A glossary can be included in the report, and will be automatically alphabetised by subject. Each entry in the glossary's plaintext file, on a new line, should be formatted as follows:
 
 > \* SubjectName: Field1, Field2, Field3, ...
 
 The glossary file must end with a blank line to prevent any fields from being cut off.
 
-As with the font file, provided the glossary file is named '{archive_name}\_glossary.txt', where archive_name is the name of the root of the archive, and is _somewhere_ on the hard drive, it will be found. If no glossary is found, then one will not be written to the report.
+As with the font file, provided that the glossary file is _somewhere_ on the hard drive, and is named '{archive_name}\_glossary.txt', where archive_name is the name of the root of the archive, it will be found. If no glossary is found, then one will not be written to the report.
 
 
 

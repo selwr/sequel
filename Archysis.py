@@ -25,11 +25,12 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.14"
+version = "v3.15"
 
 ext = ".pdf"
 
 singleSep = "─"
+boldSep = "━"
 doubleSep = "═"
 
 pageWidth = 88
@@ -62,8 +63,9 @@ print(f"\n──▶ {archive_name} Report will be generated!\n")
 
 
 # Getting directory of font file
-fontFile = "archysis_font.ttf"
+fontFile = "archysis_font"
 fontFileDir = None
+fontExt = None
 
 print("──▶ Searching for font file...")
 
@@ -71,7 +73,20 @@ for root, dirs, files in os.walk(r"/Users"):
 
     for name in files:
 
-        if name == fontFile:
+        try:
+
+            fontExtStart = name.index(".")
+        
+        except ValueError:
+
+            break
+
+
+        if fontFile == name[:fontExtStart]:
+
+            fontExt = name[name.index(".") + 1:]
+
+            fontFile += f".{fontExt}"
 
             fontFileDir = os.path.abspath(os.path.join(root, name))[:-len(fontFile)]
 
@@ -1269,7 +1284,7 @@ else:
 
 
 # Writing the contents line
-contentsLine = " " * 28 + "╉" + singleSep * 10 + "  Contents  " + singleSep * 10 + "╊"
+contentsLine = " " * 28 + "╋" + boldSep * 10 + "  Contents  " + boldSep * 10 + "╋"
 text.append(contentsLine)
 
 text.append("")
@@ -1280,20 +1295,20 @@ text.append("")
 # Writing the tables lines
 if doThemesTable == True:
 
-    dollarsNum = contentsWidth - (len("Themes table") + 1)
+    dollarsNum = contentsWidth - (len("Themes") + 1)
 
-    text.append(" " * gapWidth + "Themes table" + " " + "$" * dollarsNum)
+    text.append(" " * gapWidth + "Themes" + " " + "$" * dollarsNum)
 
 
-    dollarsNum = contentsWidth - (len("Subjects table") + 1)
+    dollarsNum = contentsWidth - (len("Subjects") + 1)
 
-    text.append(" " * gapWidth + "Subjects table" + " " + "$" * dollarsNum)
+    text.append(" " * gapWidth + "Subjects" + " " + "$" * dollarsNum)
 
 else:
 
-    dollarsNum = contentsWidth - (len("Subjects table") + 1)
+    dollarsNum = contentsWidth - (len("Subjects") + 1)
 
-    text.append(" " * gapWidth + "Subjects table" + " " + "$" * dollarsNum)
+    text.append(" " * gapWidth + "Subjects" + " " + "$" * dollarsNum)
 
 
 text.append("")
@@ -1339,12 +1354,12 @@ for theme in themes:
 
         if lineModulo != (pageLength - 1):
 
-            text.append(" " * gapWidth + "╾ " + theme[0] + " ╼")
+            text.append(" " * gapWidth + "╼ " + theme[0])
 
         elif lineModulo == (pageLength - 1):
 
             text.append("")
-            text.append(" " * gapWidth + "╾ " + theme[0] + " ╼")
+            text.append(" " * gapWidth + "╼ " + theme[0])
         
 
 
@@ -1395,7 +1410,7 @@ for x in range(push):
 # Themes table
 if doThemesTable == True:
 
-    themesLine = " " * 9 + "┠" + singleSep * 30 + "  Themes  " + singleSep * 30 + "┨"
+    themesLine = " " * 9 + "┣" + boldSep * 30 + "  Themes  " + boldSep * 30 + "┫"
     text.append(themesLine)
 
     text.append("")
@@ -1430,7 +1445,7 @@ else:
 
 
 # Subjects table
-subjectsLine = " " * 14 + "┠" + singleSep * 24 + "  Subjects  " + singleSep * 24 + "┨"
+subjectsLine = " " * 14 + "┣" + boldSep * 24 + "  Subjects  " + boldSep * 24 + "┫"
 text.append(subjectsLine)
 text.append("")
 
@@ -1446,7 +1461,7 @@ text.append("")
 
 
 # Writing topics line
-topicsLine = " " * 19 + "┠" + singleSep * 19 + "  Topics  " + singleSep * 19 + "┨"
+topicsLine = " " * 19 + "┣" + boldSep * 19 + "  Topics  " + boldSep * 19 + "┫"
 text.append(topicsLine)
 text.append("")
 
@@ -1464,10 +1479,10 @@ for theme in topicsOverall:
         text.append(doubleSep * pageWidth)
         text.append("")
 
-        subjectLength = len("━ " + theme[0] + " ━")
+        subjectLength = len("― " + theme[0] + " ―")
         extraBit = (pageWidth - subjectLength) / 2
 
-        text.append(" " * int(np.ceil(extraBit)) + f"━ {theme[0]} ━")
+        text.append(" " * int(np.ceil(extraBit)) + f"― {theme[0]} ―")
 
         text.append("")
         text.append(doubleSep * pageWidth)
@@ -1516,11 +1531,11 @@ for theme in topicsOverall:
 
         if (pageWidth - themeLength) % 2 == 0:
 
-            text.append(" " * int(np.ceil(extraBit) + 1) + f"╾ {theme[0]} ╼")
+            text.append(" " * int(np.ceil(extraBit) + 1) + f"╼ {theme[0]} ╾")
 
         else:
 
-            text.append(" " * int(np.ceil(extraBit)) + f"╾ {theme[0]} ╼")
+            text.append(" " * int(np.ceil(extraBit)) + f"╼ {theme[0]} ╾")
 
         text.append("")
         text.append(doubleSep * pageWidth)
@@ -1599,7 +1614,7 @@ if doGlossary == True:
 
 
     # Writing glossary line
-    glossaryLine = " " * 19 + "┠" + singleSep * 19 + "  Glossary  " + singleSep * 19 + "┨"
+    glossaryLine = " " * 19 + "┣" + boldSep * 19 + "  Glossary  " + boldSep * 19 + "┫"
     text.append(glossaryLine)
     text.append("")
     text.append("")
@@ -1759,6 +1774,7 @@ for line in text:
 textTablesDone = []
 
 subjectsStartLine = textWrapped.index(subjectsLine)
+themesStartLine = textWrapped.index(themesLine)
 
 corrections = 0
 
@@ -1767,14 +1783,13 @@ corrections = 0
 # Corrections count is to correct spacing later on
 for index in range(len(textWrapped)):
 
-    if index % pageLength == (pageLength - 1) and "┼" in textWrapped[index]:
+    if index % pageLength == (pageLength - 1) and "┼" in textWrapped[index] and index > themesStartLine:
 
         threeReplaced = textWrapped[index].replace("┼", "┴").replace("├", "└").replace("┤", "┘")
 
         textTablesDone.append(threeReplaced)
 
-
-    elif index % pageLength == 0 and "┼" in textWrapped[index - 1]:
+    elif index % pageLength == 0 and "┼" in textWrapped[index - 1] and index > themesStartLine:
 
         threeReplaced = textWrapped[index - 1].replace("┼", "┬").replace("├", "┌").replace("┤", "┐")
 
@@ -1785,8 +1800,7 @@ for index in range(len(textWrapped)):
             
             corrections += 1
 
-
-    elif index % pageLength == (pageLength - 2) and "┼" in textWrapped[index]:
+    elif index % pageLength == (pageLength - 2) and "┼" in textWrapped[index] and index > themesStartLine:
 
         threeReplaced = textWrapped[index].replace("┼", "┴").replace("├", "└").replace("┤", "┘")
 
@@ -1801,8 +1815,7 @@ for index in range(len(textWrapped)):
             corrections += 1
         
 
-
-    elif index % pageLength == (pageLength - 1) and "┼" in textWrapped[index - 1]:
+    elif index % pageLength == (pageLength - 1) and "┼" in textWrapped[index - 1] and index > themesStartLine:
 
         threeReplaced = textWrapped[index - 1].replace("┼", "┬").replace("├", "┌").replace("┤", "┐")
 
@@ -2095,7 +2108,7 @@ while runningIndex < finalIndex:
 
 
                 # Moving sections onto new pages
-                elif "┠" in line and x % pageLength != 0 and x >= topicsStartLine:
+                elif "┣" in line and x % pageLength != 0 and x >= topicsStartLine:
 
                     currentStartIndex = x
 
@@ -2334,7 +2347,7 @@ for theme in themes:
 
                     line = finalText[x]
 
-                    if f" ━ {theme} ━" in line:
+                    if f" ― {theme} ―" in line:
                         
                         pageNum = (x // pageLength) + 2
 
@@ -2351,7 +2364,7 @@ for theme in themes:
 
                     line = finalText[x]
 
-                    if f" ━ {theme} ━" in line:
+                    if f" ― {theme} ―" in line:
 
                         pageNum = (x // pageLength) + 2
 
@@ -2371,6 +2384,7 @@ for theme in themes:
 
             # Looping over lines to find subject headers and thus calculate their page numbers
             for x in range(len(finalText)):
+
 
                 # Only want to search topics list, so ignoring the glossary
                 if doGlossary == True:
@@ -2431,7 +2445,7 @@ for x in range(len(finalText)):
 
         pageNum = (x // pageLength) + 2
 
-        pageNums.append(["Themes table", pageNum])
+        pageNums.append(["Themes", pageNum])
 
         break
 
@@ -2446,7 +2460,7 @@ for x in range(len(finalText)):
 
         pageNum = (x // pageLength) + 2
 
-        pageNums.append(["Subjects table", pageNum])
+        pageNums.append(["Subjects", pageNum])
 
         break
 
@@ -2480,7 +2494,7 @@ for x in range(len(finalText)):
         # Finding position of subject name
         for char in line:
 
-            if char != " " and char != "▪" and char != "━":
+            if char != " " and char != "▪" and char != "―":
 
                 subjectNameStart = line.index(char)
 
@@ -2489,7 +2503,7 @@ for x in range(len(finalText)):
 
         for char in line:
 
-            if char == "━":
+            if char == "―":
 
                 continue
 
@@ -2518,11 +2532,11 @@ for x in range(len(finalText)):
 
                     numDots = (pageWidth - gapWidth) - 4 - gapWidth - len(subjectName) - len(str(subject[1]))
 
-                    finalText[x] = " " * gapWidth + "◆ " + subjectName + " " + "." * numDots + " " + str(subject[1])
+                    finalText[x] = " " * gapWidth + "― " + subjectName + " " + "." * numDots + " " + str(subject[1])
                 
 
                 # Glossary, themes table or subjects table
-                elif subjectName == "Glossary" or subjectName == "Themes table" or subjectName == "Subjects table":
+                elif subjectName == "Glossary" or subjectName == "Themes" or subjectName == "Subjects":
 
                     numDots = (pageWidth - gapWidth) - 2 - gapWidth - len(subjectName) - len(str(subject[1]))
 
@@ -2578,7 +2592,7 @@ print("──▶ Writing to PDF...")
 # Setting up the PDF
 pdf = FPDF(orientation = "P", format = "A4")
 pdf.add_page()
-pdf.add_font("Menlo", "", fontFileDir + fontFile, uni=True)
+pdf.add_font(f"{fontFile[:-4]}", "", fontFileDir + fontFile, uni=True)
 pdf.set_auto_page_break(auto = True, margin = 8.0)
 
 
@@ -2619,7 +2633,7 @@ formattedDate = dateToday.strftime(f"%d{get_ending(str(dateDay))} %b %Y")
 
 
 # Writing title page
-pdf.set_font("Menlo", size = 10)
+pdf.set_font(f"{fontFile[:-4]}", size = 10)
 
 for i in range(14):
 
@@ -2628,12 +2642,12 @@ for i in range(14):
 
 
 # Writing title
-pdf.set_font("Menlo", size = 32)
+pdf.set_font(f"{fontFile[:-4]}", size = 32)
 titleLength = len(f"{archive_name} Report")
 titleLine = int(np.ceil((27 - titleLength)/2)) * " " + f"{archive_name} Report"
 pdf.cell(0, 4, txt=titleLine, ln=1)
 
-pdf.set_font("Menlo", size = 10)
+pdf.set_font(f"{fontFile[:-4]}", size = 10)
 
 for i in range(6):
 
@@ -2642,12 +2656,12 @@ for i in range(6):
 
 
 # Writing date and time
-pdf.set_font("Menlo", size = 18)
+pdf.set_font(f"{fontFile[:-4]}", size = 18)
 datetimeLength = len(timeNow + "  ❦  " + formattedDate)
 dateLine = int(np.ceil((49 - datetimeLength)/2)) * " " + timeNow + "  ❦  " + formattedDate
 pdf.cell(0, 4, txt=dateLine, ln=1)
 
-pdf.set_font("Menlo", size = 10)
+pdf.set_font(f"{fontFile[:-4]}", size = 10)
 
 for i in range(3):
 
@@ -2693,7 +2707,7 @@ else:
 
 
 # Writing the box top
-pdf.set_font("Menlo", size = 14)
+pdf.set_font(f"{fontFile[:-4]}", size = 14)
 
 pdf.cell(0, 4, txt=(" " * extraBitAll + "╭" + "─" * boxWidth + "╮"), ln=1)
 pdf.cell(0, 4, txt=(" " * extraBitAll + "│" + " " * boxWidth + "│"), ln=1)
@@ -2715,7 +2729,7 @@ for line in summaryBoxLines:
 # Writing the box bottom
 pdf.cell(0, 4, txt=(" " * extraBitAll + "╰" + "─" * boxWidth + "╯"), ln=1)
 
-pdf.set_font("Menlo", size= 10)
+pdf.set_font(f"{fontFile[:-4]}", size= 10)
 
 
 
@@ -2735,12 +2749,12 @@ else:
 
 
 # Writing version number
-pdf.set_font("Menlo", size = 18)
+pdf.set_font(f"{fontFile[:-4]}", size = 18)
 versionLength = len(version)
 versionLine = int(np.ceil((49 - versionLength)/2)) * " " + version
 pdf.cell(0, 4, txt=versionLine, ln=1)
 
-pdf.set_font("Menlo", size = 10)
+pdf.set_font(f"{fontFile[:-4]}", size = 10)
 
 for i in range(2):
 
@@ -2749,7 +2763,7 @@ for i in range(2):
 
 
 # Writing remainder of the lines
-pdf.set_font("Menlo", size = 10)
+pdf.set_font(f"{fontFile[:-4]}", size = 10)
 
 for x in range(len(finalText)):
 
