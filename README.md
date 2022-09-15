@@ -80,11 +80,11 @@ Under normal circumstances, PDF files should be placed in the subject folders. H
 
 If all 'themes' are subject-like, then no themes table will be written in the report. In this case, the 'theme' folders are termed 'subjects' and will be referred to as such in the report.
 
-NB: Subject-like themes will appear in the themes table to match their level of directory hierarchy, but will *not* appear in the subjects table as, in effect, they are <u>themes</u> and not <u>subjects</u>. Furthermore, the total subjects count will *not* include any subject-like themes. However, given that they have no subdirectories, subject-like themes can (and should!) have glossary entries.
+NB: Subject-like themes will appear in the themes table to match their level of directory hierarchy, but will *not* appear in the subjects table as, in effect, they are **themes** and not **subjects**. Furthermore, the total subjects count will *not* include any subject-like themes. However, given that they have no subdirectories, subject-like themes can (and should!) have glossary entries.
 
 
 ### Fonts
-Due to the formatting of the report's tables, a monospaced Unicode (UTF-8 and above) font must be used. The default font (Menlo) is included within this repo. Once the repo has been downloaded, provided that the 'archysis_font.ttf' file is _somewhere_ on the hard drive, it will be found.
+Due to the formatting of the report's tables, a monospaced Unicode (UTF-8 and above) font must be used. The recommended font is DejaVu Sans Mono, which can be downloaded at https://dejavu-fonts.github.io. Once downloaded, provided that the font file is renamed from 'DejaVuSansMono.ttf' to 'archysis_font.ttf' and is _somewhere_ on the hard drive, it will be found.
 
 Other fonts can be used, provided that they conform to the above requirements and that their filename is 'archysis_font' with a '.ttf' or '.otf' extension. Note that .otf files with Postscript Outlines are not supported.
 
