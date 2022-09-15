@@ -13,6 +13,7 @@ import numpy as np
 from PyPDF2 import PdfFileReader
 from fpdf import FPDF
 from tabulate import tabulate
+from sys import exit
 
 warnings.filterwarnings("ignore")
 
@@ -25,7 +26,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.15"
+version = "v3.16"
 
 ext = ".pdf"
 
@@ -47,48 +48,96 @@ startTime = time.time()
 startLine = f"Archysis {version}"
 
 numSep = int(np.ceil((66 - len(f" {startLine} ")) / 2))
-print(f"\n\n{singleSep * (numSep + 1)} {startLine} {singleSep * (numSep + 1)}")
+print(f"\n\n{singleSep * (numSep + 1)} {startLine} {singleSep * (numSep + 1)}\n")
 
 
 
-# Getting current working directory and its contents
-in_dir = os.path.dirname(os.path.realpath(__file__))
+# Getting archive directory and finding it
+wantedDir = input("Enter directory of archive: ")
 
-archive_name = in_dir.split(os.sep)[-1]
+runFromDir = os.path.dirname(os.path.realpath(__file__))
 
-directory_contents = os.listdir(in_dir)
+print(f"\n──▶ Looking for {wantedDir}...")
 
-print(f"\n──▶ {archive_name} Report will be generated!\n")
+if ":" in runFromDir:
+
+    lookForDir = rf"C:{os.sep}Users"
+
+else:
+
+    lookForDir = rf"{os.sep}Users"
+
+archDir = None
+
+
+for root, dirs, files in os.walk(lookForDir):
+
+    dirLength = len(root) - len(wantedDir)
+
+    if root[dirLength:] == wantedDir:
+
+        archDir = root
+
+        break
+
+
+if archDir == None:
+
+    print(f"\n──▶ {wantedDir} not found!\n")
+    exit()
+
+else:
+
+    # Getting archive name
+    archive_name = archDir.split(os.sep)[-1]
+
+    directory_contents = os.listdir(archDir)
+
+    print(f"──▶ {wantedDir} found!\n")
+    print(f"──▶ {archive_name} Report will be generated!\n")
 
 
 
 # Getting directory of font file
 fontFile = "archysis_font"
+fontFileList = [f"{fontFile}.ttf", f"{fontFile}.otf"]
 fontFileDir = None
 fontExt = None
 
-print("──▶ Searching for font file...")
+print("──▶ Looking for font file...")
 
-for root, dirs, files in os.walk(r"/Users"):
 
-    for name in files:
+for root, dirs, files in os.walk(lookForDir):
 
-        try:
+    
+    for filename in files:
 
-            fontExtStart = name.index(".")
-        
-        except ValueError:
+        if filename == fontFileList[0]:
+
+            fontFileDir = os.path.abspath(os.path.join(root, filename))[:-len(fontFileList[0])]
+            
+            if "Trash" in fontFileDir or "Recycle.Bin" in fontFileDir:
+
+                fontFileDir = None
+
+                continue
+            
+            fontFile = fontFileList[0]
 
             break
+        
 
+        elif filename == fontFileList[1]:
 
-        if fontFile == name[:fontExtStart]:
+            fontFileDir = os.path.abspath(os.path.join(root, filename))[:-len(fontFileList[1])]
+            
+            if "Trash" in fontFileDir or "Recycle.Bin" in fontFileDir:
 
-            fontExt = name[name.index(".") + 1:]
+                fontFileDir = None
 
-            fontFile += f".{fontExt}"
-
-            fontFileDir = os.path.abspath(os.path.join(root, name))[:-len(fontFile)]
+                continue
+            
+            fontFile = fontFileList[1]
 
             break
 
@@ -115,15 +164,21 @@ else:
 glossDir = None
 glossName = f"{archive_name.lower()}_glossary.txt"
 
-print("──▶ Searching for glossary file...")
+print("──▶ Looking for glossary file...")
 
-for root, dirs, files in os.walk(r"/Users"):
+for root, dirs, files in os.walk(lookForDir):
 
-    for name in files:
+    for filename in files:
 
-        if name == glossName:
+        if filename == glossName:
 
-            glossDir = os.path.abspath(os.path.join(root, name))[:-len(glossName)]
+            glossDir = os.path.abspath(os.path.join(root, filename))[:-len(glossName)]
+
+            if "Trash" in glossDir or "Recycle.Bin" in glossDir:
+
+                glossDir = None
+
+                continue
 
             break
 
@@ -138,6 +193,7 @@ for root, dirs, files in os.walk(r"/Users"):
 if glossDir == None:
 
     print("──▶ No glossary file found!\n")
+    
     doGlossary = False
 
 else:
@@ -153,15 +209,15 @@ subjectLikeThemeCount = 0
 
 for folder in directory_contents:
 
-    if (os.path.isdir(folder)) and ("." not in folder):
+    if (os.path.isdir(os.path.join(archDir, folder))) and ("." not in folder):
 
         subjects = []
 
 
         # Looping over subject subdirectories
-        for subject in os.listdir(os.path.join(in_dir, folder)):
+        for subject in os.listdir(os.path.join(archDir, folder)):
 
-            if (os.path.isdir(os.path.join(in_dir, folder, subject))) and ("." not in subject):
+            if (os.path.isdir(os.path.join(archDir, folder, subject))) and ("." not in subject):
 
                 subjects.append(subject)
 
@@ -295,7 +351,7 @@ for theme in themes:
 
 
             # Going through each of the files
-            for filename in os.listdir(os.path.join(in_dir, theme[0], subject)):
+            for filename in os.listdir(os.path.join(archDir, theme[0], subject)):
 
 
                 # If we have a PDF
@@ -311,14 +367,14 @@ for theme in themes:
 
 
                     # Getting size data
-                    totalsData[5] += os.path.getsize(os.path.join(in_dir, theme[0], subject, filename))
-                    subjectSize += os.path.getsize(os.path.join(in_dir, theme[0], subject, filename))
-                    size += os.path.getsize(os.path.join(in_dir, theme[0], subject, filename))
+                    totalsData[5] += os.path.getsize(os.path.join(archDir, theme[0], subject, filename))
+                    subjectSize += os.path.getsize(os.path.join(archDir, theme[0], subject, filename))
+                    size += os.path.getsize(os.path.join(archDir, theme[0], subject, filename))
 
 
 
                     # Getting pages data & checking files
-                    with open(os.path.join(in_dir, theme[0], subject, filename), "rb") as f:
+                    with open(os.path.join(archDir, theme[0], subject, filename), "rb") as f:
 
                         try:
 
@@ -326,7 +382,13 @@ for theme in themes:
 
                         except PyPDF2.errors.PdfReadError:
 
-                            corruptFiles.append(f"{theme[0]} | {subject}: {filename}")
+                            corruptFiles.append(f"{theme[0]} / {subject}: {filename}")
+
+                            continue
+
+                        except PyPDF2.errors.DependencyError:
+
+                            corruptFiles.append(f"{theme[0]} / {subject}: {filename} (Encryption error)")
 
                             continue
 
@@ -339,13 +401,13 @@ for theme in themes:
 
                         except PyPDF2.errors.PdfReadError:
 
-                            corruptFiles.append(f"{theme[0]} | {subject}: {filename}")
+                            corruptFiles.append(f"{theme[0]} / {subject}: {filename}")
 
                             continue
 
                         except ValueError:
 
-                            corruptFiles.append(f"{theme[0]} | {subject}: {filename}")
+                            corruptFiles.append(f"{theme[0]} / {subject}: {filename}")
 
                             continue
 
@@ -643,7 +705,7 @@ for theme in themes:
 
 
         # Going through all files
-        for filename in os.listdir(os.path.join(in_dir, theme)):
+        for filename in os.listdir(os.path.join(archDir, theme)):
 
 
             # If we have a PDF
@@ -659,14 +721,14 @@ for theme in themes:
 
 
                 # Getting size data
-                totalsData[5] += os.path.getsize(os.path.join(in_dir, theme, filename))
-                subjectSize += os.path.getsize(os.path.join(in_dir, theme, filename))
-                size += os.path.getsize(os.path.join(in_dir, theme, filename))
+                totalsData[5] += os.path.getsize(os.path.join(archDir, theme, filename))
+                subjectSize += os.path.getsize(os.path.join(archDir, theme, filename))
+                size += os.path.getsize(os.path.join(archDir, theme, filename))
 
 
 
                 # Getting pages data & checking files
-                with open(os.path.join(in_dir, theme, filename), "rb") as f:
+                with open(os.path.join(archDir, theme, filename), "rb") as f:
 
                     try:
 
@@ -674,7 +736,13 @@ for theme in themes:
 
                     except PyPDF2.errors.PdfReadError:
 
-                        corruptFiles.append(f"{subject}: {filename}")
+                        corruptFiles.append(f"{theme}: {filename}")
+
+                        continue
+
+                    except PyPDF2.errors.DependencyError:
+
+                        corruptFiles.append(f"{theme}: {filename} (Encryption error)")
 
                         continue
 
@@ -687,13 +755,13 @@ for theme in themes:
 
                     except PyPDF2.errors.PdfReadError:
 
-                        corruptFiles.append(f"{subject}: {filename}")
+                        corruptFiles.append(f"{theme}: {filename}")
 
                         continue
 
                     except ValueError:
 
-                        corruptFiles.append(f"{subject}: {filename}")
+                        corruptFiles.append(f"{theme}: {filename}")
                         
                         continue
 
@@ -720,6 +788,14 @@ for theme in themes:
 
 
         # Appending all values to necessary lists
+        if not doThemesTable:
+
+            subjectTopicVals.append(subjectTopics)
+            subjectFileVals.append(subjectFiles)
+            subjectPageVals.append(subjectPages)
+            subjectSizeVals.append(subjectSize)
+
+
         themeData.append(str(subjectTopics))
         themeData.append(str(subjectFiles))
         themeData.append(str(subjectPages))
@@ -961,7 +1037,7 @@ for theme in themes:
 # Terminating if not PDFs found
 if totalsData[3] == 0:
 
-    print("\n──▶ No PDF files found\n")
+    print("\n──▶ No PDF files found!\n")
 
     exit()
 
@@ -970,13 +1046,15 @@ if totalsData[3] == 0:
 # Writing list of corrupt files, if necessary
 if corruptFiles != []:
 
-    with open("Corruptions.txt", "w") as f:
+    with open(f"{archDir + os.sep}Corruptions.txt", "w") as f:
 
         f.write("# Corrupt Files\n\n")
 
         for filename in corruptFiles:
 
             f.write(f"* {filename}\n")
+        
+        f.write("\n\n(This plaintext file can be deleted once all files have been fixed!)\n")
 
 
     print("\n──▶ File check & read complete!\n")
@@ -1171,6 +1249,12 @@ for theme in overallData:
         for subject in theme[1]:
 
             subjectRows.append(subject)
+    
+    else:
+
+        if not doThemesTable:
+
+            subjectRows.append(theme)
 
 
 def subject_name(element):
@@ -1493,7 +1577,7 @@ for theme in topicsOverall:
         # Giving a statement if the theme is empty
         if theme[1] == []:
 
-            text.append("No PDF files found in this folder")
+            text.append("No PDF files found in this folder!")
 
 
         # Otherwise, writing the topics list
@@ -1583,7 +1667,7 @@ for theme in topicsOverall:
             # Writing a statement if subject is empty
             if subject[1] == []:
 
-                text.append("No PDF files found in this subfolder")
+                text.append("No PDF files found in this subfolder!")
             
 
 
@@ -1774,7 +1858,15 @@ for line in text:
 textTablesDone = []
 
 subjectsStartLine = textWrapped.index(subjectsLine)
-themesStartLine = textWrapped.index(themesLine)
+
+if doThemesTable:
+    
+    themesStartLine = textWrapped.index(themesLine)
+
+else:
+
+    themesStartLine = subjectsStartLine
+
 
 corrections = 0
 
@@ -2136,7 +2228,7 @@ while runningIndex < finalIndex:
 
 
                 # Moving subjects onto new pages
-                elif x > topicsStartLine and x % pageLength != 0 and x != (len(listToSort) - 1) and singleSep in listToSort[x+1] and (doubleSep not in listToSort[x-2]) and (("•" in listToSort[x+3]) or ("No PDF files found in this subfolder" in listToSort[x+3])):
+                elif x > topicsStartLine and x % pageLength != 0 and x != (len(listToSort) - 1) and singleSep in listToSort[x+1] and (doubleSep not in listToSort[x-2]) and (("•" in listToSort[x+3]) or ("No PDF files found in this subfolder!" in listToSort[x+3])):
 
                     currentSubjectIndex = x
 
@@ -2671,7 +2763,16 @@ for i in range(3):
 
 # Writing summary box
 themesNum = str(totalsData[0])
-subsNum = str(totalsData[1])
+
+if doThemesTable:
+
+    subsNum = str(totalsData[1])
+
+else:
+
+    subsNum = str(totalsData[0])
+
+
 topsNum = str(totalsData[2])
 filesNum = str(totalsData[3])
 pagesNum = str(totalsData[4])
@@ -2769,7 +2870,7 @@ for x in range(len(finalText)):
 
     pdf.cell(0, 4, txt=finalText[x], ln=1)
 
-pdf.output(f"{archive_name} Report.pdf")
+pdf.output(f"{archDir + os.sep + archive_name} Report.pdf")
 
 print("──▶ PDF written!\n")
 
