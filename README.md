@@ -1,6 +1,6 @@
 # Archysis v3
 
-Archysis is an archive analysis tool which will read a directory's PDF files and produce a report, detailing all themes, subjects, topics, flags and multiplicities. A contents page is automatically generated, and an optional glossary can be included too!
+Archysis is an archive analysis tool which will read a directory's PDF filenames & page counts to produce a report, detailing all themes, subjects, topics, flags and multiplicities. A contents page is automatically generated, and an optional glossary can be included too!
 
 Archysis v1 and v2 can be found in selwr/poirot, but these are very much out of date with many oversights and problems, hence the v3 re-write.
 
@@ -60,16 +60,16 @@ and then running the file created in the 'dist' subfolder to generate the report
 
 Note that all dependent libraries above, as well as pyinstaller, must be installed prior to compilation.
 
-NB: If an executable file is compiled on/for a Windows system, all files & folders (the archive itself, Archysis and the font & glossary files) must be on the C: drive.
 
 
+## Running Archysis
+When run, Archysis will have a short boot-up before asking for the (case-sensitive) directory of the archive. The more information given, the better. It is recommended to give the parent folder and as well as the archive folder (parentDir/archiveDir) to ensure the correct archive is found. For example, if the archive folder is called 'Archive' and this folder is in the Documents folder, then an ideal input to Archysis would be:
 
-## Running the program
-When run, the program will have a short boot-up before asking for the (case-sensitive) directory of the archive. The more information given, the better. It is recommended to give the parent folder and as well as the archive folder to ensure the correct archive is found. For example,
+> Documents/Archive
 
-> parentDir/archiveDir
+and then Archysis will find the folder called 'Archive' in the Documents folder, showing that the full path does not need to be given in this case. However, beware that if there are multiple folders of the same name and/or in the same location, your desired archive may not be found, and so further specification up the directory tree should be given.
 
-The full path name need not be given.
+NB: Neither the Python file, nor the executable needs to be put in the top-level of the archive in order to run it. These files can be put anywhere on the hard drive. The archive folder will be found from the above input!
 
 
 ### Files in the archive
@@ -77,9 +77,9 @@ Only PDF files will be analysed and their filenames should be formatted in the f
 
 > {topic} (flags) [multiplicity].pdf
 
-Topics are what the files are about. They needn't be written within curly braces - the above is just to illustrate their positioning within the filename. There should only be one topic per file, but hyphens can be included in the filename to give further clarity to the topic.
+Topics are what the files are about. They needn't be written within curly braces - the above is just to illustrate their positioning within the filename. There should only be one topic per file, but hyphens can be included in the topic to give further clarity to the topic.
 
-Flags are separate, optional 'classifiers' that allow differentiation between files on the same topic. They should all be in one set of round brackets and in the position shown above. Two flags should be separated using ' and ', and three or more flags can be separated using commas too.
+Flags are separate, optional 'classifiers' that allow differentiation between files on the same topic. They should all be in one set of round brackets and in the position shown above. Two flags should be separated using ' and '. Three or more flags should also be separated using commas.
 
 The multiplicity in the square brackets should count from 1 up to however many files there are on that specific topic. However, if there is only one file on that topic, [1] is not required at the end of the filename. The multiplicity should be the final part of the filename before the extension.
 
@@ -89,7 +89,9 @@ Round and/or square brackets should not appear anywhere else in the filename, ot
 
 No box-drawing characters or bullets points (of any type) are permitted within filenames.
 
-When the files are read, they will be individually checked to see if they are corrupt. If any corrupt files are found, these will be added to a plaintext file and the program will be terminated so that the list of files can be repaired before a full report can be generated.
+When the files are read, they will be individually checked to see if they can be opened. If any corrupt/encrypted files are found, these will be added to a plaintext file and the program will be terminated so that the list of files can be repaired/decrypted before a full report can be generated.
+
+NB: All files (the archive itself, Archysis (.py and/or executable) and the font & glossary files) must be on the C: drive on a Windows system, or all on the same hard drive on a Unix system.
 
 
 ### Directory structure
@@ -97,15 +99,15 @@ The archive should contain folders in which the PDF files reside. This highest-l
 
 Under normal circumstances, PDF files should be placed in the subject folders. However, theme folders can be 'subject-like', containing no subfolders, and instead containing PDF files. This is fine, and will be properly analysed even if all 'theme' folders are subject-like. However, if a theme is subject-like, it shouldn't contain any subfolders.
 
-If all 'themes' are subject-like, then no themes table will be written in the report. In this case, the 'theme' folders are termed 'subjects' and will be referred to as such in the report.
+If all 'themes' are subject-like, then no themes table will be written in the report. In this case, the 'theme' folders are referred to as 'subjects' in the report.
 
-Ideally, all theme and subject folders should be unde 50 characters in length.
+Ideally, all theme and subject folder names should be under 50 characters in length.
 
-NB: Subject-like themes will appear in the themes table to match their level of directory hierarchy, but will *not* appear in the subjects table as, in effect, they are **themes** and not **subjects**. Furthermore, the total subjects count will *not* include any subject-like themes. However, given that they have no subdirectories, subject-like themes can (and should!) have glossary entries.
+NB: If not all themes are subject-like, any subject-like themes _will_ appear in the themes table to match their level of directory hierarchy, but _will not_ appear in the subjects table as, in effect, they are **themes** and not **subjects**. Furthermore, the total subjects count will _not_ include subject-like themes. However, given that they have no subdirectories, subject-like themes can (and should!) have glossary entries.
 
 
 ### Fonts
-Due to the formatting of the report's tables, a monospaced Unicode TrueType or OpenType font must be used. This should allow for as large a range of glyphs possible, especially box-drawing characters. The recommended font is DejaVu Sans Mono, which can be downloaded at https://dejavu-fonts.github.io. Once downloaded, provided that the font file is renamed from 'DejaVuSansMono.ttf' to 'archysis_font.ttf' and is _somewhere_ on the hard drive, it will be found.
+Due to the formatting of the report's tables, a monospaced Unicode TrueType or OpenType font must be used. This should allow for as large a range of glyphs possible, especially box-drawing characters as well as any other letter-like characters, such as letters with accents or Greek characters. To that end, the recommended font is DejaVu Sans Mono, which can be downloaded at https://dejavu-fonts.github.io. Once downloaded, provided that the font file is renamed from 'DejaVuSansMono.ttf' to 'archysis_font.ttf' and is _somewhere_ on the hard drive, it will be found.
 
 Other fonts can be used, provided that they conform to the above requirements, that their filename is 'archysis_font' with a '.ttf' or '.otf' extension and that the file is _somewhere_ on the hard drive. Note that .otf files with Postscript Outlines are not supported.
 
@@ -119,7 +121,7 @@ A glossary can be included in the report, and will be automatically alphabetised
 
 The glossary file must end with a blank line to prevent any fields from being cut off.
 
-As with the font file, provided that the glossary file is _somewhere_ on the hard drive, and is named 'archiveName_glossary.txt', it will be found (where archiveName is the **lower case** name of the archive). If no glossary is found, then one will not be written to the report.
+As with the font file, provided that the glossary file is _somewhere_ on the hard drive, and is named 'archiveName_glossary.txt', it will be found (where archiveName is the **lower case** name of the archive). If no glossary file is found, then one will not be written to the report.
 
 
 
