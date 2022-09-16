@@ -26,7 +26,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.16"
+version = "v3.17"
 
 ext = ".pdf"
 
@@ -299,7 +299,7 @@ subjectFileVals = []
 subjectPageVals = []
 subjectSizeVals = []
 
-corruptFiles = []
+filesToFix = []
 
 
 
@@ -382,13 +382,13 @@ for theme in themes:
 
                         except PyPDF2.errors.PdfReadError:
 
-                            corruptFiles.append(f"{theme[0]} / {subject}: {filename}")
+                            filesToFix.append(f"{theme[0]} / {subject}: {filename} (Corrupted file)")
 
                             continue
 
                         except PyPDF2.errors.DependencyError:
 
-                            corruptFiles.append(f"{theme[0]} / {subject}: {filename} (Encryption error)")
+                            filesToFix.append(f"{theme[0]} / {subject}: {filename} (Encryption error)")
 
                             continue
 
@@ -401,13 +401,13 @@ for theme in themes:
 
                         except PyPDF2.errors.PdfReadError:
 
-                            corruptFiles.append(f"{theme[0]} / {subject}: {filename}")
+                            filesToFix.append(f"{theme[0]} / {subject}: {filename} (Corrupted file)")
 
                             continue
 
                         except ValueError:
 
-                            corruptFiles.append(f"{theme[0]} / {subject}: {filename}")
+                            filesToFix.append(f"{theme[0]} / {subject}: {filename} (Corrupted file)")
 
                             continue
 
@@ -736,13 +736,13 @@ for theme in themes:
 
                     except PyPDF2.errors.PdfReadError:
 
-                        corruptFiles.append(f"{theme}: {filename}")
+                        filesToFix.append(f"{theme}: {filename} (Corrupted file)")
 
                         continue
 
                     except PyPDF2.errors.DependencyError:
 
-                        corruptFiles.append(f"{theme}: {filename} (Encryption error)")
+                        filesToFix.append(f"{theme}: {filename} (Encryption error)")
 
                         continue
 
@@ -755,13 +755,13 @@ for theme in themes:
 
                     except PyPDF2.errors.PdfReadError:
 
-                        corruptFiles.append(f"{theme}: {filename}")
+                        filesToFix.append(f"{theme}: {filename} (Corrupted file)")
 
                         continue
 
                     except ValueError:
 
-                        corruptFiles.append(f"{theme}: {filename}")
+                        filesToFix.append(f"{theme}: {filename} (Corrupted file)")
                         
                         continue
 
@@ -1043,14 +1043,14 @@ if totalsData[3] == 0:
 
 
 
-# Writing list of corrupt files, if necessary
-if corruptFiles != []:
+# Writing list of files to fix, if necessary
+if filesToFix != []:
 
-    with open(f"{archDir + os.sep}Corruptions.txt", "w") as f:
+    with open(f"{archDir + os.sep}Files to fix.txt", "w") as f:
 
-        f.write("# Corrupt Files\n\n")
+        f.write("# Files to fix\n\n")
 
-        for filename in corruptFiles:
+        for filename in filesToFix:
 
             f.write(f"* {filename}\n")
         
@@ -1058,7 +1058,7 @@ if corruptFiles != []:
 
 
     print("\n──▶ File check & read complete!\n")
-    print("\n──▶ Fix files listed in 'Corruptions.txt'\n")
+    print("\n──▶ Fix files listed in 'Files to fix.txt'\n")
 
     exit()
 
