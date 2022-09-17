@@ -1,8 +1,11 @@
 # Archysis
 # by Sam Wallis-Riches, 2022
 
-import os
+
 import time
+startTime = time.time()
+
+import os
 import warnings
 import textwrap
 import humanize
@@ -26,7 +29,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.17"
+version = "v3.18"
 
 ext = ".pdf"
 
@@ -39,8 +42,6 @@ pageLength = 69
 
 doThemesTable = True
 doGlossary = True
-
-startTime = time.time()
 
 
 
@@ -57,7 +58,7 @@ wantedDir = input("Enter directory of archive: ")
 
 runFromDir = os.path.dirname(os.path.realpath(__file__))
 
-print(f"\n──▶ Looking for {wantedDir}...")
+print(f"\n──▶ Looking for {wantedDir} folder...")
 
 if ":" in runFromDir:
 
@@ -83,7 +84,7 @@ for root, dirs, files in os.walk(lookForDir):
 
 if archDir == None:
 
-    print(f"\n──▶ {wantedDir} not found!\n")
+    print(f"\n──▶ {wantedDir} folder not found!\n")
     exit()
 
 else:
@@ -93,7 +94,7 @@ else:
 
     directory_contents = os.listdir(archDir)
 
-    print(f"──▶ {wantedDir} found!\n")
+    print(f"──▶ {wantedDir} folder found!\n")
     print(f"──▶ {archive_name} Report will be generated!\n")
 
 
@@ -325,11 +326,11 @@ for theme in themes:
 
         if themes.index(theme) == 0:
 
-            print(f"──▶ Reading {theme[0]} folder...")
+            print(f"──▶ Reading {theme[0]} folders...")
 
         else:
 
-            print(f"\n──▶ Reading {theme[0]} folder...")
+            print(f"\n──▶ Reading {theme[0]} folders...")
 
 
 
