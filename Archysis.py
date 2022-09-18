@@ -29,7 +29,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.18"
+version = "v3.19"
 
 ext = ".pdf"
 
@@ -479,7 +479,20 @@ for theme in themes:
             topicsSubjectActualSet = set(topicsSubjectActual)
             topicsSubjectActualList = list(topicsSubjectActualSet)
 
-            topicsSubjectActual = sorted(topicsSubjectActualList)
+
+            def get_topic(element):
+
+                if element[0] == "'" or element[0] == "‘":
+
+                    return element[1:]
+                
+
+                else:
+
+                    return element
+
+
+            topicsSubjectActual = sorted(topicsSubjectActualList, key=get_topic)
 
 
 
@@ -837,7 +850,20 @@ for theme in themes:
         topicsSubjectActualSet = set(topicsSubjectActual)
         topicsSubjectActualList = list(topicsSubjectActualSet)
 
-        topicsSubjectActual = sorted(topicsSubjectActualList)
+
+        def get_topic(element):
+
+                if element[0] == "'" or element[0] == "‘":
+
+                    return element[1:]
+                
+
+                else:
+
+                    return element
+
+
+        topicsSubjectActual = sorted(topicsSubjectActualList, key=get_topic)
 
 
 
@@ -1564,10 +1590,10 @@ for theme in topicsOverall:
         text.append(doubleSep * pageWidth)
         text.append("")
 
-        subjectLength = len("― " + theme[0] + " ―")
+        subjectLength = len("— " + theme[0] + " —")
         extraBit = (pageWidth - subjectLength) / 2
 
-        text.append(" " * int(np.ceil(extraBit)) + f"― {theme[0]} ―")
+        text.append(" " * int(np.ceil(extraBit)) + f"— {theme[0]} —")
 
         text.append("")
         text.append(doubleSep * pageWidth)
@@ -2440,7 +2466,7 @@ for theme in themes:
 
                     line = finalText[x]
 
-                    if f" ― {theme} ―" in line:
+                    if f" — {theme} —" in line:
                         
                         pageNum = (x // pageLength) + 2
 
@@ -2457,7 +2483,7 @@ for theme in themes:
 
                     line = finalText[x]
 
-                    if f" ― {theme} ―" in line:
+                    if f" — {theme} —" in line:
 
                         pageNum = (x // pageLength) + 2
 
@@ -2587,7 +2613,7 @@ for x in range(len(finalText)):
         # Finding position of subject name
         for char in line:
 
-            if char != " " and char != "▪" and char != "―":
+            if char != " " and char != "▪" and char != "—":
 
                 subjectNameStart = line.index(char)
 
@@ -2596,7 +2622,7 @@ for x in range(len(finalText)):
 
         for char in line:
 
-            if char == "―":
+            if char == "—":
 
                 continue
 
@@ -2625,7 +2651,7 @@ for x in range(len(finalText)):
 
                     numDots = (pageWidth - gapWidth) - 4 - gapWidth - len(subjectName) - len(str(subject[1]))
 
-                    finalText[x] = " " * gapWidth + "― " + subjectName + " " + "." * numDots + " " + str(subject[1])
+                    finalText[x] = " " * gapWidth + "— " + subjectName + " " + "." * numDots + " " + str(subject[1])
                 
 
                 # Glossary, themes table or subjects table
