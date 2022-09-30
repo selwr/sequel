@@ -87,7 +87,7 @@ The spaces shown in the filename above (between the end of the topic & the openi
 
 Round and/or square brackets should not appear anywhere else in the filename, other than the positions shown above.
 
-No box-drawing characters or bullets points (of any type) are permitted within filenames.
+No box-drawing characters or bullets points (of any type) are permitted within filenames. Only single quotation marks (') may be used in filenames, not double quotation marks (").
 
 When the files are read, they will be individually checked to see if they can be opened. If any corrupt/encrypted files are found, these will be added to a plaintext file and the program will be terminated so that the list of files can be repaired/decrypted before a full report can be generated.
 
