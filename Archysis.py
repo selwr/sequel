@@ -29,7 +29,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.19"
+version = "v3.19.1"
 
 ext = ".pdf"
 
@@ -484,12 +484,12 @@ for theme in themes:
 
                 if element[0] == "'" or element[0] == "‘":
 
-                    return element[1:]
+                    return element[1:].lower()
                 
 
                 else:
 
-                    return element
+                    return element.lower()
 
 
             topicsSubjectActual = sorted(topicsSubjectActualList, key=get_topic)
@@ -855,12 +855,12 @@ for theme in themes:
 
                 if element[0] == "'" or element[0] == "‘":
 
-                    return element[1:]
+                    return element[1:].lower()
                 
 
                 else:
 
-                    return element
+                    return element.lower()
 
 
         topicsSubjectActual = sorted(topicsSubjectActualList, key=get_topic)
