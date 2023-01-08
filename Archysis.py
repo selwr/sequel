@@ -13,7 +13,7 @@ import PyPDF2
 import datetime as dt
 import numpy as np
 
-from PyPDF2 import PdfFileReader
+from PyPDF2 import PdfReader
 from fpdf import FPDF
 from tabulate import tabulate
 from sys import exit
@@ -29,7 +29,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.19.1"
+version = "v3.19.2"
 
 ext = ".pdf"
 
@@ -379,7 +379,7 @@ for theme in themes:
 
                         try:
 
-                            pdf = PdfFileReader(f)
+                            pdf = PdfReader(f)
 
                         except PyPDF2.errors.PdfReadError:
 
@@ -396,9 +396,9 @@ for theme in themes:
 
                         try:
 
-                            totalsData[4] += pdf.getNumPages()
-                            subjectPages += pdf.getNumPages()
-                            pages += pdf.getNumPages()
+                            totalsData[4] += len(pdf.pages)
+                            subjectPages += len(pdf.pages)
+                            pages += len(pdf.pages)
 
                         except PyPDF2.errors.PdfReadError:
 
@@ -746,7 +746,7 @@ for theme in themes:
 
                     try:
 
-                        pdf = PdfFileReader(f)
+                        pdf = PdfReader(f)
 
                     except PyPDF2.errors.PdfReadError:
 
@@ -763,9 +763,9 @@ for theme in themes:
 
                     try:
 
-                        totalsData[4] += pdf.getNumPages()
-                        subjectPages += pdf.getNumPages()
-                        pages += pdf.getNumPages()
+                        totalsData[4] += len(pdf.pages)
+                        subjectPages += len(pdf.pages)
+                        pages += len(pdf.pages)
 
                     except PyPDF2.errors.PdfReadError:
 
