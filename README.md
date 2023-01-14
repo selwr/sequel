@@ -49,6 +49,7 @@ A number of external libraries are used, so these should be installed _before_ r
 * PyPDF2
 * fpdf
 * tabulate
+* colorama
 
 
 ### Compilation into executable
@@ -79,7 +80,7 @@ Only PDF files will be analysed and their filenames should be formatted in the f
 
 Topics are what the files are about. They needn't be written within curly braces - the above is just to illustrate their positioning within the filename. There should only be one topic per file, but hyphens can be included in the topic to give further clarity to the topic.
 
-Flags are separate, optional 'classifiers' that allow differentiation between files on the same topic. They should all be in one set of round brackets and in the position shown above. Two flags should be separated using ' and '. Three or more flags should also be separated using commas.
+Flags are separate, optional 'classifiers' that allow differentiation between files on the same topic. They should all be in one set of round brackets and in the position shown above. Two flags should be separated using ' and '. Three or more flags should also be separated using commas. Use of an ampersand in the round brackets allows the whole flag to be printed onto a single line in the report, rather than being separated onto multiple ones for each of the different components.
 
 The multiplicity in the square brackets should count from 1 up to however many files there are on that specific topic. However, if there is only one file on that topic, [1] is not required at the end of the filename. The multiplicity should be the final part of the filename before the extension.
 

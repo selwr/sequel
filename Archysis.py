@@ -3,8 +3,6 @@
 
 
 import time
-startTime = time.time()
-
 import os
 import warnings
 import textwrap
@@ -17,6 +15,7 @@ from PyPDF2 import PdfReader
 from fpdf import FPDF
 from tabulate import tabulate
 from sys import exit
+from colorama import Fore, Style
 
 warnings.filterwarnings("ignore")
 
@@ -29,7 +28,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.19.2"
+version = "v3.20"
 
 ext = ".pdf"
 
@@ -49,16 +48,20 @@ doGlossary = True
 startLine = f"Archysis {version}"
 
 numSep = int(np.ceil((66 - len(f" {startLine} ")) / 2))
-print(f"\n\n{singleSep * (numSep + 1)} {startLine} {singleSep * (numSep + 1)}\n")
+print("\n\n\n" + f"{Fore.BLUE}{singleSep}{Style.RESET_ALL}" * (2*numSep + 4 + len(startLine)))
+print("\n" + " " * (numSep + 1) + f"{Fore.MAGENTA} {startLine}{Style.RESET_ALL}\n")
+
+startTime = time.time()
 
 
 
 # Getting archive directory and finding it
-wantedDir = input("Enter directory of archive: ")
+wantedDir = input(f"\nEnter directory of archive: {Fore.CYAN}")
 
 runFromDir = os.path.dirname(os.path.realpath(__file__))
 
-print(f"\n──▶ Looking for {wantedDir} folder...")
+print(f"\n{Style.RESET_ALL}──▶ Starting up...")
+
 
 if ":" in runFromDir:
 
@@ -84,7 +87,8 @@ for root, dirs, files in os.walk(lookForDir):
 
 if archDir == None:
 
-    print(f"\n──▶ {wantedDir} folder not found!\n")
+    print(f"\n\n\n{Fore.RED}──▶ '{wantedDir}' directory not found!{Style.RESET_ALL}\n\n")
+    print(f"{Fore.BLUE}{singleSep}{Style.RESET_ALL}" * (2*numSep + 4 + len(startLine)) + "\n\n\n")
     exit()
 
 else:
@@ -94,8 +98,7 @@ else:
 
     directory_contents = os.listdir(archDir)
 
-    print(f"──▶ {wantedDir} folder found!\n")
-    print(f"──▶ {archive_name} Report will be generated!\n")
+    print(f"    • Directory found {Fore.GREEN}✓{Style.RESET_ALL}")
 
 
 
@@ -104,8 +107,6 @@ fontFile = "archysis_font"
 fontFileList = [f"{fontFile}.ttf", f"{fontFile}.otf"]
 fontFileDir = None
 fontExt = None
-
-print("──▶ Looking for font file...")
 
 
 for root, dirs, files in os.walk(lookForDir):
@@ -152,12 +153,13 @@ for root, dirs, files in os.walk(lookForDir):
 # Terminating if no font file can be found
 if fontFileDir == None:
 
-    print("──▶ No font file found!\n")
+    print(f"\n\n\n{Fore.RED}──▶ No font file found!{Style.RESET_ALL}\n\n")
+    print(f"{Fore.BLUE}{singleSep}{Style.RESET_ALL}" * (2*numSep + 4 + len(startLine)) + "\n\n\n")
     exit()
 
 else:
 
-    print("──▶ Font file found!\n")
+    print(f"    • Font file found {Fore.GREEN}✓{Style.RESET_ALL}")
 
 
 
@@ -165,7 +167,6 @@ else:
 glossDir = None
 glossName = f"{archive_name.lower()}_glossary.txt"
 
-print("──▶ Looking for glossary file...")
 
 for root, dirs, files in os.walk(lookForDir):
 
@@ -193,13 +194,13 @@ for root, dirs, files in os.walk(lookForDir):
 # Determining whether a glossary can/will be written
 if glossDir == None:
 
-    print("──▶ No glossary file found!\n")
+    print(f"{Fore.YELLOW}    • WARNING: No glossary file found!{Style.RESET_ALL}\n\n")
     
     doGlossary = False
 
 else:
 
-    print("──▶ Glossary file found!\n")
+    print(f"    • Glossary file found {Fore.GREEN}✓{Style.RESET_ALL}\n\n")
 
 
 
@@ -238,7 +239,8 @@ for folder in directory_contents:
 # Terminating if no folders are found
 if themes == []:
 
-    print("\n──▶ No folders found to analyse!\n")
+    print(f"{Fore.RED}\n──▶ No folders found to analyse!{Style.RESET_ALL}\n\n")
+    print(f"{Fore.BLUE}{singleSep}{Style.RESET_ALL}" * (2*numSep + 4 + len(startLine)) + "\n\n\n")
 
     exit()
 
@@ -326,11 +328,11 @@ for theme in themes:
 
         if themes.index(theme) == 0:
 
-            print(f"──▶ Reading {theme[0]} folders...")
+            print(f"──▶ Reading '{theme[0]}' folders...")
 
         else:
 
-            print(f"\n──▶ Reading {theme[0]} folders...")
+            print(f"\n──▶ Reading '{theme[0]}' folders...")
 
 
 
@@ -516,79 +518,85 @@ for theme in themes:
                     flag = name[bracketIndex+1:-1]
                     topicProper = name[:bracketIndex-1]
 
-
-
-                    # One flag
-                    if "," not in flag and " and " not in flag:
+                    if "&" in flag:
 
                         flags.append(flag)
+
+
+                    elif "&" not in flag:
+
+
+                        # One flag
+                        if "," not in flag and " and " not in flag:
+
+                            flags.append(flag)
+                        
+
+
+                        # Two flags
+                        if "," not in flag and " and " in flag:
+
+                            tempFlags = flag.split(" and ")
+
+                            for f in tempFlags:
+
+                                flags.append(f)
                     
 
 
-                    # Two flags
-                    if "," not in flag and " and " in flag:
+                        # No comma with 'and', three or more flags
+                        if ", " in flag and " and " in flag and ", and " not in flag:
 
-                        tempFlags = flag.split(" and ")
+                            tempFlags = flag.split(", ")
 
-                        for f in tempFlags:
+                            tempFlags2 = []
 
-                            flags.append(f)
-                
+                            for elem in tempFlags:
 
+                                if " and " in elem:
 
-                    # No comma with 'and', three or more flags
-                    if ", " in flag and " and " in flag and ", and " not in flag:
+                                    splitAnd = elem.split(" and ")
 
-                        tempFlags = flag.split(", ")
-
-                        tempFlags2 = []
-
-                        for elem in tempFlags:
-
-                            if " and " in elem:
-
-                                splitAnd = elem.split(" and ")
-
-                                for e in splitAnd:
-
-                                    tempFlags2.append(e)
-                            
-                            else:
-
-                                tempFlags2.append(elem)
-
-                        for f in tempFlags2:
-
-                            flags.append(f)
-
-
-
-                    # Comma with 'and', three or more flags
-                    if "," in flag and ", and " in flag:
-
-                        tempFlags = flag.split(", ")
-
-                        tempFlags2 = []
-
-                        for elem in tempFlags:
-
-                            if "and " in elem:
-
-                                splitAnd = elem.split("and ")
-
-                                for e in splitAnd:
-
-                                    if e != "":
+                                    for e in splitAnd:
 
                                         tempFlags2.append(e)
+                                
+                                else:
 
-                            else:
-                                tempFlags2.append(elem)
+                                    tempFlags2.append(elem)
+
+                            for f in tempFlags2:
+
+                                flags.append(f)
 
 
-                        for f in tempFlags2:
 
-                            flags.append(f)
+                        # Comma with 'and', three or more flags
+                        if "," in flag and ", and " in flag:
+
+                            tempFlags = flag.split(", ")
+
+                            tempFlags2 = []
+
+                            for elem in tempFlags:
+
+                                if "and " in elem:
+
+                                    splitAnd = elem.split("and ")
+
+                                    for e in splitAnd:
+
+                                        if e != "":
+
+                                            tempFlags2.append(e)
+
+                                else:
+                                    tempFlags2.append(elem)
+
+
+                            for f in tempFlags2:
+
+                                flags.append(f)
 
 
 
@@ -624,27 +632,20 @@ for theme in themes:
                         countFlag = flaggedTopic[1].count(flag)
 
 
-                        if countFlag == len(flaggedTopic[1]) and countFlag > 1:
+                        if countFlag == len(flaggedTopic[1]):
 
-                            topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)] = f"{flaggedTopic[0]} ({flag}) [{countFlag}]"
+                            topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1] = [f"[{countFlag}] {flag}"]
 
                             break
 
 
-                        elif countFlag != len(flaggedTopic[1]) and countFlag > 1:
+                        elif countFlag != len(flaggedTopic[1]):
 
-                            topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1][flaggedTopic[1].index(flag)] = f"{flag} [{countFlag}]"
+                            topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1][flaggedTopic[1].index(flag)] = f"[{countFlag}] {flag}"
 
                             while flag in topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1]:
 
                                 topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1].remove(flag)
-
-
-                        elif countFlag == len(flaggedTopic[1]) and countFlag == 1:
-
-                            topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)] = f"{flaggedTopic[0]} ({flag})"
-                            
-                            break
                 
             
 
@@ -668,20 +669,18 @@ for theme in themes:
                 count = topicsSubjectDupes.count(topic)
                 index = topicsForSubject.index(topic)
 
-                if count > 1:
+                if isinstance(topicsSubjectActual[index], list):
 
-                    if isinstance(topicsSubjectActual[index], list):
+                    topicsSubjectActual[index][0] = f"[{count}] " + topicsSubjectActual[index][0]
 
-                        topicsSubjectActual[index][0] = topicsSubjectActual[index][0] + f" [{count}]"
+                elif not isinstance(topicsSubjectActual[index], list) and "[" not in topicsSubjectActual[index]:
 
-                    elif not isinstance(topicsSubjectActual[index], list) and "[" not in topicsSubjectActual[index]:
-
-                        topicsSubjectActual[index] = topicsSubjectActual[index] + f" [{count}]"
+                    topicsSubjectActual[index] = f"[{count}] " + topicsSubjectActual[index]
 
 
             themeTopics[1].append([subject, topicsSubjectActual])
 
-            print(f"    ▪ {subject} ✓")
+            print(f"    ▪ {subject} {Fore.GREEN}✓{Style.RESET_ALL}")
         
 
 
@@ -710,11 +709,11 @@ for theme in themes:
 
         if themes.index(theme) == 0:
 
-            print(f"──▶ Reading {theme} folder...")
+            print(f"──▶ Reading '{theme}' folder...")
 
         else:
 
-            print(f"\n──▶ Reading {theme} folder...")
+            print(f"\n──▶ Reading '{theme}' folder...")
 
 
 
@@ -887,80 +886,86 @@ for theme in themes:
                 flag = name[bracketIndex+1:-1]
                 topicProper = name[:bracketIndex-1]
 
-
-
-                # One flag
-                if "," not in flag and " and " not in flag:
+                if "&" in flag:
 
                     flags.append(flag)
 
 
+                elif "&" not in flag:
 
-                # Two flags
-                if "," not in flag and " and " in flag:
 
-                    tempFlags = flag.split(" and ")
+                    # One flag
+                    if "," not in flag and " and " not in flag:
 
-                    for f in tempFlags:
-
-                        flags.append(f)
+                        flags.append(flag)
 
 
 
-                # No comma with 'and', three or more flags
-                if ", " in flag and " and " in flag and ", and " not in flag:
+                    # Two flags
+                    if "," not in flag and " and " in flag:
 
-                    tempFlags = flag.split(", ")
+                        tempFlags = flag.split(" and ")
 
-                    tempFlags2 = []
+                        for f in tempFlags:
 
-                    for elem in tempFlags:
-
-                        if " and " in elem:
-
-                            splitAnd = elem.split(" and ")
-
-                            for e in splitAnd:
-
-                                tempFlags2.append(e)
-
-                        else:
-
-                            tempFlags2.append(elem)
-
-
-                    for f in tempFlags2:
-
-                        flags.append(f)
+                            flags.append(f)
 
 
 
-                # Comma with 'and', three or more flags
-                if "," in flag and ", and " in flag:
+                    # No comma with 'and', three or more flags
+                    if ", " in flag and " and " in flag and ", and " not in flag:
 
-                    tempFlags = flag.split(", ")
+                        tempFlags = flag.split(", ")
 
-                    tempFlags2 = []
+                        tempFlags2 = []
 
-                    for elem in tempFlags:
+                        for elem in tempFlags:
 
-                        if "and " in elem:
+                            if " and " in elem:
 
-                            splitAnd = elem.split("and ")
+                                splitAnd = elem.split(" and ")
 
-                            for e in splitAnd:
-
-                                if e != "":
+                                for e in splitAnd:
 
                                     tempFlags2.append(e)
 
-                        else:
-                            tempFlags2.append(elem)
+                            else:
+
+                                tempFlags2.append(elem)
 
 
-                    for f in tempFlags2:
+                        for f in tempFlags2:
 
-                        flags.append(f)
+                            flags.append(f)
+
+
+
+                    # Comma with 'and', three or more flags
+                    if "," in flag and ", and " in flag:
+
+                        tempFlags = flag.split(", ")
+
+                        tempFlags2 = []
+
+                        for elem in tempFlags:
+
+                            if "and " in elem:
+
+                                splitAnd = elem.split("and ")
+
+                                for e in splitAnd:
+
+                                    if e != "":
+
+                                        tempFlags2.append(e)
+
+                            else:
+                                tempFlags2.append(elem)
+
+
+                        for f in tempFlags2:
+
+                            flags.append(f)
 
 
 
@@ -995,25 +1000,19 @@ for theme in themes:
 
                     countFlag = flaggedTopic[1].count(flag)
 
-                    if countFlag == len(flaggedTopic[1]) and countFlag > 1:
+                    if countFlag == len(flaggedTopic[1]):
 
-                        topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)] = f"{flaggedTopic[0]} ({flag}) [{countFlag}]"
+                        topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1] = [f"[{countFlag}] {flag}"]
 
                         break
 
-                    elif countFlag != len(flaggedTopic[1]) and countFlag > 1:
+                    elif countFlag != len(flaggedTopic[1]):
 
-                        topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1][flaggedTopic[1].index(flag)] = f"{flag} [{countFlag}]"
+                        topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1][flaggedTopic[1].index(flag)] = f"[{countFlag}] {flag}"
 
                         while flag in topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1]:
 
                             topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)][1].remove(flag)
-
-                    elif countFlag == len(flaggedTopic[1]) and countFlag == 1:
-
-                        topicsSubjectActual[topicsSubjectActual.index(flaggedTopic)] = f"{flaggedTopic[0]} ({flag})"
-
-                        break
 
 
 
@@ -1037,15 +1036,13 @@ for theme in themes:
             count = topicsSubjectDupes.count(topic)
             index = topicsForSubject.index(topic)
 
-            if count > 1:
+            if isinstance(topicsSubjectActual[index], list):
 
-                if isinstance(topicsSubjectActual[index], list):
+                topicsSubjectActual[index][0] = f"[{count}] " + topicsSubjectActual[index][0]
 
-                    topicsSubjectActual[index][0] = topicsSubjectActual[index][0] + f" [{count}]"
+            elif not isinstance(topicsSubjectActual[index], list) and "[" not in topicsSubjectActual[index]:
 
-                elif not isinstance(topicsSubjectActual[index], list) and "[" not in topicsSubjectActual[index]:
-
-                    topicsSubjectActual[index] = topicsSubjectActual[index] + f" [{count}]"
+                topicsSubjectActual[index] = f"[{count}] " + topicsSubjectActual[index]
 
 
 
@@ -1057,14 +1054,15 @@ for theme in themes:
         overallData.append(themeData)
         topicsOverall.append(themeTopics)
 
-        print(f"    ◆ {theme} ✓")
+        print(f"    ◆ {theme} {Fore.GREEN}✓{Style.RESET_ALL}")
 
 
 
 # Terminating if not PDFs found
 if totalsData[3] == 0:
 
-    print("\n──▶ No PDF files found!\n")
+    print(f"\n\n\n{Fore.RED}──▶ No PDF files found!{Style.RESET_ALL}\n\n")
+    print(f"{Fore.BLUE}{singleSep}{Style.RESET_ALL}" * (2*numSep + 4 + len(startLine)) + "\n\n\n")
 
     exit()
 
@@ -1084,15 +1082,15 @@ if filesToFix != []:
         f.write("\n\n(This plaintext file can be deleted once all files have been fixed!)\n")
 
 
-    print("\n──▶ File check & read complete!\n")
-    print("\n──▶ Fix files listed in 'Files to fix.txt'\n")
+    print(f"\n\n\n{Fore.RED}──▶ Fix files listed in 'Files to fix.txt'{Style.RESET_ALL}\n\n")
+    print(f"{Fore.BLUE}{singleSep}{Style.RESET_ALL}" * (2*numSep + 4 + len(startLine)) + "\n\n\n")
 
     exit()
 
 else:
 
-    print("\n──▶ File check & read complete!")
-    print("──▶ All files OK!\n")
+    print("\n\n──▶ Finishing...")
+    print(f"    • All files okay {Fore.GREEN}✓{Style.RESET_ALL}")
 
 
 
@@ -1100,9 +1098,6 @@ else:
 '''
 DATA FORMATTING FOR REPORT
 '''
-
-
-print("──▶ Formatting data for writing...")
 
 
 
@@ -1128,13 +1123,13 @@ if doThemesTable:
 
             themeSubVals.append(int(theme[1][1:endSubNum]))
 
-        themeTopVals.append(int(theme[2]))
+            themeTopVals.append(int(theme[2]))
 
-        themeFileVals.append(int(theme[3]))
+            themeFileVals.append(int(theme[3]))
 
-        themePageVals.append(int(theme[4]))
+            themePageVals.append(int(theme[4]))
 
-        themeSizeVals.append(int(theme[5]))
+            themeSizeVals.append(int(theme[5]))
 
     
 
@@ -1618,9 +1613,11 @@ for theme in topicsOverall:
 
                     text.append(f"• {topic[0]}")
 
+                    pushFactor = topic[0].index("]") + 2
+
                     for flag in topic[1]:
 
-                        text.append(f"    ‣ {flag}")
+                        text.append(" " * pushFactor + f"    ‣ {flag}")
 
 
                 # If we have no flags
@@ -1709,9 +1706,11 @@ for theme in topicsOverall:
 
                         text.append(f"• {topic[0]}")
 
+                        pushFactor = topic[0].index("]") + 2
+
                         for flag in topic[1]:
 
-                            text.append(f"    ‣ {flag}")
+                            text.append(" " * pushFactor + f"    ‣ {flag}")
 
 
                     # If we have no flags
@@ -1829,33 +1828,54 @@ for line in text:
         # 'Regular' wrapping
         if not inGloss:
 
-            wrappedText = textwrap.wrap(line, width = pageWidth)
 
-            for elem in wrappedText:
+            # Wrapping text if there is no flag in the current line
+            if "‣" not in line:
+
+                pushFactor = line.index("]") + 2
+                subIndent = " " * pushFactor
+
+                wrappedText = textwrap.wrap(line, width = pageWidth, subsequent_indent=subIndent)
 
 
-                # If no flag, add either no indent or a double-space indent, for alignment
-                if "‣" not in line:
+                for elem in wrappedText:
 
-                    if elem == wrappedText[0]:
+                    textWrapped.append(elem)
 
-                        textWrapped.append(elem)
 
-                    else:
+            # Wrapping text if there is a flag in the current line
+            elif "‣" in line:
 
-                        textWrapped.append("  " + elem)
+                backCount = 1
+
+                found = False
+
+
+                # Finding the previous topic bullet in order to calculate the correct push factor
+                while found == False:
+
+                    if "•" not in text[text.index(line) - backCount]:
+
+                        backCount += 1
+
+                        continue
+
+                    elif "•" in text[text.index(line) - backCount]:
+
+                        pushFactor = text[text.index(line) - backCount].index("]") + 3
+
+                        found = True
                 
+                
+                currentLinePushFactor = line.index("]") - line.index("‣") + 3
+                subIndent = " " * (pushFactor + currentLinePushFactor)
 
-                # If we have a flag, add a four-space indent or a six-space indent, for alignment
-                elif "‣" in line:
+                wrappedText = textwrap.wrap(line, width = pageWidth, subsequent_indent=subIndent)
 
-                    if elem == wrappedText[0]:
 
-                        textWrapped.append("    " + elem)
+                for elem in wrappedText:
 
-                    else:
-
-                        textWrapped.append("      " + elem)
+                    textWrapped.append(elem)
         
 
 
@@ -2681,7 +2701,7 @@ for x in range(len(finalText)):
         continue
 
 
-print("──▶ Data formatted!\n")
+print(f"    • Data formatted {Fore.GREEN}✓{Style.RESET_ALL}")
 
 
 
@@ -2690,11 +2710,11 @@ if doGlossary:
 
     if (totalsData[1] + subjectLikeThemeCount) > int(lengthGloss):
 
-        print("──▶ Warning! Not all subjects have an entry in the glossary!\n")
+        print(f"{Fore.YELLOW}    • WARNING: Not all subjects have an entry in the glossary!{Style.RESET_ALL}")
 
     elif (totalsData[1] + subjectLikeThemeCount) < int(lengthGloss):
 
-        print("──▶ Warning! Not all entries in the glossary have a directory!\n")
+        print(f"{Fore.YELLOW}    • WARNING: Not all entries in the glossary have a directory!{Style.RESET_ALL}")
 
 
 
@@ -2702,9 +2722,6 @@ if doGlossary:
 '''
 WRITING TO PDF
 '''
-
-
-print("──▶ Writing to PDF...")
 
 
 
@@ -2899,7 +2916,7 @@ for x in range(len(finalText)):
 
 pdf.output(f"{archDir + os.sep + archive_name} Report.pdf")
 
-print("──▶ PDF written!\n")
+print(f"    • PDF written {Fore.GREEN}✓{Style.RESET_ALL}\n\n")
 
 
 
@@ -2921,6 +2938,6 @@ os.remove(fontFileDir + f"{fontFile[:-4]}.pkl")
 endTime = time.time()
 runningTime = round(endTime - startTime, 2)
 
-print(f"──▶ Finished in {runningTime}s!\n")
+print(f"──▶ Finished in {Fore.MAGENTA}{runningTime}s{Style.RESET_ALL}!\n\n")
 
-print(singleSep * (len(f"{singleSep * numSep} {startLine} {singleSep * numSep}") + 2) + "\n\n")
+print(f"{Fore.BLUE}{singleSep}{Style.RESET_ALL}" * (2*numSep + 4 + len(startLine)) + "\n\n\n")
