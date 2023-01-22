@@ -28,7 +28,7 @@ INITIAL SETUP
 
 
 # Setting initial variables & starting the clock
-version = "v3.20"
+version = "v3.20.1"
 
 ext = ".pdf"
 
@@ -1090,7 +1090,7 @@ if filesToFix != []:
 else:
 
     print("\n\n──▶ Finishing...")
-    print(f"    • All files okay {Fore.GREEN}✓{Style.RESET_ALL}")
+    print(f"    • All files ok {Fore.GREEN}✓{Style.RESET_ALL}")
 
 
 
@@ -2189,7 +2189,7 @@ while runningIndex < finalIndex:
 
 
 
-                            # Appending the current line if it can fit on the current age
+                            # Appending the current line if it can fit on the current page
                             elif dividerCount == 0:
 
                                 finalText.append(line)
@@ -2429,13 +2429,85 @@ while runningIndex < finalIndex:
                     # Appending the current line if it can fit on the current age
                     elif dividerCount > 0:
 
-                        finalText.append(line)
+                        if x < runningIndex:
 
-                        if x >= runningIndex:
+                            finalText.append(line)
 
-                            runningIndex += 1
+                            if x >= runningIndex:
 
-                        continue
+                                runningIndex += 1
+
+                            continue
+
+                        else:
+
+                            entryWidth = 0
+
+                            for part in listToSort[currentBulletIndex:nextBulletIndex+1]:
+
+                                if part != "":
+
+                                    entryWidth += 1
+                                
+                                else:
+
+                                    break
+                        
+                        
+
+                            for part in listToSort[currentBulletIndex:nextBulletIndex+1]:
+
+                                if singleSep in part:
+
+                                    nextDivIndex = listToSort[currentBulletIndex:nextBulletIndex+1].index(part)
+
+                                    if nextDivIndex > 2:
+
+                                        push = nextDivIndex - 2
+
+                                    break
+
+
+                                elif doubleSep in part:
+
+                                    nextDivIndex = listToSort[currentBulletIndex:nextBulletIndex+1].index(part)
+
+                                    if nextDivIndex > 1:
+
+                                        push = nextDivIndex - 1
+
+                                    break
+                            
+
+
+                            if (currentBulletModulo + entryWidth) > pageLength:
+
+                                for x in range(push):
+
+                                    finalText.append("")
+
+
+                                finalText.append(line)
+
+
+                                for rem in listToSort[currentBulletIndex + 1:]:
+
+                                    finalText.append(rem)
+
+                                finalIndex = len(finalText)
+
+                                break
+
+
+                            else:
+
+                                finalText.append(line)
+
+                                if x >= runningIndex:
+
+                                    runningIndex += 1
+
+                                continue
 
 
 
