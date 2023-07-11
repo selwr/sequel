@@ -17,10 +17,6 @@ The report will contain:
 
 A summary of the archive, as well as the date & time of generation, is given on the title page.
 
-The title of the report, and its filename, will be "archiveName Report", where archiveName is the name of the archive.
-
-The page numbers given in the contents refer to the absolute page numbers of the report document.
-
 
 ### House style continuity
 Throughout the report, a house style has been applied to aid the identification of different parts of the report at a glance.
@@ -49,28 +45,13 @@ A number of external libraries are used, so these should be installed _before_ r
 * PyPDF2
 * fpdf
 * tabulate
-* colorama
-
-
-### Compilation into executable
-The source code in the repo can be compiled into an executable file by running pyinstaller in the folder containing the Python file,
-
-> pyinstaller --onefile Archysis.py
-
-and then running the file created in the 'dist' subfolder to generate the report.
-
-Note that all dependent libraries above, as well as pyinstaller, must be installed prior to compilation.
 
 
 
 ## Running Archysis
-When run, Archysis will have a short boot-up before asking for the (case-sensitive) directory of the archive. The more information given, the better. It is recommended to give the parent folder and as well as the archive folder (parentDir/archiveDir) to ensure the correct archive is found. For example, if the archive folder is called 'Archive' and this folder is in the Documents folder, then an ideal input to Archysis would be:
+When run, Archysis' GUI will pop up. This will (sequentially) request for the user to select the archive, font file, and glossary directories from a subsequent OS window that will open on clicking the 'Browse' buttons. Clicking 'Run' will then start the main program, and verbose updates will be printed to the text box as the folders in the given archive directory are processed. On finishing, the report will automatically be opened!
 
-> Documents/Archive
-
-and then Archysis will find the folder called 'Archive' in the Documents folder, showing that the full path does not need to be given in this case. However, beware that if there are multiple folders of the same name and/or in the same location, your desired archive may not be found, and so further specification up the directory tree should be given.
-
-NB: Neither the Python file, nor the executable needs to be put in the top-level of the archive in order to run it. These files can be put anywhere on the hard drive. The archive folder will be found from the above input!
+NB: As glossaries are not mandatory, the 'Run' button will be made available after the archive and font file directories have been chosen.
 
 
 ### Files in the archive
@@ -92,7 +73,6 @@ No box-drawing characters or bullets points (of any type) are permitted within f
 
 When the files are read, they will be individually checked to see if they can be opened. If any corrupt/encrypted files are found, these will be added to a plaintext file and the program will be terminated so that the list of files can be repaired/decrypted before a full report can be generated.
 
-NB: All files (the archive itself, Archysis (.py and/or executable) and the font & glossary files) must be on the C: drive on a Windows system, or all on the same hard drive on a Unix system.
 
 
 ### Directory structure
@@ -108,11 +88,11 @@ NB: If not all themes are subject-like, any subject-like themes _will_ appear in
 
 
 ### Fonts
-Due to the formatting of the report's tables, a monospaced Unicode TrueType or OpenType font must be used. This should allow for as large a range of glyphs possible, especially box-drawing characters as well as any other letter-like characters, such as letters with accents or Greek characters. To that end, the recommended font is DejaVu Sans Mono, which can be downloaded at https://dejavu-fonts.github.io. Once downloaded, provided that the font file is renamed from 'DejaVuSansMono.ttf' to 'archysis_font.ttf' and is _somewhere_ on the hard drive, it will be found.
+Due to the formatting of the report's tables, a monospaced Unicode TrueType or OpenType font must be used. This should allow for as large a range of glyphs as possible, especially box-drawing characters as well as any other letter-like characters, such as letters with accents or Greek characters. To that end, the recommended font is DejaVu Sans Mono, which can be downloaded at https://dejavu-fonts.github.io. Within the report, both bold and italic characters are used, and so the 'regular', 'bold' and 'oblique' fonts from the DejaVu Sans Mono group are required. These should all be placed in a single folder that can be selected from the Archysis GUI. The font files need to be renamed to 'archysis_font_regular', 'archysis_font_bold' and 'archysis_font_italic' for the regular, bold and oblique font files, respectively.
 
-Other fonts can be used, provided that they conform to the above requirements, that their filename is 'archysis_font' with a '.ttf' or '.otf' extension and that the file is _somewhere_ on the hard drive. Note that .otf files with Postscript Outlines are not supported.
+Other fonts can be used, provided that they conform to the above requirements, that their filename is 'archysis_font_TYPE' with a '.ttf' or '.otf' extension, that all files are either TrueType or OpenType (no mixing) and that 'TYPE' is replaced with 'regular', 'bold' or 'italic' where appropriate. Note that .otf files with Postscript Outlines are not supported.
 
-The code will generate two .pkl files during its execution, but these will be automatically deleted.
+The code will generate a number of .pkl files during its execution, but these will be automatically deleted.
 
 
 ### Glossary
@@ -120,11 +100,9 @@ A glossary can be included in the report, and will be automatically alphabetised
 
 > \* SubjectName: Field1, Field2, Field3, ...
 
-The glossary file must end with a blank line to prevent any fields from being cut off.
-
-As with the font file, provided that the glossary file is _somewhere_ on the hard drive, and is named 'archiveName_glossary.txt', it will be found (where archiveName is the **lower case** name of the archive). If no glossary file is found, then one will not be written to the report.
+The glossary file must end with a blank line to prevent any fields from being cut off, and should be named 'archiveName_glossary.txt' (where archiveName is the **lower case** name of the archive). If no glossary file is found, then one will not be written to the report.
 
 
 
 ## Future
-A GUI-based version of Archysis (called P.A.G.E.) is in the works.
+Another GUI-based version of Archysis (called P.A.G.E.) is in the works.
